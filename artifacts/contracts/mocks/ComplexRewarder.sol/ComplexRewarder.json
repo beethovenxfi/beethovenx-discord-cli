@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ComplexRewarder",
+  "sourceName": "contracts/mocks/ComplexRewarder.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220ff564643fee7e44ef9949260fe11c47e04f6fb37d60de4146f574475b8c1dc9164736f6c63430008070033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220ff564643fee7e44ef9949260fe11c47e04f6fb37d60de4146f574475b8c1dc9164736f6c63430008070033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
