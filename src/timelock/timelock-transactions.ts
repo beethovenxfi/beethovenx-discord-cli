@@ -68,7 +68,7 @@ export async function queueTimelockTransaction(
     const contractInteraction = await executeTimelockTransaction(transactionId);
     await sendMessage(
       ChannelId.MULTISIG_TX,
-      "Transaction ready to execute:" +
+      "@here Transaction ready to execute:" +
         codeBlock(
           `
       Contract: ${contractInteraction.contract}
