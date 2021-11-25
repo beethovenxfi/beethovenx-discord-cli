@@ -2,7 +2,7 @@ import { codeBlock, SlashCommandBuilder } from "@discordjs/builders";
 import { ethers } from "hardhat";
 import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
-import { config } from "../../config";
+import { config } from "../config/config";
 import { BeethovenxMasterChef } from "../../types";
 
 async function execute(interaction: CommandInteraction) {

@@ -1,5 +1,5 @@
-import { client } from "./src/client/discord-client";
-import { registerSlashCommands } from "./src/interactions/slash-commands";
+import { client } from "./client/discord-client";
+import { registerSlashCommands } from "./interactions/slash-commands";
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 

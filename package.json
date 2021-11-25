@@ -21,8 +21,8 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "start": "ts-node -r dotenv/config --transpile-only app.ts",
-    "deploy:commands": "ts-node -r dotenv/config --transpile-only deploy-commands.ts",
+    "start": "ts-node -r dotenv/config --transpile-only src/app.ts",
+    "deploy:commands": "ts-node -r dotenv/config --transpile-only scripts/deploy-commands.ts",
     "masterchef": "ts-node -r dotenv/config --transpile-only cli/masterchef.ts",
     "timelock": "ts-node -r dotenv/config --transpile-only cli/time-lock.ts",
     "vesting": "ts-node -r dotenv/config --transpile-only cli/vesting.ts",

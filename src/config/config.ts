@@ -1,7 +1,6 @@
-import {network} from "hardhat";
+import { network } from "hardhat";
 
 type CliConfigContent = {
-  safeAddresses: string[];
   contractAddresses: {
     MasterChef: string;
     Timelock: string;
@@ -20,7 +19,6 @@ type Config = Record<number, CliConfigContent>;
 
 export const scriptConfig: Config = {
   250: {
-    safeAddresses: ["0xce739F64D2CC2dd665eC59E8fDb18380Ca69c2B1"],
     contractAddresses: {
       MasterChef: "0x8166994d9ebBe5829EC86Bd81258149B87faCfd3",
       Timelock: "0xb5caee3cd5d86c138f879b3abc5b1bebb63c6471",
@@ -35,7 +33,6 @@ export const scriptConfig: Config = {
     },
   },
   4: {
-    safeAddresses: [],
     contractAddresses: {
       MasterChef: "0x64CBF3dbee116167Dd41Abd143405B511c436076",
       Timelock: "0xa2f273656b1989d10fA36274Ca9c3c851D4f1928",

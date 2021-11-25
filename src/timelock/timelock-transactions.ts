@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { ethers, network } from "hardhat";
 import moment from "moment";
-import { config } from "../../config";
+import { config } from "../config/config";
 import { ChannelId, sendMessage } from "../interactions/send-message";
 import { codeBlock } from "@discordjs/builders";
 

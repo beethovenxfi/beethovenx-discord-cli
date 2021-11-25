@@ -3,7 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
 import { queueTimelockTransaction } from "../timelock/timelock-transactions";
 import moment from "moment";
-import { config } from "../../config";
+import { config } from "../config/config";
 
 async function execute(interaction: CommandInteraction) {
   const pid = interaction.options.getString("pid");

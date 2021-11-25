@@ -1,5 +1,5 @@
 import { REST } from "@discordjs/rest";
-import { commandHandlers } from "./src/commands";
+import { commandHandlers } from "../src/commands";
 
 const { Routes } = require("discord-api-types/v9");
 
