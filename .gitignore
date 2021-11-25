@@ -5,3 +5,5 @@ package-lock.json
 .vscode
 .idea
 yarn-error.log
+
+.timelock
