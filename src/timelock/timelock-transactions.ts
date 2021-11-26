@@ -37,6 +37,7 @@ export type HexContractInteraction = {
     identifier: string;
     args: any[];
   };
+  eta: number;
   hexData: string;
 };
 
@@ -84,7 +85,8 @@ export async function queueTimelockTransaction(
       Contract address: ${contractInteraction.targetContract.address},
       Function: ${
         contractInteraction.targetFunction.identifier
-      } [${contractInteraction.targetFunction.args.join(",")}]
+      }(${contractInteraction.targetFunction.args.join(",")})
+      eta: ${moment.unix(contractInteraction.eta)}
       HexData: ${contractInteraction.hexData}`
         )
     );
@@ -96,6 +98,7 @@ export async function queueTimelockTransaction(
     transactionId,
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
+    eta: transaction.eta,
     hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [
@@ -141,6 +144,7 @@ export async function executeTimelockTransaction(
     transactionId,
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
+    eta: transaction.eta,
     hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [

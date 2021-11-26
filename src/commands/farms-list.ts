@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
 import { config } from "../config/config";
-import { BeethovenxMasterChef } from "../../types";
+import { BeethovenxMasterChef } from "../../masterchef-types";
 
 async function execute(interaction: CommandInteraction) {
   const chef = (await ethers.getContractAt(

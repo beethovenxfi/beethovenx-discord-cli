@@ -44,7 +44,8 @@ async function execute(interaction: CommandInteraction) {
       Contract address: ${contractInteraction.targetContract.address},
       Function: ${
         contractInteraction.targetFunction.identifier
-      } [${contractInteraction.targetFunction.args.join(",")}]
+      }(${contractInteraction.targetFunction.args.join(",")})
+      eta: ${moment.unix(contractInteraction.eta)}
       HexData: ${contractInteraction.hexData}`
     ),
     ephemeral: true,

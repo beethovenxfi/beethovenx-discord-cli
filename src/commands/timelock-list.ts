@@ -18,8 +18,9 @@ async function execute(interaction: CommandInteraction) {
     contract: ${timelockTransaction.transaction.targetContract.name} - [${
       timelockTransaction.transaction.targetContract.address
     }]
-    func: ${timelockTransaction.transaction.targetFunction.identifier}
-    args: [${timelockTransaction.transaction.targetFunction.args.join(",")}]
+    function: ${
+      timelockTransaction.transaction.targetFunction.identifier
+    }(${timelockTransaction.transaction.targetFunction.args.join(",")})
     eta: ${moment.unix(timelockTransaction.transaction.eta)}
     -------------------------------------------------`;
   }
