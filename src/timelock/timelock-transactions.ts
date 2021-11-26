@@ -79,7 +79,7 @@ export async function queueTimelockTransaction(
       "@here Transaction ready to execute:" +
         codeBlock(
           `
-      TransactionId: ${contractInteraction.transactionId}
+      TX_ID: ${contractInteraction.transactionId}
       Contract name: ${contractInteraction.targetContract.name}
       Contract address: ${contractInteraction.targetContract.address},
       Function: ${
