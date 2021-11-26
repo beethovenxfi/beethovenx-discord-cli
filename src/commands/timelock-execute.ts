@@ -10,8 +10,8 @@ async function execute(interaction: CommandInteraction) {
   await interaction.reply({
     content: codeBlock(
       `
-      Contract: ${contractInteraction.contract}
-      Data: ${contractInteraction.data}`
+      Contract: ${contractInteraction.contractAddress}
+      Data: ${contractInteraction.hexData}`
     ),
     ephemeral: true,
   });

@@ -33,8 +33,13 @@ async function execute(interaction: CommandInteraction) {
   await interaction.reply({
     content: codeBlock(
       `
-      Contract: ${contractInteraction.contract}
-      Data: ${contractInteraction.data}`
+      TransactionId: ${contractInteraction.transactionId}
+      Contract name: ${contractInteraction.targetContract.name}
+      Contract address: ${contractInteraction.targetContract.address},
+      Function: ${
+        contractInteraction.targetFunction.identifier
+      } [${contractInteraction.targetFunction.args.join(",")}]
+      HexData: ${contractInteraction.hexData}`
     ),
     ephemeral: true,
   });

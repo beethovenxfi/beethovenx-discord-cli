@@ -28,8 +28,16 @@ export type StoredTimelockTransaction = TimelockTransaction & {
 };
 
 export type HexContractInteraction = {
-  contract: string;
-  data: string;
+  transactionId: string;
+  targetContract: {
+    name: string;
+    address: string;
+  };
+  targetFunction: {
+    identifier: string;
+    args: any[];
+  };
+  hexData: string;
 };
 
 const timelockReminders: Map<string, NodeJS.Timeout> = new Map<
@@ -71,8 +79,13 @@ export async function queueTimelockTransaction(
       "@here Transaction ready to execute:" +
         codeBlock(
           `
-      Contract: ${contractInteraction.contract}
-      Data: ${contractInteraction.data}`
+      TransactionId: ${contractInteraction.transactionId}
+      Contract name: ${contractInteraction.targetContract.name}
+      Contract address: ${contractInteraction.targetContract.address},
+      Function: ${
+        contractInteraction.targetFunction.identifier
+      } [${contractInteraction.targetFunction.args.join(",")}]
+      HexData: ${contractInteraction.hexData}`
         )
     );
   }, reminderDuration);
@@ -80,8 +93,10 @@ export async function queueTimelockTransaction(
   timelockReminders.set(transactionId, reminderId);
 
   return {
-    contract: timelockContract.address,
-    data: timelockContract.interface.encodeFunctionData(
+    transactionId,
+    targetContract: transaction.targetContract,
+    targetFunction: transaction.targetFunction,
+    hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [
         transaction.targetContract.address,
@@ -123,8 +138,10 @@ export async function executeTimelockTransaction(
   markExecutedTransaction(transactionId);
 
   return {
-    contract: timelockContract.address,
-    data: timelockContract.interface.encodeFunctionData(
+    transactionId,
+    targetContract: transaction.targetContract,
+    targetFunction: transaction.targetFunction,
+    hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [
         transaction.targetContract.address,
