@@ -38,6 +38,7 @@ export type HexContractInteraction = {
     args: any[];
   };
   eta: number;
+  timelockAddress: string;
   hexData: string;
 };
 
@@ -99,6 +100,7 @@ export async function queueTimelockTransaction(
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
     eta: transaction.eta,
+    timelockAddress: timelockContract.address,
     hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [
@@ -145,6 +147,7 @@ export async function executeTimelockTransaction(
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
     eta: transaction.eta,
+    timelockAddress: timelockContract.address,
     hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [

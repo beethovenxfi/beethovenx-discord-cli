@@ -18,6 +18,7 @@ async function execute(interaction: CommandInteraction) {
         contractInteraction.targetFunction.identifier
       }(${contractInteraction.targetFunction.args.join(",")})
       eta: ${moment.unix(contractInteraction.eta)}
+      Timelock Address: ${contractInteraction.timelockAddress}
       HexData: ${contractInteraction.hexData}`
     ),
     ephemeral: true,
