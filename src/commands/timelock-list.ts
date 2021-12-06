@@ -9,8 +9,10 @@ import moment from "moment";
 
 async function execute(interaction: CommandInteraction) {
   const onlyExecutable = interaction.options.getBoolean("executable_only")!;
+  const limit = interaction.options.getNumber("limit") ?? 8;
 
-  const timelockTransactions = getTimelockTransactions(onlyExecutable);
+  const timelockTransactions = getTimelockTransactions(onlyExecutable, limit);
+
   let output = "";
   for (let timelockTransaction of timelockTransactions) {
     output += `
@@ -30,12 +32,17 @@ async function execute(interaction: CommandInteraction) {
 export const timelockList: CommandHandler = {
   definition: new SlashCommandBuilder()
     .setName("timelock_list")
-    .setDescription("List transactions ready to execute")
+    .setDescription("List transactions")
     .addBooleanOption((option) =>
       option
         .setName("executable_only")
         .setDescription("Show only executable transactions")
         .setRequired(true)
+    )
+    .addNumberOption((option) =>
+      option
+        .setName("limit")
+        .setDescription("Limit the amount of tx shown (default 8)")
     ),
 
   execute,
