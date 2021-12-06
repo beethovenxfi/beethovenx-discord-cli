@@ -228,10 +228,7 @@ function markExecutedTransaction(transactionId: string) {
   );
 }
 
-export function getTimelockTransactions(
-  onlyExecutable = true,
-  limit: number = 8
-) {
+export function getTimelockTransactions(limit: number, onlyExecutable = true) {
   const storedTransactions = getStoredTransactions();
   let transactionIds = [];
   if (onlyExecutable) {

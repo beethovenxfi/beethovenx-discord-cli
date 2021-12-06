@@ -9,9 +9,9 @@ import moment from "moment";
 
 async function execute(interaction: CommandInteraction) {
   const onlyExecutable = interaction.options.getBoolean("executable_only")!;
-  const limit = interaction.options.getNumber("limit") ?? 8;
+  const limit = interaction.options.getNumber("limit") ?? 7;
 
-  const timelockTransactions = getTimelockTransactions(onlyExecutable, limit);
+  const timelockTransactions = getTimelockTransactions(limit, onlyExecutable);
 
   let output = "";
   for (let timelockTransaction of timelockTransactions) {
@@ -42,7 +42,7 @@ export const timelockList: CommandHandler = {
     .addNumberOption((option) =>
       option
         .setName("limit")
-        .setDescription("Limit the amount of tx shown (default 8)")
+        .setDescription("Limit the amount of tx shown (default 7)")
     ),
 
   execute,
