@@ -1,6 +1,6 @@
 import { network } from "hardhat";
 
-type CliConfigContent = {
+type CliNetworkConfigContent = {
   contractAddresses: {
     MasterChef: string;
     Timelock: string;
@@ -15,9 +15,9 @@ type CliConfigContent = {
   };
 };
 
-type Config = Record<number, CliConfigContent>;
+type NetworkConfig = Record<number, CliNetworkConfigContent>;
 
-export const scriptConfig: Config = {
+export const scriptConfig: NetworkConfig = {
   250: {
     contractAddresses: {
       MasterChef: "0x8166994d9ebBe5829EC86Bd81258149B87faCfd3",
@@ -48,4 +48,5 @@ export const scriptConfig: Config = {
   },
 };
 
-export const config = scriptConfig[network.config.chainId!];
+export const networkConfig = scriptConfig[network.config.chainId!];
+export const MODERATOR_ROLE = "886027958257594379";

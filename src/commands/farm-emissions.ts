@@ -3,7 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
 import { queueTimelockTransaction } from "../timelock/timelock-transactions";
 import moment from "moment";
-import { config } from "../config/config";
+import { networkConfig } from "../config/config";
 import { ethers } from "hardhat";
 import { BeethovenxMasterChef, BeethovenxToken } from "../../masterchef-types";
 import { bn } from "../utils";
@@ -16,12 +16,12 @@ async function execute(interaction: CommandInteraction) {
 
   const token = (await ethers.getContractAt(
     "BeethovenxToken",
-    config.contractAddresses.BeethovenxToken
+    networkConfig.contractAddresses.BeethovenxToken
   )) as BeethovenxToken;
 
   const chef = (await ethers.getContractAt(
     "BeethovenxMasterChef",
-    config.contractAddresses.MasterChef
+    networkConfig.contractAddresses.MasterChef
   )) as BeethovenxMasterChef;
 
   const totalSupply = await token.totalSupply();

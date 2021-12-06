@@ -1,12 +1,12 @@
 import { client } from "../client/discord-client";
 import { Collection } from "discord.js";
-import { commandHandlers } from "../commands";
+import { CommandHandler, commandHandlers } from "../commands";
 
-const commands: Collection<string, any> = new Collection();
+export const cliCommands: Collection<string, CommandHandler> = new Collection();
 
 export function registerSlashCommands() {
   commandHandlers.forEach((handler) => {
-    commands.set(handler.definition.name, handler);
+    cliCommands.set(handler.definition.name, handler);
   });
 
   client.on("interactionCreate", async (interaction) => {
@@ -14,7 +14,7 @@ export function registerSlashCommands() {
       return;
     }
 
-    const command = commands.get(interaction.commandName);
+    const command = cliCommands.get(interaction.commandName);
 
     if (!command) {
       return;

@@ -3,9 +3,9 @@ import { commandHandlers } from "../src/commands";
 
 const { Routes } = require("discord-api-types/v9");
 
-const TOKEN = process.env.DISCORD_TOKEN!;
-const GUILD_ID = process.env.DISCORD_GUILD_ID!;
-const CLIENT_ID = process.env.DISCORD_CLIENT_ID!;
+export const TOKEN = process.env.DISCORD_TOKEN!;
+export const GUILD_ID = process.env.DISCORD_GUILD_ID!;
+export const CLIENT_ID = process.env.DISCORD_CLIENT_ID!;
 
 const commands = commandHandlers.map((command) => command.definition.toJSON());
 

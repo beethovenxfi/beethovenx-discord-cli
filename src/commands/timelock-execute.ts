@@ -3,6 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
 import { executeTimelockTransaction } from "../timelock/timelock-transactions";
 import moment from "moment";
+import { MODERATOR_ROLE } from "../config/config";
 
 async function execute(interaction: CommandInteraction) {
   const transactionId = interaction.options.getString("transaction_id");
@@ -34,6 +35,8 @@ export const timelockExecute: CommandHandler = {
         .setName("transaction_id")
         .setDescription("Transaction ID")
         .setRequired(true)
-    ),
+    )
+    .setDefaultPermission(false),
   execute,
+  permissionRoles: [MODERATOR_ROLE],
 };

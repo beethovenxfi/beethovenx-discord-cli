@@ -3,7 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
 import { queueTimelockTransaction } from "../timelock/timelock-transactions";
 import moment from "moment";
-import { config } from "../config/config";
+import { MODERATOR_ROLE, networkConfig } from "../config/config";
 
 async function execute(interaction: CommandInteraction) {
   const allocationPoints = interaction.options.getNumber("allocation_points");
@@ -20,7 +20,7 @@ async function execute(interaction: CommandInteraction) {
   const contractInteraction = await queueTimelockTransaction({
     targetContract: {
       name: "BeethovenxMasterChef",
-      address: config.contractAddresses.MasterChef,
+      address: networkConfig.contractAddresses.MasterChef,
     },
     value: 0,
     targetFunction: {
@@ -70,6 +70,8 @@ export const farmsAdd: CommandHandler = {
     )
     .addNumberOption((option) =>
       option.setName("eta").setDescription("Time of execution (defaults to 8h)")
-    ),
+    )
+    .setDefaultPermission(false),
   execute,
+  permissionRoles: [MODERATOR_ROLE],
 };

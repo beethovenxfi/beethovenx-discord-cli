@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { ethers, network } from "hardhat";
 import moment from "moment";
-import { config } from "../config/config";
+import { networkConfig } from "../config/config";
 import { ChannelId, sendMessage } from "../interactions/send-message";
 import { codeBlock } from "@discordjs/builders";
 
@@ -52,7 +52,7 @@ export async function queueTimelockTransaction(
 ): Promise<HexContractInteraction> {
   const timelockContract = await ethers.getContractAt(
     "Timelock",
-    config.contractAddresses.Timelock
+    networkConfig.contractAddresses.Timelock
   );
   const targetContract = await ethers.getContractAt(
     transaction.targetContract.name,
@@ -121,7 +121,7 @@ export async function executeTimelockTransaction(
   const transaction = storedTransactions[transactionId];
   const timelockContract = await ethers.getContractAt(
     "Timelock",
-    config.contractAddresses.Timelock
+    networkConfig.contractAddresses.Timelock
   );
   const targetContract = await ethers.getContractAt(
     transaction.targetContract.name,

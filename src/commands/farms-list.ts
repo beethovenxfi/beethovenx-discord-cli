@@ -2,13 +2,13 @@ import { codeBlock, SlashCommandBuilder } from "@discordjs/builders";
 import { ethers } from "hardhat";
 import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
-import { config } from "../config/config";
+import { networkConfig } from "../config/config";
 import { BeethovenxMasterChef } from "../../masterchef-types";
 
 async function execute(interaction: CommandInteraction) {
   const chef = (await ethers.getContractAt(
     "BeethovenxMasterChef",
-    config.contractAddresses.MasterChef
+    networkConfig.contractAddresses.MasterChef
   )) as BeethovenxMasterChef;
   await interaction.deferReply({ ephemeral: true });
   const poolsLength = await chef.poolLength();
