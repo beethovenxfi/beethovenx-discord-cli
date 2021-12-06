@@ -38,19 +38,27 @@ async function execute(interaction: CommandInteraction) {
   }
 
   const emissionScheduleStepInfo = emissionSchedule[emissionStep];
+  const normalizedEmittedBeets = parseInt(
+    ethers.utils.formatUnits(emittedBeets)
+  ).toFixed(0);
+
   await interaction.editReply({
     content: codeBlock(
       `
-      Total emitted BEETS: ${parseInt(
-        ethers.utils.formatUnits(emittedBeets)
-      ).toFixed(0)}
-      Current beets per block: ${ethers.utils.formatUnits(beetsPerBlock)} 
+      Total emitted BEETS: ${normalizedEmittedBeets}
+      Current BEETS per block: ${ethers.utils.formatUnits(beetsPerBlock)} 
       Expected BEETS per block: ${
         emissionScheduleStepInfo.beets_per_block / 100
       } (step ${emissionStep + 1})
       ${
         bn(emissionScheduleStepInfo.beets_per_block, 16).eq(beetsPerBlock)
-          ? `No emission change required until ${emissionScheduleStepInfo.total_emitted} emitted BEETS!`
+          ? `No emission change required until ${
+              emissionScheduleStepInfo.total_emitted
+            } emitted BEETS!
+      Remaining BEETS emission until change: ${
+        emissionScheduleStepInfo.total_emitted -
+        parseInt(normalizedEmittedBeets)
+      }`
           : `Please change emission rate to ${
               emissionScheduleStepInfo.beets_per_block / 100
             }!`
