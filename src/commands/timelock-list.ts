@@ -1,10 +1,7 @@
 import { codeBlock, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
-import {
-  executeTimelockTransaction,
-  getTimelockTransactions,
-} from "../timelock/timelock-transactions";
+import { getTimelockTransactions } from "../timelock/timelock-transactions";
 import moment from "moment";
 
 async function execute(interaction: CommandInteraction) {

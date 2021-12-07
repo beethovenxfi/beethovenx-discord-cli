@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "StableOracleMath",
+  "sourceName": "contracts/meta/StableOracleMath.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212201da9f685d56860ee9063494bd04a7088f9b66c055a0eddf1ca0f6e1cae40404b64736f6c63430007010033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212201da9f685d56860ee9063494bd04a7088f9b66c055a0eddf1ca0f6e1cae40404b64736f6c63430007010033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
