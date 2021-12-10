@@ -1,8 +1,6 @@
 import { codeBlock, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
-import { queueTimelockTransaction } from "../timelock/timelock-transactions";
-import moment from "moment";
 import { networkConfig } from "../config/config";
 import { ethers } from "hardhat";
 import { BeethovenxMasterChef, BeethovenxToken } from "../../masterchef-types";
@@ -68,7 +66,7 @@ async function execute(interaction: CommandInteraction) {
   });
 }
 
-export const farmEmissions: CommandHandler = {
+export const farmsEmissions: CommandHandler = {
   definition: new SlashCommandBuilder()
     .setName("farms_emissions")
     .setDescription("View emission infos"),
