@@ -18,18 +18,18 @@ async function execute(interaction: CommandInteraction) {
 
   const amounts = await feesCollector.getCollectedFeeAmounts(tokens);
 
-  let tokenContent = "";
+  let tokenAmounts = "";
 
   for (let index = 0; index < tokens.length; index++) {
     const erc20 = await ethers.getContractAt("ERC20", tokens[index]);
-    tokenContent += `
-    Token: ${await erc20.symbol()}
-    Amount: ${ethers.utils.formatUnits(amounts[index], await erc20.decimals())}
-    
-    ----------------------------------------------------
+    tokenAmounts += `${await erc20.symbol()} - ${ethers.utils.formatUnits(
+      amounts[index],
+      await erc20.decimals()
+    )}
     `;
   }
-  tokenContent += `
+  await interaction.editReply({ content: codeBlock(tokenAmounts) });
+  const tokenData = `
     Contract: ${feesCollector.address}
     Data: ${feesCollector.interface.encodeFunctionData(
       "withdrawCollectedFees",
@@ -37,9 +37,20 @@ async function execute(interaction: CommandInteraction) {
     )}
   `;
 
-  await interaction.editReply({
-    content: codeBlock(tokenContent),
-  });
+  if (tokenData.length < 2000) {
+    await interaction.followUp({
+      content: codeBlock(tokenData),
+      ephemeral: true,
+    });
+  } else {
+    const splits = splitString(tokenData);
+    for (let split of splits) {
+      await interaction.followUp({
+        content: codeBlock(split),
+        ephemeral: true,
+      });
+    }
+  }
 }
 
 export const feesCollectorWithdraw: CommandHandler = {
@@ -61,4 +72,28 @@ export const feesCollectorWithdraw: CommandHandler = {
     .setDefaultPermission(false),
   execute,
   permissionRoles: [MODERATOR_ROLE],
+};
+
+const MESSAGE_CHAR_LIMIT = 1950;
+
+const splitString = (val: string, prepend = "", append = ""): string[] => {
+  if (val.length <= MESSAGE_CHAR_LIMIT) {
+    return [val];
+  }
+
+  const splitIndex = val.lastIndexOf(
+    "\n",
+    MESSAGE_CHAR_LIMIT - prepend.length - append.length
+  );
+  const sliceEnd =
+    splitIndex > 0
+      ? splitIndex
+      : MESSAGE_CHAR_LIMIT - prepend.length - append.length;
+  const rest = splitString(val.slice(sliceEnd), prepend, append);
+
+  return [
+    `${val.slice(0, sliceEnd)}${append}`,
+    `${prepend}${rest[0]}`,
+    ...rest.slice(1),
+  ];
 };
