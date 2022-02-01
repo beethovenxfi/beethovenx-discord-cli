@@ -4,8 +4,8 @@ import { CommandHandler } from "./index";
 import { ethers } from "ethers";
 
 async function execute(interaction: CommandInteraction) {
-  const types = interaction.options.getString("value")!.split(",");
-  const values = interaction.options.getString("value")!.split(",");
+  const types = interaction.options.getString("types")!.split(",");
+  const values = interaction.options.getString("values")!.split(",");
 
   const abi = new ethers.utils.AbiCoder();
 
