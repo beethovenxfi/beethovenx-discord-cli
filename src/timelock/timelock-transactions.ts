@@ -88,6 +88,7 @@ export async function queueTimelockTransaction(
         contractInteraction.targetFunction.identifier
       }(${contractInteraction.targetFunction.args.join(",")})
       eta: ${moment.unix(contractInteraction.eta)}
+      Timelock Address: ${contractInteraction.timelockAddress}
       HexData: ${contractInteraction.hexData}`
         )
     );
