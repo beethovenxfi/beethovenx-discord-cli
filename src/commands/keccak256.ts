@@ -6,7 +6,9 @@ import { ethers } from "ethers";
 async function execute(interaction: CommandInteraction) {
   const value = interaction.options.getString("value")!;
 
-  const formattedValue = ethers.utils.keccak256(value);
+  const formattedValue = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes(value)
+  );
 
   await interaction.reply({
     content: codeBlock(
