@@ -57,18 +57,22 @@ async function execute(interaction: CommandInteraction) {
     ephemeral: true,
   });
 
-  for (let split of newFarmsSummary) {
-    await interaction.followUp({
-      content: codeBlock(split),
-      ephemeral: true,
-    });
+  if (farmAdditions.length > 0) {
+    for (let split of newFarmsSummary) {
+      await interaction.followUp({
+        content: codeBlock(split),
+        ephemeral: true,
+      });
+    }
   }
 
-  for (let split of editFarmsSummary) {
-    await interaction.followUp({
-      content: codeBlock(split),
-      ephemeral: true,
-    });
+  if (farmModifications.length > 0) {
+    for (let split of editFarmsSummary) {
+      await interaction.followUp({
+        content: codeBlock(split),
+        ephemeral: true,
+      });
+    }
   }
 }
 
