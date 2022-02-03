@@ -3,6 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
 import { MODERATOR_ROLE, networkConfig } from "../config/config";
 import { ethers } from "hardhat";
+import { splitString } from "../utils";
 
 async function execute(interaction: CommandInteraction) {
   await interaction.deferReply({ ephemeral: true });
@@ -72,28 +73,4 @@ export const feesCollectorWithdraw: CommandHandler = {
     .setDefaultPermission(false),
   execute,
   permissionRoles: [MODERATOR_ROLE],
-};
-
-const MESSAGE_CHAR_LIMIT = 1950;
-
-const splitString = (val: string, prepend = "", append = ""): string[] => {
-  if (val.length <= MESSAGE_CHAR_LIMIT) {
-    return [val];
-  }
-
-  const splitIndex = val.lastIndexOf(
-    "\n",
-    MESSAGE_CHAR_LIMIT - prepend.length - append.length
-  );
-  const sliceEnd =
-    splitIndex > 0
-      ? splitIndex
-      : MESSAGE_CHAR_LIMIT - prepend.length - append.length;
-  const rest = splitString(val.slice(sliceEnd), prepend, append);
-
-  return [
-    `${val.slice(0, sliceEnd)}${append}`,
-    `${prepend}${rest[0]}`,
-    ...rest.slice(1),
-  ];
 };

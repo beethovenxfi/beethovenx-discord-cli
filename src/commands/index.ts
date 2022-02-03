@@ -13,6 +13,9 @@ import { farmsEmissionsChange } from "./farms-emissions-change";
 import { timelockSetPendingAdmin } from "./timelock-set-pending-admin";
 import { keccak256 } from "./keccak256";
 import { abiEncode } from "./abi-encode";
+import { txReminder } from "./txReminder";
+import { farmsChangesForEta } from "./farms-changes-for-eta";
+import { farmsChangeEtas } from "./farms-change-etas";
 
 export type CommandExecutor = (interaction: CommandInteraction) => Promise<any>;
 export type CommandHandler = {
@@ -27,6 +30,8 @@ export const commandHandlers = [
   farmsEdit,
   farmsEmissions,
   farmsEmissionsChange,
+  farmsChangeEtas,
+  farmsChangesForEta,
   timelockExecute,
   timelockList,
   timelockDelete,

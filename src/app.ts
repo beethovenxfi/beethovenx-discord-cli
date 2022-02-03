@@ -4,6 +4,7 @@ import {
   registerSlashCommands,
 } from "./interactions/slash-commands";
 import { GUILD_ID } from "../scripts/deploy-commands";
+import { scheduleTransactionReminders } from "./crons/send_tx_reminders";
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -31,5 +32,6 @@ client.once("ready", (client) => {
 });
 
 registerSlashCommands();
+scheduleTransactionReminders();
 
 client.login(TOKEN);
