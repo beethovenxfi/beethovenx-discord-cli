@@ -38,7 +38,7 @@ export type HexContractInteraction = {
     args: any[];
   };
   eta: number;
-  timelockAddress: string;
+  operatorAddress: string;
   hexData: string;
 };
 
@@ -51,8 +51,8 @@ export async function queueTimelockTransaction(
   transaction: TimelockTransaction
 ): Promise<HexContractInteraction> {
   const timelockContract = await ethers.getContractAt(
-    "Timelock",
-    networkConfig.contractAddresses.Timelock
+    "MasterChefOperator",
+    networkConfig.contractAddresses.MasterChefOperator
   );
   const targetContract = await ethers.getContractAt(
     transaction.targetContract.name,
@@ -88,7 +88,7 @@ export async function queueTimelockTransaction(
         contractInteraction.targetFunction.identifier
       }(${contractInteraction.targetFunction.args.join(",")})
       eta: ${moment.unix(contractInteraction.eta)}
-      Timelock Address: ${contractInteraction.timelockAddress}
+      Operator Address: ${contractInteraction.operatorAddress}
       HexData: ${contractInteraction.hexData}`
         )
     );
@@ -101,7 +101,7 @@ export async function queueTimelockTransaction(
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
     eta: transaction.eta,
-    timelockAddress: timelockContract.address,
+    operatorAddress: timelockContract.address,
     hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [
@@ -148,7 +148,7 @@ export async function executeTimelockTransaction(
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
     eta: transaction.eta,
-    timelockAddress: timelockContract.address,
+    operatorAddress: timelockContract.address,
     hexData: timelockContract.interface.encodeFunctionData(
       timelockFunctionFragment,
       [
