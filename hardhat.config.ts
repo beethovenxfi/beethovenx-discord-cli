@@ -1,8 +1,7 @@
 import "dotenv/config";
 import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-etherscan";
 import { HardhatUserConfig } from "hardhat/config";
-
-
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -10,8 +9,7 @@ const config: HardhatUserConfig = {
     timeout: 20000,
   },
   networks: {
-    localhost: {
-    },
+    localhost: {},
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
       chainId: 4,
