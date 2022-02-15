@@ -31,6 +31,8 @@ async function checkForNewRewarders() {
 
   const deploymentCount = await rewarderFactory.rewarderDeploymentLength();
   const lastDeploymentId = deploymentCount.toNumber() - 1;
+  console.log("last deployment id", lastDeploymentId);
+  console.log("last verified deployment id", lastVerifiedDeployment);
 
   if (lastVerifiedDeployment.id < lastDeploymentId) {
     for (
@@ -38,10 +40,12 @@ async function checkForNewRewarders() {
       deploymentId <= lastDeploymentId;
       deploymentId++
     ) {
+      console.log("Trying to verify rewarder for deployment ID", deploymentId);
       const config = await rewarderFactory.rewarderConfigs(deploymentId);
       const rewarderAddress = await rewarderFactory.deployedRewarders(
         deploymentId
       );
+      console.log("verify....");
       await run("verify:verify", {
         address: rewarderAddress,
         constructorArguments: [
@@ -50,6 +54,7 @@ async function checkForNewRewarders() {
           networkConfig.contractAddresses.MasterChef,
         ],
       });
+      console.log("done.");
       await sendMessage(
         ChannelId.MULTISIG_TX,
         `@here New rewarder with deploymentId ${deploymentId} for LP ${inlineCode(
