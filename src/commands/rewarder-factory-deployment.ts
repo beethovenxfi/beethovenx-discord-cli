@@ -20,6 +20,7 @@ async function execute(interaction: CommandInteraction) {
     LP: ${config.lpToken} 
     Reward Token: ${config.rewardToken}
     Rewards/sec: ${config.rewardsPerSecond}
+    Admin: ${config.admin}
     Approved: ${config.approved}
     TimelockEta: ${config.timelockEta}
     Activated: ${config.activated}
