@@ -8,6 +8,10 @@ const config: HardhatUserConfig = {
   mocha: {
     timeout: 20000,
   },
+
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
   networks: {
     localhost: {},
     rinkeby: {
