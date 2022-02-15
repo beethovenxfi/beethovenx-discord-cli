@@ -34,6 +34,6 @@ client.once("ready", (client) => {
 
 registerSlashCommands();
 scheduleTransactionReminders();
-handlePreparedRewarders();
+// handlePreparedRewarders();
 
 client.login(TOKEN);
