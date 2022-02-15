@@ -36,7 +36,7 @@ async function checkForNewRewarders() {
 
   if (lastVerifiedDeployment.id < lastDeploymentId) {
     for (
-      let deploymentId = lastVerifiedDeployment.id;
+      let deploymentId = Math.max(lastVerifiedDeployment.id, 0);
       deploymentId <= lastDeploymentId;
       deploymentId++
     ) {
