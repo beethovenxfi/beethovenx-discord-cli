@@ -50,7 +50,7 @@ const timelockReminders: Map<string, NodeJS.Timeout> = new Map<
 export async function queueTimelockTransaction(
   transaction: TimelockTransaction
 ): Promise<HexContractInteraction> {
-  const timelockContract = await ethers.getContractAt(
+  const operatorContract = await ethers.getContractAt(
     "MasterChefOperator",
     networkConfig.contractAddresses.MasterChefOperator
   );
@@ -68,8 +68,8 @@ export async function queueTimelockTransaction(
     transaction.targetFunction.args
   );
 
-  const timelockFunctionFragment =
-    timelockContract.interface.getFunction("queueTransaction");
+  const queueTransactionFunctionFragment =
+    operatorContract.interface.getFunction("queueTransaction");
 
   const transactionId = storeQueuedTransaction(transaction);
 
@@ -101,9 +101,9 @@ export async function queueTimelockTransaction(
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
     eta: transaction.eta,
-    operatorAddress: timelockContract.address,
-    hexData: timelockContract.interface.encodeFunctionData(
-      timelockFunctionFragment,
+    operatorAddress: operatorContract.address,
+    hexData: operatorContract.interface.encodeFunctionData(
+      queueTransactionFunctionFragment,
       [
         transaction.targetContract.address,
         transaction.value,
@@ -120,9 +120,9 @@ export async function executeTimelockTransaction(
 ): Promise<HexContractInteraction> {
   const storedTransactions = getStoredTransactions();
   const transaction = storedTransactions[transactionId];
-  const timelockContract = await ethers.getContractAt(
-    "Timelock",
-    networkConfig.contractAddresses.Timelock
+  const operatorContract = await ethers.getContractAt(
+    "MasterChefOperator",
+    networkConfig.contractAddresses.MasterChefOperator
   );
   const targetContract = await ethers.getContractAt(
     transaction.targetContract.name,
@@ -138,8 +138,8 @@ export async function executeTimelockTransaction(
     transaction.targetFunction.args
   );
 
-  const timelockFunctionFragment =
-    timelockContract.interface.getFunction("executeTransaction");
+  const executeTransactionFunctionFragment =
+    operatorContract.interface.getFunction("executeTransaction");
 
   markExecutedTransaction(transactionId);
 
@@ -148,9 +148,9 @@ export async function executeTimelockTransaction(
     targetContract: transaction.targetContract,
     targetFunction: transaction.targetFunction,
     eta: transaction.eta,
-    operatorAddress: timelockContract.address,
-    hexData: timelockContract.interface.encodeFunctionData(
-      timelockFunctionFragment,
+    operatorAddress: operatorContract.address,
+    hexData: operatorContract.interface.encodeFunctionData(
+      executeTransactionFunctionFragment,
       [
         transaction.targetContract.address,
         transaction.value,
