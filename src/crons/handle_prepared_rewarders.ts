@@ -1,4 +1,4 @@
-import { ethers, run } from "hardhat";
+import { ethers } from "hardhat";
 import { networkConfig } from "../config/config";
 import { ChannelId, sendMessage } from "../interactions/send-message";
 import { inlineCode } from "@discordjs/builders";
@@ -6,9 +6,9 @@ import { MasterChefRewarderFactory } from "../../masterchef-types/MasterChefRewa
 import fs from "fs";
 import path from "path";
 
-export async function handlePreparedRewarders() {
+export async function notifiyPreparedRewarders() {
   console.log("scheduling rewarder factory handler...");
-  setInterval(checkForNewRewarders, 30000);
+  setInterval(checkForNewRewarders, 300000);
 }
 
 async function checkForNewRewarders() {
@@ -45,19 +45,11 @@ async function checkForNewRewarders() {
       const rewarderAddress = await rewarderFactory.deployedRewarders(
         deploymentId
       );
-      console.log("verify....");
-      await run("verify:verify", {
-        address: rewarderAddress,
-        constructorArguments: [
-          config.rewardToken,
-          0,
-          networkConfig.contractAddresses.MasterChef,
-        ],
-      });
-      console.log("done.");
       await sendMessage(
         ChannelId.MULTISIG_TX,
-        `@here New rewarder with deploymentId ${deploymentId} for LP ${inlineCode(
+        `@here New rewarder ${inlineCode(
+          rewarderAddress
+        )} with deploymentId ${deploymentId} for LP ${inlineCode(
           config.lpToken
         )} with reward token ${
           config.rewardToken
