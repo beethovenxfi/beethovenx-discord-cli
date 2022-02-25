@@ -22,7 +22,14 @@ async function scheduleReminders() {
     networkConfig.contractAddresses.MasterChefOperator
   )) as MasterChefOperator;
   const etas = await operator.queuedFarmChangeEtas();
-  etas
+  const relevantEtas = [];
+  for (let eta of etas) {
+    const queued = await operator.usedFarmChangeEtas(eta);
+    if (queued) {
+      relevantEtas.push(eta);
+    }
+  }
+  relevantEtas
     .map((eta) => moment.unix(eta.toNumber()))
     .filter((eta) => !reminders.has(eta.unix()) && eta.isAfter(moment.now()))
     .forEach((eta) => {

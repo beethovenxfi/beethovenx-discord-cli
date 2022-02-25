@@ -16,6 +16,7 @@ import { abiEncode } from "./abi-encode";
 import { farmsChangesForEta } from "./farms-changes-for-eta";
 import { farmsChangeEtas } from "./farms-change-etas";
 import { rewarderFactoryDeployment } from "./rewarder-factory-deployment";
+import { farmsChangeEtaQueued } from "./farms-change-is-eta-queued";
 
 export type CommandExecutor = (interaction: CommandInteraction) => Promise<any>;
 export type CommandHandler = {
@@ -31,6 +32,7 @@ export const commandHandlers = [
   farmsEmissions,
   farmsEmissionsChange,
   farmsChangeEtas,
+  farmsChangeEtaQueued,
   farmsChangesForEta,
   timelockExecute,
   timelockList,
