@@ -1,4 +1,8 @@
-import { codeBlock, SlashCommandBuilder } from "@discordjs/builders";
+import {
+  codeBlock,
+  inlineCode,
+  SlashCommandBuilder,
+} from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { CommandHandler } from "./index";
 import { MODERATOR_ROLE, networkConfig } from "../config/config";
@@ -29,7 +33,22 @@ async function execute(interaction: CommandInteraction) {
     )}
     `;
   }
-  await interaction.editReply({ content: codeBlock(tokenAmounts) });
+  await interaction.editReply({ content: inlineCode("Token amounts:") });
+  if (tokenAmounts.length < 2000) {
+    await interaction.followUp({
+      content: codeBlock(tokenAmounts),
+      ephemeral: true,
+    });
+  } else {
+    const splits = splitString(tokenAmounts);
+    for (let split of splits) {
+      await interaction.followUp({
+        content: codeBlock(split),
+        ephemeral: true,
+      });
+    }
+  }
+
   const tokenData = `
     Contract: ${feesCollector.address}
     Data: ${feesCollector.interface.encodeFunctionData(
