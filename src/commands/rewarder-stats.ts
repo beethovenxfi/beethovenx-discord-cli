@@ -33,7 +33,9 @@ async function execute(interaction: CommandInteraction) {
   await interaction.reply({
     content: codeBlock(`
         Reward token: ${rewardToken}
-        Remaining reward tokens: ${ethers.utils.formatUnits(balance)}
+        Remaining rewards: ${ethers.utils.formatUnits(
+          balance
+        )} ${await erc20.symbol()}
         Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
     `),
     ephemeral: true,

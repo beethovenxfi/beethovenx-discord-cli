@@ -43,7 +43,7 @@ async function checkEmptyRewarders() {
         )} running empty in under 5 days! ${inlineCode(rewarderAddress)}
         Remaining reward tokens: ${inlineCode(
           ethers.utils.formatUnits(balance)
-        )}
+        )} ${await erc20.symbol()}
         Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
         `
       );
