@@ -32,10 +32,8 @@ async function execute(interaction: CommandInteraction) {
   const estimatedEndOfRewards = moment().add(seconds.toNumber());
   await interaction.reply({
     content: codeBlock(`
-        Reward token: ${rewardToken}
-        Remaining rewards: ${ethers.utils.formatUnits(
-          balance
-        )} ${await erc20.symbol()}
+        Reward token: ${await erc20.name()} - [${await erc20.symbol()}] - ${rewardToken}
+        Remaining rewards: ${ethers.utils.formatUnits(balance)}
         Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
     `),
     ephemeral: true,
