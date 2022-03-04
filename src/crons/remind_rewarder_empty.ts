@@ -9,7 +9,7 @@ import moment from "moment";
 
 export async function notifiyEmptyRewarders() {
   console.log("checking for empty rewarders");
-  setInterval(checkEmptyRewarders, 43200);
+  setInterval(checkEmptyRewarders, 43200000);
 }
 
 async function checkEmptyRewarders() {
@@ -40,7 +40,7 @@ async function checkEmptyRewarders() {
         ChannelId.MULTISIG_TX,
         `@here Rewarder ${inlineCode(
           rewarderAddress
-        )} running empty in under 5 days! 
+        )} running empty in under 2 days! 
         Remaining reward tokens: ${inlineCode(
           ethers.utils.formatUnits(balance)
         )} ${await erc20.symbol()}
