@@ -33,14 +33,14 @@ async function checkEmptyRewarders() {
     const rewardPerSecond = await rewarder.rewardPerSecond();
 
     const seconds = balance.div(rewardPerSecond);
-    const estimatedEndOfRewards = moment().add(seconds.toNumber());
+    const estimatedEndOfRewards = moment().add(seconds.toNumber(), "seconds");
     const days = estimatedEndOfRewards.diff(moment(), "days");
     if (days < 5) {
       await sendMessage(
         ChannelId.MULTISIG_TX,
         `@here Rewarder ${inlineCode(
           rewarderAddress
-        )} running empty in under 5 days! ${inlineCode(rewarderAddress)}
+        )} running empty in under 5 days! 
         Remaining reward tokens: ${inlineCode(
           ethers.utils.formatUnits(balance)
         )} ${await erc20.symbol()}
