@@ -29,7 +29,7 @@ async function execute(interaction: CommandInteraction) {
   const rewardPerSecond = await rewarder.rewardPerSecond();
 
   const seconds = balance.div(rewardPerSecond);
-  const estimatedEndOfRewards = moment().add(seconds.toNumber());
+  const estimatedEndOfRewards = moment().add(seconds.toNumber(), "seconds");
   await interaction.reply({
     content: codeBlock(`
         Reward token: ${await erc20.name()} - ${rewardToken}
