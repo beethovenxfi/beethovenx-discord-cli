@@ -33,6 +33,7 @@ async function execute(interaction: CommandInteraction) {
   await interaction.reply({
     content: codeBlock(`
         Reward token: ${await erc20.name()} - ${rewardToken}
+        Rewards per second: ${ethers.utils.formatUnits(rewardPerSecond)}
         Remaining rewards: ${ethers.utils.formatUnits(
           balance
         )} [${await erc20.symbol()}
