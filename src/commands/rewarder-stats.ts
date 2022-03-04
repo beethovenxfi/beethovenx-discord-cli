@@ -32,7 +32,7 @@ async function execute(interaction: CommandInteraction) {
   const estimatedEndOfRewards = moment().add(seconds.toNumber());
   await interaction.reply({
     content: `
-        Reward token: ${inlineCode(rewardToken)}
+        \tReward token: ${inlineCode(rewardToken)}
         Remaining reward tokens: ${inlineCode(
           ethers.utils.formatUnits(balance)
         )}
