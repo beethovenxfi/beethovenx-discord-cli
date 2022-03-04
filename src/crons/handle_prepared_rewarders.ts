@@ -16,10 +16,7 @@ async function checkForNewRewarders() {
 
   const lastVerifiedDeployment: { id: number } = JSON.parse(
     fs.readFileSync(
-      path.join(
-        __dirname,
-        `../../.rewarder_factory/last_verified_deployment.json`
-      ),
+      path.join(__dirname, `../../.rewarder/last_verified_deployment.json`),
       "utf-8"
     )
   );
@@ -58,10 +55,7 @@ async function checkForNewRewarders() {
         )}! with MasterChef multisig: https://safe.fantom.network/#/safes/0x3Fa5c411857455e0E876412010BE600F4658Dddd/transactions`
       );
       fs.writeFileSync(
-        path.join(
-          __dirname,
-          `../../.rewarder_factory/last_verified_deployment.json`
-        ),
+        path.join(__dirname, `../../.rewarder/last_verified_deployment.json`),
         JSON.stringify({
           id: deploymentId,
         })
