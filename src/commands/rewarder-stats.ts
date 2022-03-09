@@ -36,7 +36,7 @@ async function execute(interaction: CommandInteraction) {
         Rewards per second: ${ethers.utils.formatUnits(rewardPerSecond)}
         Remaining rewards: ${ethers.utils.formatUnits(
           balance
-        )} [${await erc20.symbol()}
+        )} [${await erc20.symbol()}]
         Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
     `),
     ephemeral: true,
