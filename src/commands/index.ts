@@ -20,6 +20,7 @@ import { farmsChangeEtaQueued } from "./farms-change-is-eta-queued";
 import { rewarderStats } from "./rewarder-stats";
 import { rewarderAddTopUpReminder } from "./rewarder-add-topup-reminder";
 import { rewarderRemoveTopUpReminder } from "./rewarder-remove-topup-reminder";
+import { rewarderListTracked } from "./rewarder-list-tracked-rewarders";
 
 export type CommandExecutor = (interaction: CommandInteraction) => Promise<any>;
 export type CommandHandler = {
@@ -50,4 +51,5 @@ export const commandHandlers = [
   rewarderStats,
   rewarderAddTopUpReminder,
   rewarderRemoveTopUpReminder,
+  rewarderListTracked,
 ];

@@ -1,12 +1,9 @@
-import { codeBlock, SlashCommandBuilder } from "@discordjs/builders";
-import { ethers } from "hardhat";
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { CommandHandler } from "./index";
-import { MODERATOR_ROLE, networkConfig } from "../config/config";
-import { MasterChefRewarderFactory } from "../../masterchef-types/MasterChefRewarderFactory";
 import fs from "fs";
 import path from "path";
-import { rewarderAddTopUpReminder } from "./rewarder-add-topup-reminder";
+import { MODERATOR_ROLE } from "../config/config";
+import { CommandHandler } from "./index";
 
 async function execute(interaction: CommandInteraction) {
   const rewarderAddress = interaction.options.getString("rewarder_address")!;

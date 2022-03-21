@@ -33,7 +33,7 @@ async function checkForNewRewarders() {
 
   if (lastVerifiedDeployment.id < lastDeploymentId) {
     for (
-      let deploymentId = Math.max(lastVerifiedDeployment.id, 0);
+      let deploymentId = lastVerifiedDeployment.id + 1;
       deploymentId <= lastDeploymentId;
       deploymentId++
     ) {
@@ -44,13 +44,14 @@ async function checkForNewRewarders() {
       );
       await sendMessage(
         ChannelId.MULTISIG_TX,
-        `@here New rewarder ${inlineCode(
-          rewarderAddress
-        )} with deploymentId ${deploymentId} for LP ${inlineCode(
-          config.lpToken
-        )} with reward token ${
-          config.rewardToken
-        } ready to approve on reward factory ${inlineCode(
+        `@here New rewarder with deploymentId ${inlineCode(
+          String(deploymentId)
+        )} ready to approve:
+        Address: ${inlineCode(rewarderAddress)}
+        LP: ${inlineCode(config.lpToken)}
+        Reward token: ${config.rewardToken}
+        
+        Approve on reward factory ${inlineCode(
           networkConfig.contractAddresses.MasterChefRewarderFactory
         )}! with MasterChef multisig: https://safe.fantom.network/#/safes/0x3Fa5c411857455e0E876412010BE600F4658Dddd/transactions`
       );
