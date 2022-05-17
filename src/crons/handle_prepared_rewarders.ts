@@ -8,6 +8,7 @@ import path from "path";
 
 export async function notifiyPreparedRewarders() {
   console.log("scheduling rewarder factory handler...");
+  await checkForNewRewarders();
   setInterval(checkForNewRewarders, 300000);
 }
 

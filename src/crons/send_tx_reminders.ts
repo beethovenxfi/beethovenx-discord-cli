@@ -12,6 +12,7 @@ const reminders: Map<number, NodeJS.Timeout> = new Map<
 
 export async function scheduleTransactionReminders() {
   console.log("scheduling transaction reminders...");
+  await scheduleReminders();
   setInterval(scheduleReminders, 18000000);
 }
 

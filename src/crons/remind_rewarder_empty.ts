@@ -9,6 +9,7 @@ import moment from "moment";
 
 export async function notifiyEmptyRewarders() {
   console.log("Schedule checking for empty rewarders");
+  await checkEmptyRewarders();
   setInterval(checkEmptyRewarders, 43200000);
 }
 
