@@ -22,6 +22,7 @@ async function checkEmptyRewarders() {
         "utf-8"
       )
     );
+    console.log("Checking rewarders: ", rewarders.toString());
     for (let rewarderAddress of rewarders) {
       const rewarder = (await ethers.getContractAt(
         "TimeBasedMasterChefRewarder",
