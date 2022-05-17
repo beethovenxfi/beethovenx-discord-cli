@@ -34,6 +34,9 @@ async function checkEmptyRewarders() {
       const erc20 = (await ethers.getContractAt("ERC20", rewardToken)) as ERC20;
       const balance = await erc20.balanceOf(rewarder.address);
       const rewardPerSecond = await rewarder.rewardPerSecond();
+      if (rewardPerSecond.eq(0)) {
+        continue;
+      }
 
       const seconds = balance.div(rewardPerSecond);
       if (seconds.eq(0)) {
