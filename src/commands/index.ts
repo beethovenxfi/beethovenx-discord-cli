@@ -26,7 +26,6 @@ export type CommandExecutor = (interaction: CommandInteraction) => Promise<any>;
 export type CommandHandler = {
   definition: any;
   execute: CommandExecutor;
-  permissionRoles?: string[];
 };
 
 export const commandHandlers = [

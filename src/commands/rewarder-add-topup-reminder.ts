@@ -39,5 +39,4 @@ export const rewarderAddTopUpReminder: CommandHandler = {
     )
     .setDefaultPermission(false),
   execute,
-  permissionRoles: [MODERATOR_ROLE],
 };

@@ -41,6 +41,5 @@ export const timelockList: CommandHandler = {
         .setName("limit")
         .setDescription("Limit the amount of tx shown (default 7)")
     ),
-
   execute,
 };

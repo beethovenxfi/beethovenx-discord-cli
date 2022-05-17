@@ -8,53 +8,60 @@ import { TimeBasedMasterChefRewarder } from "../../masterchef-types/TimeBasedMas
 import moment from "moment";
 
 export async function notifiyEmptyRewarders() {
-  console.log("checking for empty rewarders");
+  console.log("Schedule checking for empty rewarders");
   setInterval(checkEmptyRewarders, 43200000);
 }
 
 async function checkEmptyRewarders() {
-  console.log("Checking for newly added rewarders...");
+  console.log("checking for empty rewarders");
 
-  const rewarders: string[] = JSON.parse(
-    fs.readFileSync(
-      path.join(__dirname, `../../.rewarder/rewarder-list.json`),
-      "utf-8"
-    )
-  );
-  for (let rewarderAddress of rewarders) {
-    const rewarder = (await ethers.getContractAt(
-      "TimeBasedMasterChefRewarder",
-      rewarderAddress
-    )) as TimeBasedMasterChefRewarder;
+  try {
+    const rewarders: string[] = JSON.parse(
+      fs.readFileSync(
+        path.join(__dirname, `../../.rewarder/rewarder-list.json`),
+        "utf-8"
+      )
+    );
+    for (let rewarderAddress of rewarders) {
+      const rewarder = (await ethers.getContractAt(
+        "TimeBasedMasterChefRewarder",
+        rewarderAddress
+      )) as TimeBasedMasterChefRewarder;
 
-    const rewardToken = await rewarder.rewardToken();
-    const erc20 = (await ethers.getContractAt("ERC20", rewardToken)) as ERC20;
-    const balance = await erc20.balanceOf(rewarder.address);
-    const rewardPerSecond = await rewarder.rewardPerSecond();
+      const rewardToken = await rewarder.rewardToken();
+      const erc20 = (await ethers.getContractAt("ERC20", rewardToken)) as ERC20;
+      const balance = await erc20.balanceOf(rewarder.address);
+      const rewardPerSecond = await rewarder.rewardPerSecond();
 
-    const seconds = balance.div(rewardPerSecond);
-    if (seconds.eq(0)) {
-      await sendMessage(
-        ChannelId.MULTISIG_TX,
-        `@here Rewarder ${inlineCode(rewarderAddress)} is empty!
-        `
-      );
-    } else {
-      const estimatedEndOfRewards = moment().add(seconds.toNumber(), "seconds");
-      const days = estimatedEndOfRewards.diff(moment(), "days");
-      if (days < 5) {
+      const seconds = balance.div(rewardPerSecond);
+      if (seconds.eq(0)) {
         await sendMessage(
           ChannelId.MULTISIG_TX,
-          `@here Rewarder ${inlineCode(
-            rewarderAddress
-          )} running empty in under 2 days! 
+          `@here Rewarder ${inlineCode(rewarderAddress)} is empty!
+        `
+        );
+      } else {
+        const estimatedEndOfRewards = moment().add(
+          seconds.toNumber(),
+          "seconds"
+        );
+        const days = estimatedEndOfRewards.diff(moment(), "days");
+        if (days < 5) {
+          await sendMessage(
+            ChannelId.MULTISIG_TX,
+            `@here Rewarder ${inlineCode(
+              rewarderAddress
+            )} running empty in under 5 days! 
         Remaining reward tokens: ${inlineCode(
           ethers.utils.formatUnits(balance)
         )} ${await erc20.symbol()}
         Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
         `
-        );
+          );
+        }
       }
     }
+  } catch (error) {
+    console.log("error checking for empty rewarders", error);
   }
 }

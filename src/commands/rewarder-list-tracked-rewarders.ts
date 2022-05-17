@@ -25,5 +25,4 @@ export const rewarderListTracked: CommandHandler = {
     .setName("rewarder_list_tracked")
     .setDescription("List all tracked rewarders"),
   execute,
-  permissionRoles: [MODERATOR_ROLE],
 };

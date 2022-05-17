@@ -25,5 +25,4 @@ export const timelockDelete: CommandHandler = {
     )
     .setDefaultPermission(false),
   execute,
-  permissionRoles: [MODERATOR_ROLE],
 };

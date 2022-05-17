@@ -91,5 +91,4 @@ export const feesCollectorWithdraw: CommandHandler = {
     )
     .setDefaultPermission(false),
   execute,
-  permissionRoles: [MODERATOR_ROLE],
 };

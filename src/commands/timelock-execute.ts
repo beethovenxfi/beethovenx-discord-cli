@@ -38,5 +38,4 @@ export const timelockExecute: CommandHandler = {
     )
     .setDefaultPermission(false),
   execute,
-  permissionRoles: [MODERATOR_ROLE],
 };

@@ -76,5 +76,4 @@ export const farmsEdit: CommandHandler = {
     )
     .setDefaultPermission(false),
   execute,
-  permissionRoles: [MODERATOR_ROLE],
 };

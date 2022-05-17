@@ -58,5 +58,4 @@ export const timelockSetPendingAdmin: CommandHandler = {
       option.setName("eta").setDescription("Time of execution (defaults to 8h)")
     ),
   execute,
-  permissionRoles: [MODERATOR_ROLE],
 };
