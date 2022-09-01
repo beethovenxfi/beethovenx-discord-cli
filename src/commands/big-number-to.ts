@@ -22,11 +22,11 @@ async function execute(interaction: CommandInteraction) {
 export const bigNumberTo: CommandHandler = {
   definition: new SlashCommandBuilder()
     .setName("big_number_to")
-    .setDescription("Format big number from big numberish (hex/number)")
+    .setDescription("Format big number to big numberish (hex/number)")
     .addStringOption((option) =>
       option
         .setName("value")
-        .setDescription("Big numberish value (hex/number)")
+        .setDescription("Big number value (hex/number)")
         .setRequired(true)
     )
     .addNumberOption((option) =>
