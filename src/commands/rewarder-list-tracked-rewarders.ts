@@ -51,10 +51,12 @@ async function execute(interaction: CommandInteraction) {
         });
     }
 
-    await interaction.reply({
-        content: codeBlock(`[${JSON.stringify(rewardersOut, null, 2)}]`),
-        ephemeral: true,
-    });
+    for (const rewarder of rewardersOut) {
+        await interaction.reply({
+            content: codeBlock(`[${JSON.stringify(rewarder, null, 2)}]`),
+            ephemeral: true,
+        });
+    }
 }
 
 export const rewarderListTracked: CommandHandler = {
