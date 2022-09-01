@@ -52,9 +52,8 @@ async function execute(interaction: CommandInteraction) {
             masterchefFarmId: masterchefFarmId.toString(),
         });
     }
-    await interaction.reply({
+    await interaction.editReply({
         content: codeBlock(`All tracked rewarders:`),
-        ephemeral: true,
     });
     for (const rewarder of rewardersOut) {
         await interaction.followUp({
