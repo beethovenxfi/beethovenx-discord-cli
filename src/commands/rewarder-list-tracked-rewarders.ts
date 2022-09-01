@@ -53,7 +53,7 @@ async function execute(interaction: CommandInteraction) {
         });
     }
     await interaction.editReply({
-        content: codeBlock(`All tracked rewarders:`),
+        content: codeBlock(`Found ${rewardersOut.length} rewarders:`),
     });
     for (const rewarder of rewardersOut) {
         await interaction.followUp({
