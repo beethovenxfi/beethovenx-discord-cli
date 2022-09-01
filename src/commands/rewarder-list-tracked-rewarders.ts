@@ -50,10 +50,13 @@ async function execute(interaction: CommandInteraction) {
             masterchefFarmId: masterchefFarmId.toString(),
         });
     }
-
+    await interaction.reply({
+        content: codeBlock(`All tracked rewarders:`),
+        ephemeral: true,
+    });
     for (const rewarder of rewardersOut) {
-        await interaction.reply({
-            content: codeBlock(`[${JSON.stringify(rewarder, null, 2)}]`),
+        await interaction.followUp({
+            content: codeBlock(`${JSON.stringify(rewarder, null, 2)}`),
             ephemeral: true,
         });
     }
