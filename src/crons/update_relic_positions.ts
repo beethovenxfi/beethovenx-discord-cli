@@ -1,8 +1,12 @@
 import axios from 'axios';
-import { Multicaller } from '../utils/Multicaller';
 import { networkConfig } from '../config/config';
 import reliquaryAbi from '../../abi/Reliquary.json';
 import moment from 'moment';
+import { BigNumber } from 'ethers';
+import { parseFixed } from '@ethersproject/bignumber';
+import { ChannelId, sendMessage } from '../interactions/send-message';
+import { inlineCode } from '@discordjs/builders';
+const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
 
@@ -16,8 +20,16 @@ export async function updateRelics() {
 export async function updateLevelsOfRelics() {
     console.log('updating relic positions');
 
-    // check ftm wallet balance as well
-    // ftmscan api :https://api.ftmscan.com/api?module=account&action=balance&address=0x5A534988535cf27a70e74dFfe299D06486f185B7&apikey=YourApiKeyToken
+    const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
+    if (updaterBalance.lt(parseFixed(`1`, 18))) {
+        await sendMessage(
+            ChannelId.MULTISIG_TX,
+            `@here The wallet for the relic updatePosition service is running low. Please send FTM to ${inlineCode(
+                networkConfig.walletAddresses.relicUpdater,
+            )}!`,
+        );
+        return;
+    }
 
     const poolLevels = await axios.post<{
         data: { pools: [{ pid: Number; levels: [{ level: number; requiredMaturity: number }] }] };
@@ -31,9 +43,6 @@ export async function updateLevelsOfRelics() {
                             }
                         }
                     }`,
-    });
-    const poolMaxLevels = poolLevels.data.data.pools.map((pool) => {
-        return { pid: pool.pid, maxLevel: Math.max(...pool.levels.map((level) => level.level)) };
     });
 
     const relicIdsToUpdate: number[] = [];
@@ -62,21 +71,17 @@ export async function updateLevelsOfRelics() {
         });
     }
 
-    const multicall = new Multicaller(networkConfig.contractAddresses.multicall, reliquaryAbi);
+    console.log(`Updating ${relicIdsToUpdate.length} relics.`);
 
-    for (const relicToUpdate of relicIdsToUpdate) {
-        multicall.call(`${relicToUpdate}`, networkConfig.contractAddresses.Reliquary, 'updatePosition', [
-            relicToUpdate,
-        ]);
-
-        // execute every 100 calls
-        if (multicall.numCalls >= 100) {
-            await multicall.execute();
+    for (const relicIdToUpdate of relicIdsToUpdate) {
+        const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
+        try {
+            await reliquary.updatePosition(relicIdToUpdate);
+        } catch (e) {
+            await sendMessage(
+                ChannelId.MULTISIG_TX,
+                `Failed to update relic with ID ${inlineCode(relicIdToUpdate.toString())}!`,
+            );
         }
-    }
-
-    // execute any left over calls
-    if (multicall.numCalls >= 0) {
-        await multicall.execute();
     }
 }

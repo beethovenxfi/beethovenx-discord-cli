@@ -11,9 +11,9 @@ const config: HardhatUserConfig = {
         timeout: 20000,
     },
 
-    // etherscan: {
-    //     apiKey: process.env.ETHERSCAN_API_KEY,
-    // },
+    etherscan: {
+        apiKey: process.env.ETHERSCAN_API_KEY,
+    },
     networks: {
         localhost: {},
         rinkeby: {
@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
             url: 'https://rpc.ftm.tools/',
             accounts,
             chainId: 250,
-            gasMultiplier: 30,
+            gasMultiplier: 10,
         },
         // "fantom-testnet": {
         //   url: "https://rpc.testnet.fantom.network",
