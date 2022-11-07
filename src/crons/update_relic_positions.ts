@@ -71,17 +71,18 @@ export async function updateLevelsOfRelics() {
         });
     }
 
-    console.log(`Updating ${relicIdsToUpdate.length} relics.`);
-
-    for (const relicIdToUpdate of relicIdsToUpdate) {
+    if (relicIdsToUpdate.length > 0) {
+        console.log(`Updating ${relicIdsToUpdate.length} relics.`);
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
-        try {
-            await reliquary.updatePosition(relicIdToUpdate);
-        } catch (e) {
-            await sendMessage(
-                ChannelId.MULTISIG_TX,
-                `Failed to update relic with ID ${inlineCode(relicIdToUpdate.toString())}!`,
-            );
+        for (const relicIdToUpdate of relicIdsToUpdate) {
+            try {
+                await reliquary.updatePosition(relicIdToUpdate);
+            } catch (e) {
+                await sendMessage(
+                    ChannelId.MULTISIG_TX,
+                    `Failed to update relic with ID ${inlineCode(relicIdToUpdate.toString())}!`,
+                );
+            }
         }
     }
 }
