@@ -17,7 +17,7 @@ export async function updateRelics() {
     setInterval(updateLevelsOfRelics, 3600000);
 }
 
-export async function updateLevelsOfRelics() {
+async function updateLevelsOfRelics() {
     console.log('updating relic positions');
 
     const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
