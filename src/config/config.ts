@@ -34,7 +34,7 @@ export const scriptConfig: NetworkConfig = {
             BeetsLp: '0x03c6B3f09D2504606936b1A4DeCeFaD204687890',
             TeamVesting: '0xa2503804ec837D1E4699932D58a3bdB767DeA505',
             ProtocolFeesCollector: '0xC6920d3a369E7c8BD1A22DbE385e11d1F7aF948F',
-            Reliquary: '0x300DaA195a19DC39719237655eCadA053031359d',
+            Reliquary: '0xb0FC43069089d0fA02baAa896ac2eFcb596D7D05',
             multicall: '0x66335d7ad8011f6aa3f48aadcb523b62b38ed961',
         },
         walletAddresses: {
