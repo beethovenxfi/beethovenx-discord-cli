@@ -77,11 +77,13 @@ async function updateLevelsOfRelics() {
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
                 await reliquary.updatePosition(relicIdToUpdate);
+                console.log(`Updated relic ${relicIdToUpdate}.`);
             } catch (e) {
                 await sendMessage(
                     ChannelId.MULTISIG_TX,
                     `Failed to update relic with ID ${inlineCode(relicIdToUpdate.toString())}!`,
                 );
+                console.log(e);
             }
         }
     }
