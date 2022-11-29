@@ -4,6 +4,7 @@ import { scheduleTransactionReminders } from './crons/send_tx_reminders';
 import { notifiyPreparedRewarders } from './crons/handle_prepared_rewarders';
 import { notifiyEmptyRewarders } from './crons/remind_rewarder_empty';
 import { updateRelics } from './crons/update_relic_positions';
+import { streamBeetsToReliquary } from './crons/stream_beets_reliquary';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -16,5 +17,6 @@ scheduleTransactionReminders();
 notifiyPreparedRewarders();
 notifiyEmptyRewarders();
 updateRelics();
+streamBeetsToReliquary();
 
 client.login(TOKEN);
