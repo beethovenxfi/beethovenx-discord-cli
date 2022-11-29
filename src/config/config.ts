@@ -11,6 +11,7 @@ type CliNetworkConfigContent = {
         TeamVesting: string;
         ProtocolFeesCollector: string;
         Reliquary: string;
+        ReliquaryBeetsStreamer: string;
         multicall: string;
     };
     walletAddresses: {
@@ -35,6 +36,7 @@ export const scriptConfig: NetworkConfig = {
             TeamVesting: '0xa2503804ec837D1E4699932D58a3bdB767DeA505',
             ProtocolFeesCollector: '0xC6920d3a369E7c8BD1A22DbE385e11d1F7aF948F',
             Reliquary: '0xb0FC43069089d0fA02baAa896ac2eFcb596D7D05',
+            ReliquaryBeetsStreamer: '0x80b07c2a763a1AC906BA11963444CD5FDF5780fc',
             multicall: '0x66335d7ad8011f6aa3f48aadcb523b62b38ed961',
         },
         walletAddresses: {
@@ -55,6 +57,7 @@ export const scriptConfig: NetworkConfig = {
             TeamVesting: '',
             ProtocolFeesCollector: '0x45384d59dA6748d7C21200c80893634d5CA980CD',
             Reliquary: '',
+            ReliquaryBeetsStreamer: '',
             multicall: '',
         },
         walletAddresses: {
