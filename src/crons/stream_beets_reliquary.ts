@@ -14,7 +14,7 @@ const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/be
 // const triggerDuration = moment.duration(7, 'days').subtract(12, 'hours').asSeconds(); // 6days 12h
 const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
 
-export async function updateRelics() {
+export async function streamBeetsToReliquary() {
     console.log('Schedule to stream beets to reliquary');
     await streamBeets();
     // every hour
