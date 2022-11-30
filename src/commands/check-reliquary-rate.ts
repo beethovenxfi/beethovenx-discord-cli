@@ -87,7 +87,7 @@ async function execute(interaction: CommandInteraction) {
     }
 }
 
-export const bigNumberFrom: CommandHandler = {
+export const checkReliquaryRate: CommandHandler = {
     definition: new SlashCommandBuilder()
         .setName('check_reliquary_rate')
         .setDescription('Check the emission rate on reliquary and propose a better rate based on avaliable Beets.'),
