@@ -48,43 +48,55 @@ async function execute(interaction: CommandInteraction) {
 
     // check when we run out
     const totalBeetsAvailable = beetsLeftOnReliquary.sub(totalPendingRewards);
-    const secondsOfBeets = totalBeetsAvailable.div(currentRate);
-    const runOutDate = moment().add(secondsOfBeets.toNumber(), 'seconds');
+    const secondsOfBeetsLeft = totalBeetsAvailable.div(currentRate);
+    const runOutDate = moment().add(secondsOfBeetsLeft.toNumber(), 'seconds');
     const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
+
+    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration);
+    const secondsInEpochLeft = epochEnd.unix() - moment().unix();
+
+    const beetsNeeded = currentRate.mul(`${secondsInEpochLeft}`);
+    const beetsDifferenceForEpoch = totalBeetsAvailable.sub(beetsNeeded);
 
     // spread the total beets available to 7 days
     const proposedEmissionRate = totalBeetsAvailable.div(
         moment.unix(lastTransferTimestamp.toNumber()).add(7, 'days').unix() - moment().unix(),
     );
-    if (runOutDate.unix() < lastTransferTimestamp.toNumber() + triggerDuration) {
+
+    if (totalBeetsAvailable.lt(`0`)) {
+        await interaction.reply({
+            content: codeBlock(
+                `The reliquary ran out of beets. It is lacking  ${formatUnits(totalBeetsAvailable)} BEETS.`,
+            ),
+            ephemeral: true,
+        });
+    }
+
+    if (beetsDifferenceForEpoch.lt(`0`)) {
         await interaction.reply({
             content: codeBlock(
                 `There are now ${formatUnits(
                     totalBeetsAvailable,
                 )} BEETS available on Reliquary. With the current rate of ${formatUnits(
                     currentRate,
-                )}beets/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${moment
-                    .unix(lastTransferTimestamp.toNumber() + triggerDuration)
-                    .format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
+                )}beets/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
                     proposedEmissionRate,
-                )} for them to last until the end of this epoch.`,
+                )} for them to last until the end of this epoch or send ${formatUnits(
+                    beetsNeeded.sub(totalBeetsAvailable),
+                )} beets to reliquary.`,
             ),
             ephemeral: true,
         });
     } else {
-        const secondsSurplus =
-            runOutDate.unix() - moment.unix(lastTransferTimestamp.toNumber() + triggerDuration).unix();
         await interaction.reply({
             content: codeBlock(
                 `There are now ${formatUnits(
                     totalBeetsAvailable,
                 )} BEETS available on Reliquary. With the current rate of ${formatUnits(
                     currentRate,
-                )}beets/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${moment
-                    .unix(lastTransferTimestamp.toNumber() + triggerDuration)
-                    .format()} leaving a surplus of ${moment
-                    .utc(secondsSurplus * 1000)
-                    .format('HH:mm:ss')}. Adjusted rate would be ${formatUnits(
+                )}beets/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
+                    beetsDifferenceForEpoch,
+                )} beets. Adjusted rate would be ${formatUnits(
                     proposedEmissionRate,
                 )} to make sure they are used by the end of this epoch.`,
             ),

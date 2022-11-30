@@ -44,14 +44,16 @@ async function streamBeets() {
     const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const oldRate = (await curve.getRate(0)) as BigNumber;
     await reliquaryStreamer.startNewEpoch();
-    const beetsAfter = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
-    const newRate = (await curve.getRate(0)) as BigNumber;
+    const beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
+    const currentRate = (await curve.getRate(0)) as BigNumber;
 
     await sendMessage(
         ChannelId.MULTISIG_TX,
-        `Sent ${formatUnits(beetsAfter.sub(beetsBefore))} BEETS to Reliquary and set the rate from ${formatUnits(
-            oldRate,
-        )}beets/s to ${formatUnits(newRate)}beets/s`,
+        `Sent ${formatUnits(
+            beetsLeftOnReliquary.sub(beetsBefore),
+        )} BEETS to Reliquary and set the rate from ${formatUnits(oldRate)}beets/s to ${formatUnits(
+            currentRate,
+        )}beets/s`,
     );
 
     // calculate remaining beets
@@ -71,38 +73,54 @@ async function streamBeets() {
     }
 
     // check when we run out
-    const totalBeetsAvailable = beetsAfter.sub(totalPendingRewards);
-    const secondsOfBeets = totalBeetsAvailable.div(newRate);
-    const runOutDate = moment().add(secondsOfBeets.toNumber(), 'seconds');
+    const totalBeetsAvailable = beetsLeftOnReliquary.sub(totalPendingRewards);
+    const secondsOfBeetsLeft = totalBeetsAvailable.div(currentRate);
+    const runOutDate = moment().add(secondsOfBeetsLeft.toNumber(), 'seconds');
     lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
-    if (runOutDate.unix() < lastTransferTimestamp.toNumber() + triggerDuration) {
-        // spread the total beets available to 7 days
-        const proposedEmissionRate = totalBeetsAvailable.div(
-            moment.unix(lastTransferTimestamp.toNumber()).add(7, 'days').unix() - moment().unix(),
-        );
+    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration);
+    const secondsInEpochLeft = epochEnd.unix() - moment().unix();
+
+    const beetsNeeded = currentRate.mul(`${secondsInEpochLeft}`);
+    const beetsDifferenceForEpoch = totalBeetsAvailable.sub(beetsNeeded);
+
+    // spread the total beets available to 7 days
+    const proposedEmissionRate = totalBeetsAvailable.div(
+        moment.unix(lastTransferTimestamp.toNumber()).add(7, 'days').unix() - moment().unix(),
+    );
+
+    if (totalBeetsAvailable.lt(`0`)) {
         await sendMessage(
             ChannelId.MULTISIG_TX,
-            `(@)here There are now ${formatUnits(
+            `(@)here: The reliquary ran out of beets. It is lacking  ${formatUnits(totalBeetsAvailable)} BEETS.`,
+        );
+    }
+
+    if (beetsDifferenceForEpoch.lt(`0`)) {
+        await sendMessage(
+            ChannelId.MULTISIG_TX,
+            `(@)here: There are now ${formatUnits(
                 totalBeetsAvailable,
-            )} BEETS available on Reliquary. With the new rate, these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${moment
-                .unix(lastTransferTimestamp.toNumber() + triggerDuration)
-                .format()}.`,
-        );
-        await sendMessage(
-            ChannelId.MULTISIG_TX,
-            `You need to adjust the emission rate on Reliquary to ${formatUnits(proposedEmissionRate)}.`,
+            )} BEETS available on Reliquary. With the current rate of ${formatUnits(
+                currentRate,
+            )}beets/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
+                proposedEmissionRate,
+            )} for them to last until the end of this epoch or send ${formatUnits(
+                beetsNeeded.sub(totalBeetsAvailable),
+            )} beets to reliquary.`,
         );
     } else {
-        const secondsSurplus =
-            runOutDate.unix() - moment.unix(lastTransferTimestamp.toNumber() + triggerDuration).unix();
         await sendMessage(
             ChannelId.MULTISIG_TX,
             `There are now ${formatUnits(
                 totalBeetsAvailable,
-            )} BEETS available on Reliquary. With the new rate, these will last until ${runOutDate.format()} while the new epoch will be triggered at ${moment
-                .unix(lastTransferTimestamp.toNumber() + triggerDuration)
-                .format()} leaving a surplus of ${moment.utc(secondsSurplus * 1000).format('HH:mm:ss')}.`,
+            )} BEETS available on Reliquary. With the current rate of ${formatUnits(
+                currentRate,
+            )}beets/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
+                beetsDifferenceForEpoch,
+            )} beets. Adjusted rate would be ${formatUnits(
+                proposedEmissionRate,
+            )} to make sure they are used by the end of this epoch.`,
         );
     }
 }
