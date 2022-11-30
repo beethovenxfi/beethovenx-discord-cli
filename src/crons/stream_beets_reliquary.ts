@@ -58,7 +58,7 @@ async function streamBeets() {
         data: { relics: [{ relicId: number }] };
     }>(reliquarySubgraphUrl, {
         query: `{   
-                    relics(){
+                    relics{
                         relicId
                     }
                 }`,
