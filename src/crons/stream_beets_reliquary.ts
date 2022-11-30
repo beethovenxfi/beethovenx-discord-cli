@@ -2,6 +2,7 @@ import { networkConfig } from '../config/config';
 import reliquaryBeetsStreamerAbi from '../../abi/ReliquaryBeetsStreamer.json';
 import reliquaryAbi from '../../abi/Reliquary.json';
 import erc20Abi from '../../abi/ERC20.json';
+import BeetsConstantEmissionCurve from '../../abi/BeetsConstantEmissionCurve.json';
 import moment from 'moment';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import { formatUnits } from 'ethers/lib/utils';
@@ -35,13 +36,15 @@ async function streamBeets() {
         return;
     }
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
+    const curveAddress = await reliquary.emissionCurve();
+    const curve = await ethers.getContractAt(BeetsConstantEmissionCurve, curveAddress);
     const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.BeethovenxToken);
 
     const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
-    const oldRate = (await reliquary.getRate(0)) as BigNumber;
+    const oldRate = (await curve.getRate(0)) as BigNumber;
     await reliquaryStreamer.startNewEpoch();
     const beetsAfter = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
-    const newRate = (await reliquary.getRate(0)) as BigNumber;
+    const newRate = (await curve.getRate(0)) as BigNumber;
 
     await sendMessage(
         ChannelId.MULTISIG_TX,
