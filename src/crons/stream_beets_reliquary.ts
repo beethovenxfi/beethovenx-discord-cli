@@ -11,9 +11,9 @@ import { BigNumber } from 'ethers';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
-// TODO change back
+//TODO change back
 // const triggerDuration = moment.duration(7, 'days').subtract(12, 'hours').asSeconds(); // 6days 12h
-const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
+export const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
 
 export async function streamBeetsToReliquary() {
     console.log('Schedule to stream beets to reliquary');
