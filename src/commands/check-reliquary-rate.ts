@@ -49,7 +49,7 @@ async function execute(interaction: CommandInteraction) {
     // check when we run out
     const totalBeetsAvailable = beetsLeftOnReliquary.sub(totalPendingRewards);
     const secondsOfBeets = totalBeetsAvailable.div(currentRate);
-    const runOutDate = moment().add(formatUnits(secondsOfBeets), 'seconds');
+    const runOutDate = moment().add(secondsOfBeets.toNumber(), 'seconds');
     const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
     // spread the total beets available to 7 days
@@ -61,7 +61,9 @@ async function execute(interaction: CommandInteraction) {
             content: codeBlock(
                 `There are now ${formatUnits(
                     totalBeetsAvailable,
-                )} BEETS available on Reliquary (${beetsLeftOnReliquary} - ${totalPendingRewards}). With the current rate of ${currentRate}beets/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${moment
+                )} BEETS available on Reliquary. With the current rate of ${formatUnits(
+                    currentRate,
+                )}beets/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${moment
                     .unix(lastTransferTimestamp.toNumber() + triggerDuration)
                     .format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
                     proposedEmissionRate,
@@ -76,7 +78,9 @@ async function execute(interaction: CommandInteraction) {
             content: codeBlock(
                 `There are now ${formatUnits(
                     totalBeetsAvailable,
-                )} BEETS available on Reliquary. With the current rate of ${currentRate}beets/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${moment
+                )} BEETS available on Reliquary. With the current rate of ${formatUnits(
+                    currentRate,
+                )}beets/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${moment
                     .unix(lastTransferTimestamp.toNumber() + triggerDuration)
                     .format()} leaving a surplus of ${moment
                     .utc(secondsSurplus * 1000)

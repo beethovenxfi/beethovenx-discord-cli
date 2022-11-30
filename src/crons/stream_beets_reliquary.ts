@@ -73,7 +73,7 @@ async function streamBeets() {
     // check when we run out
     const totalBeetsAvailable = beetsAfter.sub(totalPendingRewards);
     const secondsOfBeets = totalBeetsAvailable.div(newRate);
-    const runOutDate = moment().add(formatUnits(secondsOfBeets), 'seconds');
+    const runOutDate = moment().add(secondsOfBeets.toNumber(), 'seconds');
     lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
     if (runOutDate.unix() < lastTransferTimestamp.toNumber() + triggerDuration) {
