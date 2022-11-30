@@ -65,7 +65,7 @@ async function streamBeets() {
     });
     let totalPendingRewards = BigNumber.from(0);
     for (const relic of allRelics.data.data.relics) {
-        totalPendingRewards.add(reliquary.pendingReward(relic.relicId));
+        totalPendingRewards.add(await reliquary.pendingReward(relic.relicId));
     }
 
     // check when we run out
