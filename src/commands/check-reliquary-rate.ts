@@ -3,7 +3,7 @@ import { CommandInteraction } from 'discord.js';
 import { CommandHandler } from './index';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { networkConfig } from '../config/config';
-import { ethers } from 'hardhat';
+const { ethers } = require('hardhat');
 import erc20Abi from '../../abi/ERC20.json';
 import reliquaryAbi from '../../abi/Reliquary.json';
 import BeetsConstantEmissionCurve from '../../abi/BeetsConstantEmissionCurve.json';
@@ -17,7 +17,8 @@ import moment from 'moment';
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
 
 async function execute(interaction: CommandInteraction) {
-    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.BeethovenxToken);
+    //TODO change to real beets
+    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.TestBeethovenxToken);
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
     const curveAddress = await reliquary.emissionCurve();
     const curve = await ethers.getContractAt(BeetsConstantEmissionCurve, curveAddress);
@@ -41,7 +42,8 @@ async function execute(interaction: CommandInteraction) {
     });
     let totalPendingRewards = BigNumber.from(0);
     for (const relic of allRelics.data.data.relics) {
-        totalPendingRewards.add(await reliquary.pendingReward(relic.relicId));
+        let pendingReward = (await reliquary.pendingReward(relic.relicId)) as BigNumber;
+        totalPendingRewards = totalPendingRewards.add(pendingReward);
     }
 
     // check when we run out

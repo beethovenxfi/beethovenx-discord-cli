@@ -7,6 +7,7 @@ type CliNetworkConfigContent = {
         MasterChefRewarderFactory: string;
         Timelock: string;
         BeethovenxToken: string;
+        TestBeethovenxToken: string;
         BeetsLp: string;
         TeamVesting: string;
         ProtocolFeesCollector: string;
@@ -38,6 +39,7 @@ export const scriptConfig: NetworkConfig = {
             Reliquary: '0xb0FC43069089d0fA02baAa896ac2eFcb596D7D05',
             ReliquaryBeetsStreamer: '0x80b07c2a763a1AC906BA11963444CD5FDF5780fc',
             multicall: '0x66335d7ad8011f6aa3f48aadcb523b62b38ed961',
+            TestBeethovenxToken: '0xD520179ed42421C6b8ad522FFccB2301378FED23',
         },
         walletAddresses: {
             treasury: '0xa1e849b1d6c2fd31c63eef7822e9e0632411ada7',
@@ -59,6 +61,7 @@ export const scriptConfig: NetworkConfig = {
             Reliquary: '',
             ReliquaryBeetsStreamer: '',
             multicall: '',
+            TestBeethovenxToken: '',
         },
         walletAddresses: {
             treasury: '',

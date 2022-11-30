@@ -38,7 +38,8 @@ async function streamBeets() {
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
     const curveAddress = await reliquary.emissionCurve();
     const curve = await ethers.getContractAt(BeetsConstantEmissionCurve, curveAddress);
-    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.BeethovenxToken);
+    //TODO change to real beets
+    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.TestBeethovenxToken);
 
     const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const oldRate = (await curve.getRate(0)) as BigNumber;
@@ -65,7 +66,8 @@ async function streamBeets() {
     });
     let totalPendingRewards = BigNumber.from(0);
     for (const relic of allRelics.data.data.relics) {
-        totalPendingRewards.add(await reliquary.pendingReward(relic.relicId));
+        let pendingReward = (await reliquary.pendingReward(relic.relicId)) as BigNumber;
+        totalPendingRewards = totalPendingRewards.add(pendingReward);
     }
 
     // check when we run out
