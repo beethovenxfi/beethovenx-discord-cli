@@ -26,8 +26,8 @@ async function execute(interaction: CommandInteraction) {
         networkConfig.contractAddresses.ReliquaryBeetsStreamer,
     );
 
-    const beetsAfter = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
-    const newRate = (await curve.getRate(0)) as BigNumber;
+    const beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
+    const currentRate = (await curve.getRate(0)) as BigNumber;
 
     // calculate remaining beets
     const allRelics = await axios.post<{
@@ -45,8 +45,8 @@ async function execute(interaction: CommandInteraction) {
     }
 
     // check when we run out
-    const totalBeetsAvailable = beetsAfter.sub(totalPendingRewards);
-    const secondsOfBeets = totalBeetsAvailable.div(newRate);
+    const totalBeetsAvailable = beetsLeftOnReliquary.sub(totalPendingRewards);
+    const secondsOfBeets = totalBeetsAvailable.div(currentRate);
     const runOutDate = moment().add(formatUnits(secondsOfBeets), 'seconds');
     const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
@@ -59,7 +59,7 @@ async function execute(interaction: CommandInteraction) {
             content: codeBlock(
                 `There are now ${formatUnits(
                     totalBeetsAvailable,
-                )} BEETS available on Reliquary. With the current rate, these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${moment
+                )} BEETS available on Reliquary (${beetsLeftOnReliquary} - ${totalPendingRewards}). With the current rate of ${currentRate}beets/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${moment
                     .unix(lastTransferTimestamp.toNumber() + triggerDuration)
                     .format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
                     proposedEmissionRate,
@@ -74,7 +74,7 @@ async function execute(interaction: CommandInteraction) {
             content: codeBlock(
                 `There are now ${formatUnits(
                     totalBeetsAvailable,
-                )} BEETS available on Reliquary. With the current rate, these will last until ${runOutDate.format()} while the new epoch will be triggered at ${moment
+                )} BEETS available on Reliquary. With the current rate of ${currentRate}beets/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${moment
                     .unix(lastTransferTimestamp.toNumber() + triggerDuration)
                     .format()} leaving a surplus of ${moment
                     .utc(secondsSurplus * 1000)
