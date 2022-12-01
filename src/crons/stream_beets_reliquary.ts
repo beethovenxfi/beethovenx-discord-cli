@@ -31,10 +31,10 @@ export async function streamBeets() {
     );
     let lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
-    // if (lastTransferTimestamp.toNumber() + triggerDuration > moment().unix()) {
-    //     // trigger duration not yet passed
-    //     return;
-    // }
+    if (lastTransferTimestamp.toNumber() + triggerDuration > moment().unix()) {
+        // trigger duration not yet passed
+        return;
+    }
 
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
     const curveAddress = await reliquary.emissionCurve();
