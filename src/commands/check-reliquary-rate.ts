@@ -76,11 +76,11 @@ async function execute(interaction: CommandInteraction) {
         await interaction.reply({
             content: codeBlock(
                 `Beets available: ${formatUnits(totalBeetsAvailable)}
-                Current rate: ${formatUnits(currentRate)} BEETS/s
-                Depleted on: ${runOutDate.format()} 
-                New epoch start: ${epochEnd.format()}. 
-                Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
-                Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
+Current rate: ${formatUnits(currentRate)} BEETS/s
+Depleted on: ${runOutDate.format()} 
+New epoch start: ${epochEnd.format()}. 
+Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
+Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
                     totalBeetsAvailable,
                 )}) beets to reliquary.`,
             ),
@@ -90,11 +90,11 @@ async function execute(interaction: CommandInteraction) {
         await interaction.reply({
             content: codeBlock(
                 `Beets available: ${formatUnits(totalBeetsAvailable)}
-                Current rate: ${formatUnits(currentRate)} BEETS/s 
-                Depleted on: ${runOutDate.format()} 
-                New epoch start: ${epochEnd.format()} 
-                Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
-                Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
+Current rate: ${formatUnits(currentRate)} BEETS/s 
+Depleted on: ${runOutDate.format()} 
+New epoch start: ${epochEnd.format()} 
+Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
+Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
             ),
             ephemeral: true,
         });

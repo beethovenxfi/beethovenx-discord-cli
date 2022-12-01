@@ -104,12 +104,12 @@ export async function streamBeets() {
         await sendMessage(
             ChannelId.MULTISIG_TX,
             `(@)here Reliquary will run out of BEETS this epoch:
-            Beets available: ${formatUnits(totalBeetsAvailable)}
-            Current rate: ${formatUnits(currentRate)} BEETS/s
-            Depleted on: ${runOutDate.format()} 
-            New epoch start: ${epochEnd.format()}. 
-            Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
-            Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
+Beets available: ${formatUnits(totalBeetsAvailable)}
+Current rate: ${formatUnits(currentRate)} BEETS/s
+Depleted on: ${runOutDate.format()} 
+New epoch start: ${epochEnd.format()}. 
+Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
+Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
                 totalBeetsAvailable,
             )}) beets to reliquary.`,
         );
@@ -117,11 +117,11 @@ export async function streamBeets() {
         await sendMessage(
             ChannelId.MULTISIG_TX,
             `Beets available: ${formatUnits(totalBeetsAvailable)}
-            Current rate: ${formatUnits(currentRate)} BEETS/s 
-            Depleted on: ${runOutDate.format()} 
-            Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
-            New epoch start: ${epochEnd.format()} 
-            Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
+Current rate: ${formatUnits(currentRate)} BEETS/s 
+Depleted on: ${runOutDate.format()} 
+Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
+New epoch start: ${epochEnd.format()} 
+Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
         );
     }
 }
