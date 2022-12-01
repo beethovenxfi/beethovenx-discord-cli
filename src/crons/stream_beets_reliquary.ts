@@ -44,7 +44,9 @@ export async function streamBeets() {
 
     const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const oldRate = (await curve.getRate(0)) as BigNumber;
-    const txn = (await reliquaryStreamer.startNewEpoch()) as ContractTransaction;
+    let txn = (await reliquaryStreamer.startNewEpoch()) as ContractTransaction;
+    await txn.wait();
+    txn = await reliquary.updatePool(0);
     await txn.wait();
     const beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const currentRate = (await curve.getRate(0)) as BigNumber;
