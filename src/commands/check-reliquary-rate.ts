@@ -79,7 +79,7 @@ async function execute(interaction: CommandInteraction) {
                     totalBeetsAvailable,
                 )} BEETS available on Reliquary. With the current rate of ${formatUnits(
                     currentRate,
-                )}BEETS/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
+                )} BEETS/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
                     proposedEmissionRate,
                 )} for them to last until the end of this epoch or send ${formatUnits(
                     beetsNeeded.sub(totalBeetsAvailable),
@@ -94,7 +94,7 @@ async function execute(interaction: CommandInteraction) {
                     totalBeetsAvailable,
                 )} BEETS available on Reliquary. With the current rate of ${formatUnits(
                     currentRate,
-                )}BEETS/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
+                )} BEETS/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
                     beetsDifferenceForEpoch,
                 )} BEETS. Adjusted rate would be ${formatUnits(
                     proposedEmissionRate,
