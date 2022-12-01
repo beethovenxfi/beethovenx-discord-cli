@@ -66,7 +66,7 @@ async function execute(interaction: CommandInteraction) {
     if (totalBeetsAvailable.lt(`0`)) {
         await interaction.reply({
             content: codeBlock(
-                `The reliquary ran out of beets. It is lacking  ${formatUnits(totalBeetsAvailable)} BEETS.`,
+                `ATTENTION: The reliquary ran out of beets. It is lacking  ${formatUnits(totalBeetsAvailable)} BEETS.`,
             ),
             ephemeral: true,
         });
@@ -75,30 +75,26 @@ async function execute(interaction: CommandInteraction) {
     if (beetsDifferenceForEpoch.lt(`0`)) {
         await interaction.reply({
             content: codeBlock(
-                `There are now ${formatUnits(
+                `Beets available: ${formatUnits(totalBeetsAvailable)}
+                Current rate: ${formatUnits(currentRate)} BEETS/s
+                Depleted on: ${runOutDate.format()} 
+                New epoch start: ${epochEnd.format()}. 
+                Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
+                Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
                     totalBeetsAvailable,
-                )} BEETS available on Reliquary. With the current rate of ${formatUnits(
-                    currentRate,
-                )} BEETS/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
-                    proposedEmissionRate,
-                )} for them to last until the end of this epoch or send ${formatUnits(
-                    beetsNeeded.sub(totalBeetsAvailable),
-                )} beets to reliquary.`,
+                )}) beets to reliquary.`,
             ),
             ephemeral: true,
         });
     } else {
         await interaction.reply({
             content: codeBlock(
-                `There are now ${formatUnits(
-                    totalBeetsAvailable,
-                )} BEETS available on Reliquary. With the current rate of ${formatUnits(
-                    currentRate,
-                )} BEETS/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
-                    beetsDifferenceForEpoch,
-                )} BEETS. Adjusted rate would be ${formatUnits(
-                    proposedEmissionRate,
-                )} to make sure they are used by the end of this epoch.`,
+                `Beets available: ${formatUnits(totalBeetsAvailable)}
+                Current rate: ${formatUnits(currentRate)} BEETS/s 
+                Depleted on: ${runOutDate.format()} 
+                New epoch start: ${epochEnd.format()} 
+                Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
+                Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
             ),
             ephemeral: true,
         });

@@ -11,7 +11,7 @@ import { BigNumber, ContractTransaction } from 'ethers';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
-//TODO change back
+//TODO change back or run it every day?
 // const triggerDuration = moment.duration(7, 'days').subtract(12, 'hours').asSeconds(); // 6days 12h
 export const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
 
@@ -101,28 +101,25 @@ export async function streamBeets() {
     if (beetsDifferenceForEpoch.lt(`0`)) {
         await sendMessage(
             ChannelId.MULTISIG_TX,
-            `(@)here: There are now ${formatUnits(
+            `(@)here Reliquary will run out of BEETS this epoch:
+            Beets available: ${formatUnits(totalBeetsAvailable)}
+            Current rate: ${formatUnits(currentRate)} BEETS/s
+            Depleted on: ${runOutDate.format()} 
+            New epoch start: ${epochEnd.format()}. 
+            Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
+            Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
                 totalBeetsAvailable,
-            )} BEETS available on Reliquary. With the current rate of ${formatUnits(
-                currentRate,
-            )} BEETS/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
-                proposedEmissionRate,
-            )} for them to last until the end of this epoch or send ${formatUnits(
-                beetsNeeded.sub(totalBeetsAvailable),
-            )} BEETS to reliquary.`,
+            )}) beets to reliquary.`,
         );
     } else {
         await sendMessage(
             ChannelId.MULTISIG_TX,
-            `There are now ${formatUnits(
-                totalBeetsAvailable,
-            )} BEETS available on Reliquary. With the current rate of ${formatUnits(
-                currentRate,
-            )} BEETS/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
-                beetsDifferenceForEpoch,
-            )} BEETS. Adjusted rate would be ${formatUnits(
-                proposedEmissionRate,
-            )} to make sure they are used by the end of this epoch.`,
+            `Beets available: ${formatUnits(totalBeetsAvailable)}
+            Current rate: ${formatUnits(currentRate)} BEETS/s 
+            Depleted on: ${runOutDate.format()} 
+            Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
+            New epoch start: ${epochEnd.format()} 
+            Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
         );
     }
 }
