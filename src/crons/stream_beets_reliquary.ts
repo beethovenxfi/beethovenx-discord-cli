@@ -7,7 +7,7 @@ import moment from 'moment';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import { formatUnits } from 'ethers/lib/utils';
 import axios from 'axios';
-import { BigNumber } from 'ethers';
+import { BigNumber, ContractTransaction } from 'ethers';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
@@ -22,7 +22,7 @@ export async function streamBeetsToReliquary() {
     setInterval(streamBeets, 3600000);
 }
 
-async function streamBeets() {
+export async function streamBeets() {
     console.log('checking if need to start epoch');
 
     const reliquaryStreamer = await ethers.getContractAt(
@@ -31,10 +31,11 @@ async function streamBeets() {
     );
     let lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
-    if (lastTransferTimestamp.toNumber() + triggerDuration > moment().unix()) {
-        // trigger duration not yet passed
-        return;
-    }
+    // if (lastTransferTimestamp.toNumber() + triggerDuration > moment().unix()) {
+    //     // trigger duration not yet passed
+    //     return;
+    // }
+
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
     const curveAddress = await reliquary.emissionCurve();
     const curve = await ethers.getContractAt(BeetsConstantEmissionCurve, curveAddress);
@@ -43,7 +44,8 @@ async function streamBeets() {
 
     const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const oldRate = (await curve.getRate(0)) as BigNumber;
-    await reliquaryStreamer.startNewEpoch();
+    const txn = (await reliquaryStreamer.startNewEpoch()) as ContractTransaction;
+    await txn.wait();
     const beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const currentRate = (await curve.getRate(0)) as BigNumber;
 
@@ -51,9 +53,9 @@ async function streamBeets() {
         ChannelId.MULTISIG_TX,
         `Sent ${formatUnits(
             beetsLeftOnReliquary.sub(beetsBefore),
-        )} BEETS to Reliquary and set the rate from ${formatUnits(oldRate)}beets/s to ${formatUnits(
+        )} BEETS to Reliquary and set the rate from ${formatUnits(oldRate)} BEETS/s to ${formatUnits(
             currentRate,
-        )}beets/s`,
+        )} BEETS/s`,
     );
 
     // calculate remaining beets
@@ -103,11 +105,11 @@ async function streamBeets() {
                 totalBeetsAvailable,
             )} BEETS available on Reliquary. With the current rate of ${formatUnits(
                 currentRate,
-            )}beets/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
+            )} BEETS/s these will last until ${runOutDate.format()} but the new epoch will only be triggered at ${epochEnd.format()}. You need to adjust the emission rate on Reliquary to ${formatUnits(
                 proposedEmissionRate,
             )} for them to last until the end of this epoch or send ${formatUnits(
                 beetsNeeded.sub(totalBeetsAvailable),
-            )} beets to reliquary.`,
+            )} BEETS to reliquary.`,
         );
     } else {
         await sendMessage(
@@ -116,9 +118,9 @@ async function streamBeets() {
                 totalBeetsAvailable,
             )} BEETS available on Reliquary. With the current rate of ${formatUnits(
                 currentRate,
-            )}beets/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
+            )} BEETS/s these will last until ${runOutDate.format()} while the new epoch will be triggered at ${epochEnd.format()} leaving a surplus of ${formatUnits(
                 beetsDifferenceForEpoch,
-            )} beets. Adjusted rate would be ${formatUnits(
+            )} BEETS. Adjusted rate would be ${formatUnits(
                 proposedEmissionRate,
             )} to make sure they are used by the end of this epoch.`,
         );
