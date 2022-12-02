@@ -5,9 +5,10 @@ import erc20Abi from '../../abi/ERC20.json';
 import BeetsConstantEmissionCurve from '../../abi/BeetsConstantEmissionCurve.json';
 import moment from 'moment';
 import { ChannelId, sendMessage } from '../interactions/send-message';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import axios from 'axios';
 import { BigNumber, ContractTransaction } from 'ethers';
+import { inlineCode } from '@discordjs/builders';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
@@ -29,21 +30,36 @@ export async function streamBeets() {
         reliquaryBeetsStreamerAbi,
         networkConfig.contractAddresses.ReliquaryBeetsStreamer,
     );
-    let lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
-    if (lastTransferTimestamp.toNumber() + triggerDuration > moment().unix()) {
-        // trigger duration not yet passed
+    const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
+    if (updaterBalance.lt(parseUnits(`1`, 18))) {
+        await sendMessage(
+            ChannelId.MULTISIG_TX,
+            `@here The wallet for the Reliquary service is running low. Please send FTM to ${inlineCode(
+                networkConfig.walletAddresses.relicUpdater,
+            )}!`,
+        );
         return;
     }
 
+    let lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
     const curveAddress = await reliquary.emissionCurve();
     const curve = await ethers.getContractAt(BeetsConstantEmissionCurve, curveAddress);
+
     //TODO change to real beets
     const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.TestBeethovenxToken);
 
-    const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
+    let beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const oldRate = (await curve.getRate(0)) as BigNumber;
+
+    if (lastTransferTimestamp.toNumber() + triggerDuration > moment().unix()) {
+        // trigger duration not yet passed check for balance anyway
+        checkBeetsBalance(reliquary, beetsLeftOnReliquary, oldRate, reliquaryStreamer, true);
+        return;
+    }
+
+    const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     // we update the pool before and after the new epoch to make sure any changes before and after are reflected
     let txn = await reliquary.updatePool(0);
     await txn.wait();
@@ -51,7 +67,7 @@ export async function streamBeets() {
     await txn.wait();
     txn = await reliquary.updatePool(0);
     await txn.wait();
-    const beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
+    beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const currentRate = (await curve.getRate(0)) as BigNumber;
 
     await sendMessage(
@@ -63,7 +79,17 @@ export async function streamBeets() {
         )} BEETS/s`,
     );
 
-    // calculate remaining beets
+    // check for beets balance
+    await checkBeetsBalance(reliquary, beetsLeftOnReliquary, currentRate, reliquaryStreamer, false);
+}
+
+async function checkBeetsBalance(
+    reliquary: any,
+    beetsLeftOnReliquary: BigNumber,
+    currentRate: BigNumber,
+    reliquaryStreamer: any,
+    alertOnly: boolean,
+) {
     const allRelics = await axios.post<{
         data: { relics: [{ relicId: number }] };
     }>(reliquarySubgraphUrl, {
@@ -83,7 +109,7 @@ export async function streamBeets() {
     const totalBeetsAvailable = beetsLeftOnReliquary.sub(totalPendingRewards);
     const secondsOfBeetsLeft = totalBeetsAvailable.div(currentRate);
     const runOutDate = moment().add(secondsOfBeetsLeft.toNumber(), 'seconds');
-    lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
+    const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
     const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration);
     const secondsInEpochLeft = epochEnd.unix() - moment().unix();
@@ -117,14 +143,17 @@ Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
             )}) beets to reliquary.`,
         );
     } else {
-        await sendMessage(
-            ChannelId.MULTISIG_TX,
-            `Beets available: ${formatUnits(totalBeetsAvailable)}
+        if (!alertOnly) {
+            await sendMessage(
+                ChannelId.MULTISIG_TX,
+                `Beets available: ${formatUnits(totalBeetsAvailable)}
 Current rate: ${formatUnits(currentRate)} BEETS/s 
 Depleted on: ${runOutDate.format()} 
 Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
 New epoch start: ${epochEnd.format()} 
 Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
-        );
+            );
+        }
     }
+    return lastTransferTimestamp;
 }
