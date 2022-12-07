@@ -97,12 +97,10 @@ async function checkBeetsBalance(
         query: `{   
             relics(where: {pid: ${fBeetsPoolId}}) {
                 relicId
+            }
             }`,
     });
-    console.log(`{   
-        relics(where: {pid: ${fBeetsPoolId}}) {
-            relicId
-        }`);
+
     let totalPendingRewards = BigNumber.from(0);
     for (const relic of allRelics.data.data.relics) {
         let pendingReward = (await reliquary.pendingReward(relic.relicId)) as BigNumber;

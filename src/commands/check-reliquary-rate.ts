@@ -38,6 +38,7 @@ async function execute(interaction: CommandInteraction) {
         query: `{   
             relics(where: {pid: ${fBeetsPoolId}}) {
                 relicId
+            }
             }`,
     });
     let totalPendingRewards = BigNumber.from(0);
