@@ -120,9 +120,7 @@ async function checkBeetsBalance(
     const beetsDifferenceForEpoch = totalBeetsAvailable.sub(beetsNeeded);
 
     // spread the total beets available to 7 days
-    const proposedEmissionRate = totalBeetsAvailable.div(
-        moment.unix(lastTransferTimestamp.toNumber()).add(7, 'days').unix() - moment().unix(),
-    );
+    const proposedEmissionRate = totalBeetsAvailable.div(triggerDuration);
 
     if (totalBeetsAvailable.lt(`0`)) {
         await sendMessage(

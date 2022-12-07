@@ -59,10 +59,8 @@ async function execute(interaction: CommandInteraction) {
     const beetsNeeded = currentRate.mul(`${secondsInEpochLeft}`);
     const beetsDifferenceForEpoch = totalBeetsAvailable.sub(beetsNeeded);
 
-    // spread the total beets available to 7 days
-    const proposedEmissionRate = totalBeetsAvailable.div(
-        moment.unix(lastTransferTimestamp.toNumber()).add(7, 'days').unix() - moment().unix(),
-    );
+    // spread the total beets available to what the bot trigger duration is
+    const proposedEmissionRate = totalBeetsAvailable.div(triggerDuration);
 
     if (totalBeetsAvailable.lt(`0`)) {
         await interaction.reply({
