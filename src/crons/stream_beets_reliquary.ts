@@ -101,7 +101,7 @@ async function checkBeetsBalance(
             }`,
     });
 
-    if (!allRelics.data.data.relics) {
+    if (!allRelics.data.data) {
         return;
     }
 
