@@ -15,6 +15,7 @@ import axios from 'axios';
 import moment from 'moment';
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
+const fBeetsPoolId: number = 1;
 
 async function execute(interaction: CommandInteraction) {
     //TODO change to real beets
@@ -35,10 +36,9 @@ async function execute(interaction: CommandInteraction) {
         data: { relics: [{ relicId: number }] };
     }>(reliquarySubgraphUrl, {
         query: `{   
-                        relics{
-                            relicId
-                        }
-                    }`,
+            relics(where: {pid: ${fBeetsPoolId}}) {
+                relicId
+            }`,
     });
     let totalPendingRewards = BigNumber.from(0);
     for (const relic of allRelics.data.data.relics) {

@@ -12,6 +12,7 @@ import { inlineCode } from '@discordjs/builders';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
+const fBeetsPoolId: number = 1;
 //TODO change back or run it every day?
 // const triggerDuration = moment.duration(7, 'days').subtract(12, 'hours').asSeconds(); // 6days 12h
 export const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
@@ -61,11 +62,11 @@ export async function streamBeets() {
 
     const beetsBefore = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     // we update the pool before and after the new epoch to make sure any changes before and after are reflected
-    let txn = await reliquary.updatePool(1);
+    let txn = await reliquary.updatePool(fBeetsPoolId);
     await txn.wait();
     txn = (await reliquaryStreamer.startNewEpoch()) as ContractTransaction;
     await txn.wait();
-    txn = await reliquary.updatePool(1);
+    txn = await reliquary.updatePool(fBeetsPoolId);
     await txn.wait();
     beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const currentRate = (await curve.getRate(0)) as BigNumber;
@@ -94,10 +95,9 @@ async function checkBeetsBalance(
         data: { relics: [{ relicId: number }] };
     }>(reliquarySubgraphUrl, {
         query: `{   
-                    relics{
-                        relicId
-                    }
-                }`,
+            relics(where: {pid: ${fBeetsPoolId}}) {
+                relicId
+            }`,
     });
     let totalPendingRewards = BigNumber.from(0);
     for (const relic of allRelics.data.data.relics) {
