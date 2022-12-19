@@ -3,7 +3,7 @@ import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-etherscan';
 import { HardhatUserConfig } from 'hardhat/config';
 
-const accounts = [`0x${process.env.RELIC_UPDATER!}`];
+const accounts = process.env.RELIC_UPDATER ? [`0x${process.env.RELIC_UPDATER}`] : [];
 
 const config: HardhatUserConfig = {
     defaultNetwork: 'hardhat',

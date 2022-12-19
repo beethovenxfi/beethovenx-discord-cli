@@ -22,6 +22,7 @@ import { rewarderAddTopUpReminder } from './rewarder-add-topup-reminder';
 import { rewarderRemoveTopUpReminder } from './rewarder-remove-topup-reminder';
 import { rewarderListTracked } from './rewarder-list-tracked-rewarders';
 import { checkReliquaryRate } from './check-reliquary-rate';
+import { balancerManageRoles } from './balancer-manage-roles';
 
 export type CommandExecutor = (interaction: CommandInteraction) => Promise<any>;
 export type CommandHandler = {
@@ -53,4 +54,5 @@ export const commandHandlers = [
     rewarderRemoveTopUpReminder,
     rewarderListTracked,
     checkReliquaryRate,
+    balancerManageRoles,
 ];

@@ -14,6 +14,8 @@ type CliNetworkConfigContent = {
         Reliquary: string;
         ReliquaryBeetsStreamer: string;
         multicall: string;
+        Authorizer: string;
+        Vault: string;
     };
     walletAddresses: {
         treasury: string;
@@ -40,6 +42,8 @@ export const scriptConfig: NetworkConfig = {
             ReliquaryBeetsStreamer: '0x80b07c2a763a1AC906BA11963444CD5FDF5780fc',
             multicall: '0x66335d7ad8011f6aa3f48aadcb523b62b38ed961',
             TestBeethovenxToken: '0xD520179ed42421C6b8ad522FFccB2301378FED23',
+            Authorizer: '0x974D3FF709D84Ba44cde3257C0B5B0b14C081Ce9',
+            Vault: '0x20dd72Ed959b6147912C2e529F0a0C651c33c9ce',
         },
         walletAddresses: {
             treasury: '0xa1e849b1d6c2fd31c63eef7822e9e0632411ada7',
@@ -62,6 +66,8 @@ export const scriptConfig: NetworkConfig = {
             ReliquaryBeetsStreamer: '',
             multicall: '',
             TestBeethovenxToken: '',
+            Vault: '',
+            Authorizer: '',
         },
         walletAddresses: {
             treasury: '',
