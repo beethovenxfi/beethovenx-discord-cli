@@ -24,7 +24,7 @@ async function execute(interaction: CommandInteraction) {
     const encodedRoles = [];
     for (const role of roles) {
         const selector = contract.interface.getSighash(role);
-        encodedRoles.push(contract.getActionId(selector));
+        encodedRoles.push(await contract.getActionId(selector));
     }
     const output = `Set roles on authorizer contract ${
         networkConfig.contractAddresses.Authorizer
