@@ -18,6 +18,7 @@ const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/be
 const fBeetsPoolId: number = 1;
 
 async function execute(interaction: CommandInteraction) {
+    await interaction.deferReply({ ephemeral: true });
     //TODO change to real beets
     const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.TestBeethovenxToken);
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
@@ -63,19 +64,18 @@ async function execute(interaction: CommandInteraction) {
     // spread the total beets available to what the bot trigger duration is
     const proposedEmissionRate = totalBeetsAvailable.div(triggerDuration);
 
+    let beetsAlarm = '';
     if (totalBeetsAvailable.lt(`0`)) {
-        await interaction.reply({
-            content: codeBlock(
-                `ATTENTION: The reliquary ran out of beets. It is lacking  ${formatUnits(totalBeetsAvailable)} BEETS.`,
-            ),
-            ephemeral: true,
-        });
+        beetsAlarm = `ATTENTION: The reliquary ran out of beets. It is lacking  ${formatUnits(
+            totalBeetsAvailable,
+        )} BEETS.`;
     }
 
     if (beetsDifferenceForEpoch.lt(`0`)) {
-        await interaction.reply({
+        await interaction.editReply({
             content: codeBlock(
-                `Beets available: ${formatUnits(totalBeetsAvailable)}
+                `${beetsAlarm}
+Beets available: ${formatUnits(totalBeetsAvailable)}
 Current rate: ${formatUnits(currentRate)} BEETS/s
 Depleted on: ${runOutDate.format()} 
 New epoch start: ${epochEnd.format()}. 
@@ -86,12 +86,12 @@ Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
                     totalBeetsAvailable,
                 )}) beets to reliquary.`,
             ),
-            ephemeral: true,
         });
     } else {
-        await interaction.reply({
+        await interaction.editReply({
             content: codeBlock(
-                `Beets available: ${formatUnits(totalBeetsAvailable)}
+                `${beetsAlarm}
+Beets available: ${formatUnits(totalBeetsAvailable)}
 Current rate: ${formatUnits(currentRate)} BEETS/s 
 Depleted on: ${runOutDate.format()} 
 New epoch start: ${epochEnd.format()} 
@@ -100,7 +100,6 @@ Proposed emission rate change to use all available BEETS: ${formatUnits(
                     proposedEmissionRate,
                 )} (${proposedEmissionRate})`,
             ),
-            ephemeral: true,
         });
     }
 }
