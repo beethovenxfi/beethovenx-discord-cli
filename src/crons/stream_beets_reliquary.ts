@@ -16,12 +16,13 @@ const fBeetsPoolId: number = 1;
 //TODO change back or run it every day?
 // const triggerDuration = moment.duration(7, 'days').subtract(30, 'minutes').asSeconds(); // 6days 12h
 export const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
+export const interval = 3600000;
 
 export async function streamBeetsToReliquary() {
     console.log('Schedule to stream beets to reliquary');
     await streamBeets();
     // every hour
-    setInterval(streamBeets, 3600000);
+    setInterval(streamBeets, interval);
 }
 
 export async function streamBeets() {
@@ -122,7 +123,8 @@ async function checkBeetsBalance(
     const runOutDate = moment().add(secondsOfBeetsLeft.toNumber(), 'seconds');
     const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
-    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration);
+    // adjust epoch end for cron interval, could be triggered up to interval after
+    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration + interval);
     const secondsInEpochLeft = epochEnd.unix() - moment().unix();
 
     const beetsNeeded = currentRate.mul(`${secondsInEpochLeft}`);
@@ -146,7 +148,9 @@ Beets available: ${formatUnits(totalBeetsAvailable)}
 Current rate: ${formatUnits(currentRate)} BEETS/s
 Depleted on: ${runOutDate.format()} 
 New epoch start: ${epochEnd.format()}. 
-Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
+Proposed emission rate change for BEETS to last until the end of the epoch: ${formatUnits(
+                proposedEmissionRate,
+            )} (${proposedEmissionRate}) 
 Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
                 totalBeetsAvailable,
             )}) beets to reliquary.`,
@@ -160,7 +164,9 @@ Current rate: ${formatUnits(currentRate)} BEETS/s
 Depleted on: ${runOutDate.format()} 
 Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
 New epoch start: ${epochEnd.format()} 
-Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
+Proposed emission rate change to use all available BEETS: ${formatUnits(
+                    proposedEmissionRate,
+                )} (${proposedEmissionRate})`,
             );
         }
     }

@@ -8,7 +8,7 @@ import erc20Abi from '../../abi/ERC20.json';
 import reliquaryAbi from '../../abi/Reliquary.json';
 import BeetsConstantEmissionCurve from '../../abi/BeetsConstantEmissionCurve.json';
 import reliquaryBeetsStreamerAbi from '../../abi/ReliquaryBeetsStreamer.json';
-import { triggerDuration } from '../crons/stream_beets_reliquary';
+import { interval, triggerDuration } from '../crons/stream_beets_reliquary';
 
 import { BigNumber } from 'ethers';
 import axios from 'axios';
@@ -53,7 +53,8 @@ async function execute(interaction: CommandInteraction) {
     const runOutDate = moment().add(secondsOfBeetsLeft.toNumber(), 'seconds');
     const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
-    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration);
+    // adjust epoch end for cron interval, could be triggered up to interval after
+    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration + interval);
     const secondsInEpochLeft = epochEnd.unix() - moment().unix();
 
     const beetsNeeded = currentRate.mul(`${secondsInEpochLeft}`);
@@ -78,7 +79,9 @@ async function execute(interaction: CommandInteraction) {
 Current rate: ${formatUnits(currentRate)} BEETS/s
 Depleted on: ${runOutDate.format()} 
 New epoch start: ${epochEnd.format()}. 
-Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate}) 
+Proposed emission rate change for BEETS to last until the end of the epoch: ${formatUnits(
+                    proposedEmissionRate,
+                )} (${proposedEmissionRate}) 
 Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
                     totalBeetsAvailable,
                 )}) beets to reliquary.`,
@@ -93,7 +96,9 @@ Current rate: ${formatUnits(currentRate)} BEETS/s
 Depleted on: ${runOutDate.format()} 
 New epoch start: ${epochEnd.format()} 
 Surplus of ${formatUnits(beetsDifferenceForEpoch)} BEETS. 
-Proposed emission rate change: ${formatUnits(proposedEmissionRate)} (${proposedEmissionRate})`,
+Proposed emission rate change to use all available BEETS: ${formatUnits(
+                    proposedEmissionRate,
+                )} (${proposedEmissionRate})`,
             ),
             ephemeral: true,
         });
