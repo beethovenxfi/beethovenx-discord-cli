@@ -8,7 +8,7 @@ import erc20Abi from '../../abi/ERC20.json';
 import reliquaryAbi from '../../abi/Reliquary.json';
 import BeetsConstantEmissionCurve from '../../abi/BeetsConstantEmissionCurve.json';
 import reliquaryBeetsStreamerAbi from '../../abi/ReliquaryBeetsStreamer.json';
-import { interval, triggerDuration } from '../crons/stream_beets_reliquary';
+import { intervalMs, triggerDuration } from '../crons/stream_beets_reliquary';
 
 import { BigNumber } from 'ethers';
 import axios from 'axios';
@@ -54,7 +54,7 @@ async function execute(interaction: CommandInteraction) {
     const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
     // adjust epoch end for cron interval, could be triggered up to interval after
-    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration + interval);
+    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration + intervalMs / 1000);
     const secondsInEpochLeft = epochEnd.unix() - moment().unix();
 
     const beetsNeeded = currentRate.mul(`${secondsInEpochLeft}`);

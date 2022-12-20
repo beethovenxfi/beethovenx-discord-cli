@@ -16,13 +16,13 @@ const fBeetsPoolId: number = 1;
 //TODO change back or run it every day?
 // const triggerDuration = moment.duration(7, 'days').subtract(30, 'minutes').asSeconds(); // 6days 12h
 export const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
-export const interval = 3600000;
+export const intervalMs = 3600000;
 
 export async function streamBeetsToReliquary() {
     console.log('Schedule to stream beets to reliquary');
     await streamBeets();
     // every hour
-    setInterval(streamBeets, interval);
+    setInterval(streamBeets, intervalMs);
 }
 
 export async function streamBeets() {
@@ -124,7 +124,7 @@ async function checkBeetsBalance(
     const lastTransferTimestamp = (await reliquaryStreamer.lastTransferTimestamp()) as BigNumber;
 
     // adjust epoch end for cron interval, could be triggered up to interval after
-    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration + interval);
+    const epochEnd = moment.unix(lastTransferTimestamp.toNumber() + triggerDuration + intervalMs / 1000);
     const secondsInEpochLeft = epochEnd.unix() - moment().unix();
 
     const beetsNeeded = currentRate.mul(`${secondsInEpochLeft}`);
