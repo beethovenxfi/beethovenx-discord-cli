@@ -90,7 +90,8 @@ Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
     } else {
         await interaction.editReply({
             content: codeBlock(
-                `${beetsAlarm}
+                `ATTENTION: Reliquary will run out of BEETS this epoch:
+${beetsAlarm}
 Beets available: ${formatUnits(totalBeetsAvailable)}
 Current rate: ${formatUnits(currentRate)} BEETS/s 
 Depleted on: ${runOutDate.format()} 
