@@ -14,14 +14,13 @@ const { ethers } = require('hardhat');
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
 const fBeetsPoolId: number = 1;
 //TODO change back or run it every day?
-// const triggerDuration = moment.duration(7, 'days').subtract(30, 'minutes').asSeconds(); // 6days 12h
-export const triggerDuration = moment.duration(1, 'days').subtract(12, 'hours').asSeconds(); // 12h
+export const triggerDuration = moment.duration(2, 'days').subtract(30, 'minutes').asSeconds(); // 1day 23h 30m
+// every hour
 export const intervalMs = 3600000;
 
 export async function streamBeetsToReliquary() {
     console.log('Schedule to stream beets to reliquary');
     await streamBeets();
-    // every hour
     setInterval(streamBeets, intervalMs);
 }
 
@@ -49,8 +48,7 @@ export async function streamBeets() {
     const curveAddress = await reliquary.emissionCurve();
     const curve = await ethers.getContractAt(BeetsConstantEmissionCurve, curveAddress);
 
-    //TODO change to real beets
-    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.TestBeethovenxToken);
+    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.BeethovenxToken);
 
     let beetsLeftOnReliquary = (await beets.balanceOf(networkConfig.contractAddresses.Reliquary)) as BigNumber;
     const oldRate = (await curve.getRate(0)) as BigNumber;

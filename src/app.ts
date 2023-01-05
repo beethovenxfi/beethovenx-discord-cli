@@ -17,6 +17,6 @@ scheduleTransactionReminders();
 notifiyPreparedRewarders();
 notifiyEmptyRewarders();
 // updateRelics();
-streamBeetsToReliquary();
+// streamBeetsToReliquary();
 
 client.login(TOKEN);
