@@ -202,7 +202,7 @@ export const feesCollectorWithdraw: CommandHandler = {
             option
                 .setName('chain')
                 .addChoices({ name: 'Optimism', value: 'op' }, { name: 'Fantom', value: 'ftm' })
-                .setDescription('Chose the chain')
+                .setDescription('Choose the chain')
                 .setRequired(true),
         )
         .setDefaultPermission(false),

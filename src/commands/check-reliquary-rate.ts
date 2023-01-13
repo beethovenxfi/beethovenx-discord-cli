@@ -20,7 +20,7 @@ const fBeetsPoolId: number = 1;
 async function execute(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
     //TODO change to real beets
-    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.TestBeethovenxToken);
+    const beets = await ethers.getContractAt(erc20Abi, networkConfig.contractAddresses.BeethovenxToken);
     const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
     const curveAddress = await reliquary.emissionCurve();
     const curve = await ethers.getContractAt(BeetsConstantEmissionCurve, curveAddress);
