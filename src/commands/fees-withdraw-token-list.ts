@@ -13,6 +13,15 @@ type MoralisTokenBalance = {
     name: string;
 };
 
+type AlchemyTokenBalance = {
+    contractAddress: string;
+    tokenBalance: string;
+    // need to fill these:
+    decimals: number;
+    symbol: string;
+    name: string;
+};
+
 type TokenValue = {
     tokenAddress: string;
     decimals: number;
@@ -22,11 +31,18 @@ type TokenValue = {
     name: string;
 };
 
+// export async function tokenlist() {
+//     await execute();
+// }
+
 async function execute(interaction: CommandInteraction) {
+    // async function execute() {
     await interaction.deferReply({ ephemeral: true });
 
     const thresholdUSDInput = interaction.options.getString('threshold_usd', true)!;
     const chainInput = interaction.options.getString('chain', true);
+    // const thresholdUSDInput = '100';
+    // const chainInput = 'op';
 
     const allTokenValues: TokenValue[] = [];
     let tokenWithoutPriceData = '';
@@ -52,8 +68,59 @@ async function execute(interaction: CommandInteraction) {
         const tokensWithoutPrice = await insertUSDValue(allTokenValues, 'fantom');
         for (const tokenWithoutPrice of tokensWithoutPrice) {
             tokenWithoutPriceData += `Token Symbol: ${tokenWithoutPrice.symbol}
-Token address: ${tokenWithoutPrice.tokenAddress}
-Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
+    Token address: ${tokenWithoutPrice.tokenAddress}
+    Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
+`;
+        }
+    } else if ('op') {
+        const baseURL = `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+
+        const data = JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'alchemy_getTokenBalances',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            params: [`0xce88686553686da562ce7cea497ce749da109f9f`],
+            id: 42,
+        });
+
+        const result = await axios.post(baseURL, data);
+        const tokenBalances: AlchemyTokenBalance[] = result.data.result.tokenBalances;
+
+        const nonZeroBalances = tokenBalances.filter((token) => {
+            return token.tokenBalance !== '0';
+        });
+        for (let token of nonZeroBalances) {
+            const data = JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'alchemy_getTokenMetadata',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                params: [`${token.contractAddress}`],
+                id: 42,
+            });
+            const result = await axios.post(baseURL, data);
+            token.decimals = result.data.result.decimals;
+            token.symbol = result.data.result.symbol;
+            token.name = result.data.result.name;
+        }
+        for (const tokenBalance of tokenBalances) {
+            allTokenValues.push({
+                tokenAddress: tokenBalance.contractAddress,
+                decimals: tokenBalance.decimals,
+                totalValueUSD: 0,
+                balance: `${parseInt(tokenBalance.tokenBalance, 16)}`,
+                symbol: tokenBalance.symbol,
+                name: tokenBalance.name,
+            });
+        }
+        const tokensWithoutPrice = await insertUSDValue(allTokenValues, 'optimistic-ethereum');
+        for (const tokenWithoutPrice of tokensWithoutPrice) {
+            tokenWithoutPriceData += `Token Symbol: ${tokenWithoutPrice.symbol}
+    Token address: ${tokenWithoutPrice.tokenAddress}
+    Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
 `;
         }
     }
@@ -125,7 +192,10 @@ Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.d
 type TokenPrices = { [address: string]: Price };
 type Price = { usd: number };
 
-async function insertUSDValue(tokenValues: TokenValue[], platform: 'fantom' | 'optimism'): Promise<TokenValue[]> {
+async function insertUSDValue(
+    tokenValues: TokenValue[],
+    platform: 'fantom' | 'optimistic-ethereum',
+): Promise<TokenValue[]> {
     const tokensWithoutprice = [];
     const allContractAddresses = tokenValues.map((token) => token.tokenAddress);
     const pagedTokenPrices: TokenPrices[] = [];
@@ -133,7 +203,7 @@ async function insertUSDValue(tokenValues: TokenValue[], platform: 'fantom' | 'o
     let backendUrl = '';
     if (platform === 'fantom') {
         backendUrl = 'https://backend-v2.beets-ftm-node.com/graphql';
-    } else {
+    } else if ('optimism') {
         backendUrl = 'https://backend-optimism-v2.beets-ftm-node.com/graphql';
     }
     const allPools = await axios.post(backendUrl, {
