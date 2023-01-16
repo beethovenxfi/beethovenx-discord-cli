@@ -59,8 +59,8 @@ async function execute(interaction: CommandInteraction) {
         const tokensWithoutPrice = await insertUSDValue(allTokenValues, 'fantom');
         for (const tokenWithoutPrice of tokensWithoutPrice) {
             tokenWithoutPriceData += `Token Symbol: ${tokenWithoutPrice.symbol}
-          Token address: ${tokenWithoutPrice.tokenAddress}
-          Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
+Token address: ${tokenWithoutPrice.tokenAddress}
+Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
           `;
         }
     }
@@ -69,18 +69,20 @@ async function execute(interaction: CommandInteraction) {
         (tokenValue) => tokenValue.totalValueUSD >= parseFloat(thresholdUSDInput),
     );
 
-    // console.log(`done, having ${tokensToWithdraw.length} tokens to withdraw`);
-
     await interaction.editReply({ content: inlineCode('Token names to withdraw, please check:') });
     let tokenNameData = '';
     let tokenAddressData = '';
     for (const token of tokensToWithdraw) {
-        tokenNameData += `${token.name}(${token.symbol}), `;
+        tokenNameData += `${token.symbol}: ${parseInt(token.balance) / 10 ** token.decimals}, `;
         tokenAddressData += `${token.tokenAddress},`;
     }
+    await interaction.followUp({
+        content: codeBlock(`Proposing to withdraw the following token amounts:`),
+        ephemeral: true,
+    });
     if (tokenNameData.length < 2000) {
         await interaction.followUp({
-            content: codeBlock(tokenNameData),
+            content: codeBlock(`${tokenNameData}`),
             ephemeral: true,
         });
     } else {
@@ -107,7 +109,10 @@ async function execute(interaction: CommandInteraction) {
             });
         }
     }
-
+    await interaction.followUp({
+        content: codeBlock(`Could not find a price for the following tokens:`),
+        ephemeral: true,
+    });
     if (tokenWithoutPriceData.length < 2000) {
         await interaction.followUp({
             content: codeBlock(tokenWithoutPriceData),
