@@ -22,18 +22,11 @@ type TokenValue = {
     name: string;
 };
 
-// export async function tokenlist() {
-//     await execute();
-// }
-
 async function execute(interaction: CommandInteraction) {
-    // async function execute() {
     await interaction.deferReply({ ephemeral: true });
 
     const thresholdUSDInput = interaction.options.getString('threshold_usd', true)!;
     const chainInput = interaction.options.getString('chain', true);
-    // const thresholdUSDInput = '100';
-    // const chainInput = 'ftm';
 
     const allTokenValues: TokenValue[] = [];
     let tokenWithoutPriceData = '';
@@ -61,7 +54,7 @@ async function execute(interaction: CommandInteraction) {
             tokenWithoutPriceData += `Token Symbol: ${tokenWithoutPrice.symbol}
 Token address: ${tokenWithoutPrice.tokenAddress}
 Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
-          `;
+`;
         }
     }
 
