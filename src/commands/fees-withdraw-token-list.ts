@@ -30,7 +30,7 @@ async function execute(interaction: CommandInteraction) {
     // async function execute() {
     await interaction.deferReply({ ephemeral: true });
 
-    const thresholdUSDInput = interaction.options.getString('thresholdUSD', true)!;
+    const thresholdUSDInput = interaction.options.getString('threshold_usd', true)!;
     const chainInput = interaction.options.getString('chain', true);
     // const thresholdUSDInput = '300';
     // const chainInput = 'ftm';
