@@ -76,7 +76,8 @@ async function updateLevelsOfRelics() {
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
-                await reliquary.updatePosition(relicIdToUpdate);
+                const txn = await reliquary.updatePosition(relicIdToUpdate);
+                await txn.wait();
                 console.log(`Updated relic ${relicIdToUpdate}.`);
             } catch (e) {
                 await sendMessage(
