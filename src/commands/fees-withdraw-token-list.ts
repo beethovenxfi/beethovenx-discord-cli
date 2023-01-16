@@ -32,7 +32,7 @@ async function execute(interaction: CommandInteraction) {
 
     const thresholdUSDInput = interaction.options.getString('threshold_usd', true)!;
     const chainInput = interaction.options.getString('chain', true);
-    // const thresholdUSDInput = '300';
+    // const thresholdUSDInput = '100';
     // const chainInput = 'ftm';
 
     const allTokenValues: TokenValue[] = [];
@@ -138,7 +138,6 @@ async function insertUSDValue(tokenValues: TokenValue[], platform: 'fantom' | 'o
     const pagedTokenPrices: TokenPrices[] = [];
     const chunks = _.chunk(allContractAddresses, 100);
     let backendUrl = '';
-    let foundPrice = false;
     if (platform === 'fantom') {
         backendUrl = 'https://backend-v2.beets-ftm-node.com/graphql';
     } else {
@@ -164,14 +163,16 @@ async function insertUSDValue(tokenValues: TokenValue[], platform: 'fantom' | 'o
     }
     const allTokenPrices = pagedTokenPrices.reduce((result, page) => ({ ...result, ...page }), {});
     for (const token of tokenValues) {
+        let foundPrice = false;
         if (allTokenPrices[token.tokenAddress]) {
             token.totalValueUSD =
                 (parseInt(token.balance) / 10 ** token.decimals) * allTokenPrices[token.tokenAddress].usd;
         } else {
             // try to get BPT prices
             for (const pool of allPools.data.data.poolGetPools) {
-                if (pool.address === token.tokenAddress) {
-                    const tokenPrice = parseFloat(pool.totalLiquidity) / parseFloat(pool.totalShares);
+                if (pool.address.toLowerCase() === token.tokenAddress.toLowerCase()) {
+                    const tokenPrice =
+                        parseFloat(pool.dynamicData.totalLiquidity) / parseFloat(pool.dynamicData.totalShares);
                     token.totalValueUSD = (parseInt(token.balance) / 10 ** token.decimals) * tokenPrice;
                     foundPrice = true;
                 }
