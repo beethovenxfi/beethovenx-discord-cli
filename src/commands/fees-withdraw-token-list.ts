@@ -1,13 +1,9 @@
-import { channelLink, codeBlock, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { codeBlock, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 import { CommandHandler } from './index';
-import { MODERATOR_ROLE, networkConfig } from '../config/config';
 import { splitString } from '../utils';
 import axios from 'axios';
 import _ from 'lodash';
-import { parseFixed } from '@ethersproject/bignumber';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 type MoralisTokenBalance = {
     token_address: string;
@@ -188,13 +184,13 @@ async function insertUSDValue(tokenValues: TokenValue[], platform: 'fantom' | 'o
     return tokensWithoutprice;
 }
 
-export const feesCollectorWithdraw: CommandHandler = {
+export const feesCollectorTokenlist: CommandHandler = {
     definition: new SlashCommandBuilder()
         .setName('protocol_fees_generate_tokenlist')
         .setDescription('Generate tokenlist for protocol fee withdraw')
         .addStringOption((option) =>
             option
-                .setName('thresholdUSD')
+                .setName('threshold_usd')
                 .setDescription('Minimum USD value of token balance to withdraw')
                 .setRequired(true),
         )
@@ -204,7 +200,6 @@ export const feesCollectorWithdraw: CommandHandler = {
                 .addChoices({ name: 'Optimism', value: 'op' }, { name: 'Fantom', value: 'ftm' })
                 .setDescription('Choose the chain')
                 .setRequired(true),
-        )
-        .setDefaultPermission(false),
+        ),
     execute,
 };

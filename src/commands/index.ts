@@ -23,6 +23,7 @@ import { rewarderRemoveTopUpReminder } from './rewarder-remove-topup-reminder';
 import { rewarderListTracked } from './rewarder-list-tracked-rewarders';
 import { checkReliquaryRate } from './check-reliquary-rate';
 import { balancerManageRoles } from './balancer-manage-roles';
+import { feesCollectorTokenlist } from './fees-withdraw-token-list';
 
 export type CommandExecutor = (interaction: CommandInteraction) => Promise<any>;
 export type CommandHandler = {
@@ -48,6 +49,7 @@ export const commandHandlers = [
     keccak256,
     abiEncode,
     feesCollectorWithdraw,
+    feesCollectorTokenlist,
     rewarderFactoryDeployment,
     rewarderStats,
     rewarderAddTopUpReminder,
