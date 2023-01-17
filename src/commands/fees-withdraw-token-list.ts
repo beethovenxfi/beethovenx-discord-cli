@@ -128,8 +128,8 @@ async function execute(interaction: CommandInteraction) {
         const tokensWithoutPrice = await insertUSDValue(allTokenValues, 'optimistic-ethereum');
         for (const tokenWithoutPrice of tokensWithoutPrice) {
             tokenWithoutPriceData += `Token Symbol: ${tokenWithoutPrice.symbol}
-    Token address: ${tokenWithoutPrice.tokenAddress}
-    Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
+Token address: ${tokenWithoutPrice.tokenAddress}
+Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
 `;
         }
     }
