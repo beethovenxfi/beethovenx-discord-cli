@@ -249,6 +249,15 @@ async function insertUSDValue(
           }
         }`,
     });
+
+    const backendTokenPrices = await axios.post(backendUrl, {
+        query: `query {
+        tokenGetCurrentPrices{
+          address
+          price
+        }
+      }`,
+    });
     for (const chunk of chunks) {
         const response = await axios.get(
             `https://api.coingecko.com/api/v3/simple/token_price/${platform}?vs_currencies=usd&contract_addresses=` +
@@ -273,6 +282,13 @@ async function insertUSDValue(
                 }
             }
             if (!foundPrice) {
+                //try backend
+                for (const backendToken of backendTokenPrices.data.data.tokenGetCurrentPrices) {
+                    if (backendToken.address.toLowerCase() === token.tokenAddress.toLowerCase()) {
+                        token.totalValueUSD = (parseInt(token.balance) / 10 ** token.decimals) * backendToken.price;
+                        foundPrice = true;
+                    }
+                }
                 console.log(
                     `Can't find price for ${token.symbol}(${token.tokenAddress}). Balance: ${
                         parseInt(token.balance) / 10 ** token.decimals
