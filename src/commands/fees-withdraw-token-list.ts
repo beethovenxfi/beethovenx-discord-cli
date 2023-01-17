@@ -4,6 +4,7 @@ import { CommandHandler } from './index';
 import { splitString } from '../utils';
 import axios from 'axios';
 import _ from 'lodash';
+import { BigNumber } from 'ethers';
 
 type MoralisTokenBalance = {
     token_address: string;
@@ -68,9 +69,9 @@ async function execute(interaction: CommandInteraction) {
         const tokensWithoutPrice = await insertUSDValue(allTokenValues, 'fantom');
         for (const tokenWithoutPrice of tokensWithoutPrice) {
             tokenWithoutPriceData += `Token Symbol: ${tokenWithoutPrice.symbol}
-    Token address: ${tokenWithoutPrice.tokenAddress}
-    Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
-`;
+        Token address: ${tokenWithoutPrice.tokenAddress}
+        Token balance: ${parseInt(tokenWithoutPrice.balance) / 10 ** tokenWithoutPrice.decimals}
+    `;
         }
     } else if ('op') {
         const baseURL = `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
@@ -85,16 +86,15 @@ async function execute(interaction: CommandInteraction) {
             id: 42,
         });
 
-        let result;
         let tokenBalances: AlchemyTokenBalance[];
         try {
-            result = await axios.post(baseURL, data);
+            const result = await axios.post(baseURL, data);
             tokenBalances = result.data.result.tokenBalances;
         } catch (e) {
-            console.log(`Could not reach RPC, try again later: ${result?.data.error}`);
-            await interaction.editReply({
-                content: inlineCode('Calling the RPC failed, you need to try again later.'),
-            });
+            console.log(e);
+            // await interaction.editReply({
+            //     content: inlineCode('Calling the RPC failed, you need to try again later.'),
+            // });
             return;
         }
         const nonZeroBalances = tokenBalances.filter((token) => {
@@ -120,7 +120,7 @@ async function execute(interaction: CommandInteraction) {
                 tokenAddress: tokenBalance.contractAddress,
                 decimals: tokenBalance.decimals,
                 totalValueUSD: 0,
-                balance: `${parseInt(tokenBalance.tokenBalance, 16)}`,
+                balance: `${BigNumber.from(tokenBalance.tokenBalance).toString()}`,
                 symbol: tokenBalance.symbol,
                 name: tokenBalance.name,
             });
@@ -141,12 +141,14 @@ async function execute(interaction: CommandInteraction) {
     await interaction.editReply({ content: inlineCode('Token names to withdraw, please check:') });
     let tokenNameData = '';
     let tokenAddressData = '';
+    let tokenBalanceData = '';
     for (const token of tokensToWithdraw) {
         tokenNameData += `${token.symbol}: ${parseInt(token.balance) / 10 ** token.decimals}, `;
         tokenAddressData += `${token.tokenAddress},`;
+        tokenBalanceData += `${token.balance}`;
     }
     await interaction.followUp({
-        content: codeBlock(`Proposing to withdraw the following token amounts:`),
+        content: codeBlock(`Proposing to withdraw the following token/amounts:`),
         ephemeral: true,
     });
     if (tokenNameData.length < 2000) {
@@ -163,7 +165,10 @@ async function execute(interaction: CommandInteraction) {
             });
         }
     }
-
+    await interaction.followUp({
+        content: codeBlock(`Here is the data... Addresses:`),
+        ephemeral: true,
+    });
     if (tokenAddressData.length < 2000) {
         await interaction.followUp({
             content: codeBlock(tokenAddressData),
@@ -171,6 +176,24 @@ async function execute(interaction: CommandInteraction) {
         });
     } else {
         const splits = splitString(tokenAddressData);
+        for (let split of splits) {
+            await interaction.followUp({
+                content: codeBlock(split),
+                ephemeral: true,
+            });
+        }
+    }
+    await interaction.followUp({
+        content: codeBlock(`Balances:`),
+        ephemeral: true,
+    });
+    if (tokenNameData.length < 2000) {
+        await interaction.followUp({
+            content: codeBlock(`${tokenBalanceData}`),
+            ephemeral: true,
+        });
+    } else {
+        const splits = splitString(tokenBalanceData);
         for (let split of splits) {
             await interaction.followUp({
                 content: codeBlock(split),
