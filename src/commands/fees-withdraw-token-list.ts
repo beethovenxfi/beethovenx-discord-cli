@@ -85,9 +85,18 @@ async function execute(interaction: CommandInteraction) {
             id: 42,
         });
 
-        const result = await axios.post(baseURL, data);
-        const tokenBalances: AlchemyTokenBalance[] = result.data.result.tokenBalances;
-
+        let result;
+        let tokenBalances: AlchemyTokenBalance[];
+        try {
+            result = await axios.post(baseURL, data);
+            tokenBalances = result.data.result.tokenBalances;
+        } catch (e) {
+            console.log(`Could not reach RPC, try again later: ${result?.data.error}`);
+            await interaction.editReply({
+                content: inlineCode('Calling the RPC failed, you need to try again later.'),
+            });
+            return;
+        }
         const nonZeroBalances = tokenBalances.filter((token) => {
             return token.tokenBalance !== '0';
         });
