@@ -145,8 +145,11 @@ async function execute(interaction: CommandInteraction) {
     for (const token of tokensToWithdraw) {
         tokenNameData += `${token.symbol}: ${parseInt(token.balance) / 10 ** token.decimals}, `;
         tokenAddressData += `${token.tokenAddress},`;
-        tokenBalanceData += `${token.balance}`;
+        tokenBalanceData += `${token.balance},`;
     }
+    tokenNameData = tokenNameData.slice(0, -1);
+    tokenAddressData = tokenAddressData.slice(0, -1);
+    tokenBalanceData = tokenBalanceData.slice(0, -1);
     await interaction.followUp({
         content: codeBlock(`Proposing to withdraw the following token/amounts:`),
         ephemeral: true,
