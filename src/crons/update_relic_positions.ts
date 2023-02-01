@@ -50,11 +50,19 @@ async function updateLevelsOfRelics() {
     const threeDaysAgo = moment().subtract(3, 'days').unix();
     for (const pool of poolLevels.data.data.pools) {
         const maxLevel = Math.max(...pool.levels.map((level) => level.level));
-        const relicsNotInMaxLevel = await axios.post<{
-            data: { relics: [{ relicId: number; level: number; entryTimestamp: number }] };
+        const nonEmptyNonMaxLevelRelics = await axios.post<{
+            data: {
+                relics: [
+                    {
+                        relicId: number;
+                        level: number;
+                        entryTimestamp: number;
+                    },
+                ];
+            };
         }>(reliquarySubgraphUrl, {
             query: `{   
-                        relics(where: {pid: ${pool.pid}, level_lt: ${maxLevel}}){
+                        relics(where: {pid: ${pool.pid}, level_lt: ${maxLevel}, balance_gt: "0"}){
                             relicId
                             level
                             entryTimestamp
@@ -62,7 +70,7 @@ async function updateLevelsOfRelics() {
                     }`,
         });
 
-        relicsNotInMaxLevel.data.data.relics.forEach((relic) => {
+        nonEmptyNonMaxLevelRelics.data.data.relics.forEach((relic) => {
             const requiredMaturityForNextLevel = pool.levels[relic.level + 1].requiredMaturity;
             if (relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo) {
                 // relic has entered next level three days ago
