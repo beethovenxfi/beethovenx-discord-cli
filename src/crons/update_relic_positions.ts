@@ -13,8 +13,8 @@ const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/be
 export async function updateRelics() {
     console.log('Schedule updating relics');
     await updateLevelsOfRelics();
-    // every 24 hours
-    setInterval(updateLevelsOfRelics, 24 * 3600000);
+    // every 2 hours
+    setInterval(updateLevelsOfRelics, 2 * 3600000);
 }
 
 async function updateLevelsOfRelics() {
