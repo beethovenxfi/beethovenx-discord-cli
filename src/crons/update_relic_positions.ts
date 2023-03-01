@@ -35,7 +35,7 @@ async function updateLevelsOfRelics() {
         data: { pools: [{ pid: Number; levels: [{ level: number; requiredMaturity: number }] }] };
     }>(reliquarySubgraphUrl, {
         query: `{
-                        pools{
+                        pools(where: {pid_in: [2]}){
                             pid
                             levels{
                                 level
@@ -57,6 +57,7 @@ async function updateLevelsOfRelics() {
                         relicId: number;
                         level: number;
                         entryTimestamp: number;
+                        user: { id: string };
                     },
                 ];
             };
@@ -66,13 +67,17 @@ async function updateLevelsOfRelics() {
                             relicId
                             level
                             entryTimestamp
+                            user { id }
                         }
                     }`,
         });
 
         nonEmptyNonMaxLevelRelics.data.data.relics.forEach((relic) => {
             const requiredMaturityForNextLevel = pool.levels[relic.level + 1].requiredMaturity;
-            if (relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo) {
+            if (
+                relic.user.id !== '0x0000000000000000000000000000000000000000' &&
+                relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo
+            ) {
                 // relic has entered next level three days ago
                 relicIdsToUpdate.push(relic.relicId);
             }
@@ -81,6 +86,7 @@ async function updateLevelsOfRelics() {
 
     if (relicIdsToUpdate.length > 0) {
         console.log(`Updating ${relicIdsToUpdate.length} relics.`);
+        await sendMessage(ChannelId.MULTISIG_TX, `Updating ${relicIdsToUpdate.length} relics`);
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
