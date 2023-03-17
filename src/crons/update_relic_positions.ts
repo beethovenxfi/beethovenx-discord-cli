@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { networkConfig } from '../config/config';
 import reliquaryAbi from '../../abi/Reliquary.json';
-import moment from 'moment';
+import moment, { now } from 'moment';
 import { BigNumber } from 'ethers';
 import { parseFixed } from '@ethersproject/bignumber';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import { inlineCode } from '@discordjs/builders';
+import instantUpdateRelics from './updateRelics.json';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
@@ -19,6 +20,7 @@ export async function updateRelics() {
 
 async function updateLevelsOfRelics() {
     console.log('updating relic positions');
+    const updateRelicIdList: number[] = instantUpdateRelics;
 
     const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
     if (updaterBalance.lt(parseFixed(`1`, 18))) {
@@ -75,8 +77,10 @@ async function updateLevelsOfRelics() {
         nonEmptyNonMaxLevelRelics.data.data.relics.forEach((relic) => {
             const requiredMaturityForNextLevel = pool.levels[relic.level + 1].requiredMaturity;
             if (
-                relic.user.id !== '0x0000000000000000000000000000000000000000' &&
-                relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo
+                (relic.user.id !== '0x0000000000000000000000000000000000000000' &&
+                    relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo) ||
+                (updateRelicIdList.includes(relic.relicId) &&
+                    relic.entryTimestamp + requiredMaturityForNextLevel < moment().unix())
             ) {
                 // relic has entered next level three days ago
                 relicIdsToUpdate.push(relic.relicId);
