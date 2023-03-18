@@ -52,29 +52,50 @@ async function updateLevelsOfRelics() {
     const threeDaysAgo = moment().subtract(3, 'days').unix();
     for (const pool of poolLevels.data.data.pools) {
         const maxLevel = Math.max(...pool.levels.map((level) => level.level));
-        const nonEmptyNonMaxLevelRelics = await axios.post<{
-            data: {
-                relics: [
-                    {
-                        relicId: number;
-                        level: number;
-                        entryTimestamp: number;
-                        user: { id: string };
-                    },
-                ];
-            };
-        }>(reliquarySubgraphUrl, {
-            query: `{   
-                        relics(where: {pid: ${pool.pid}, level_lt: ${maxLevel}, balance_gt: "0"}){
-                            relicId
-                            level
-                            entryTimestamp
-                            user { id }
-                        }
-                    }`,
-        });
 
-        nonEmptyNonMaxLevelRelics.data.data.relics.forEach((relic) => {
+        const limit = 1000;
+        let hasMore = true;
+        let nonEmptyNonMaxLevelRelics: {
+            relicId: number;
+            level: number;
+            entryTimestamp: number;
+            user: { id: string };
+        }[] = [];
+        let id = 0;
+
+        while (hasMore) {
+            const response = await axios.post<{
+                data: {
+                    relics: [
+                        {
+                            relicId: number;
+                            level: number;
+                            entryTimestamp: number;
+                            user: { id: string };
+                        },
+                    ];
+                };
+            }>(reliquarySubgraphUrl, {
+                query: `{   
+                            relics(where: {pid: ${pool.pid}, level_lt: ${maxLevel}, balance_gt: "0", relicId_gt: ${id}}, orderBy: relicId, orderDirection: asc, first: 1000){
+                                relicId
+                                level
+                                entryTimestamp
+                                user { id }
+                            }
+                        }`,
+            });
+
+            nonEmptyNonMaxLevelRelics = [...nonEmptyNonMaxLevelRelics, ...response.data.data.relics];
+
+            if (response.data.data.relics.length < limit) {
+                hasMore = false;
+            } else {
+                id = response.data.data.relics[response.data.data.relics.length - 1].relicId;
+            }
+        }
+
+        nonEmptyNonMaxLevelRelics.forEach((relic) => {
             const requiredMaturityForNextLevel = pool.levels[relic.level + 1].requiredMaturity;
             if (
                 (relic.user.id !== '0x0000000000000000000000000000000000000000' &&
