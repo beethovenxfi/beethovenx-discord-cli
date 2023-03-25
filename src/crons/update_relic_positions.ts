@@ -114,7 +114,6 @@ async function updateLevelsOfRelics() {
     if (relicIdsToUpdate.length > 0) {
         console.log(`Updating ${relicIdsToUpdate.length} relics.`);
         let updatedRelics = 0;
-        let gasPriceTooHigh = 0;
         let failedRelics = 0;
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
         for (const relicIdToUpdate of relicIdsToUpdate) {
