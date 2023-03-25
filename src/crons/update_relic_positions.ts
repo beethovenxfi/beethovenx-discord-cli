@@ -49,7 +49,7 @@ async function updateLevelsOfRelics() {
 
     const relicIdsToUpdate: number[] = [];
 
-    const threeDaysAgo = moment().subtract(3, 'days').unix();
+    const fiveDaysAgo = moment().subtract(5, 'days').unix();
     for (const pool of poolLevels.data.data.pools) {
         const maxLevel = Math.max(...pool.levels.map((level) => level.level));
 
@@ -99,7 +99,7 @@ async function updateLevelsOfRelics() {
             const requiredMaturityForNextLevel = pool.levels[relic.level + 1].requiredMaturity;
             if (
                 (relic.user.id !== '0x0000000000000000000000000000000000000000' &&
-                    relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo) ||
+                    relic.entryTimestamp + requiredMaturityForNextLevel < fiveDaysAgo) ||
                 (updateRelicIdList.includes(relic.relicId) &&
                     relic.entryTimestamp + requiredMaturityForNextLevel < moment().unix())
             ) {
