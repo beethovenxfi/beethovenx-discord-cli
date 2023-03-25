@@ -114,6 +114,7 @@ async function updateLevelsOfRelics() {
     if (relicIdsToUpdate.length > 0) {
         console.log(`Updating ${relicIdsToUpdate.length} relics.`);
         let updatedRelics = 0;
+        let gasPriceTooHigh = 0;
         let failedRelics = 0;
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
         for (const relicIdToUpdate of relicIdsToUpdate) {
@@ -124,21 +125,19 @@ async function updateLevelsOfRelics() {
                     await txn.wait();
                     console.log(`Updated relic ${relicIdToUpdate}.`);
                     updatedRelics++;
+                } else {
+                    gasPriceTooHigh++;
                 }
             } catch (e) {
-                await sendMessage(
-                    ChannelId.MULTISIG_TX,
-                    `Failed to update relic with ID ${inlineCode(relicIdToUpdate.toString())}!`,
-                );
                 failedRelics++;
                 console.log(e);
             }
         }
         await sendMessage(
             ChannelId.MULTISIG_TX,
-            `Updated relics: ${inlineCode(updateRelics.toString())}. Failed relic updates: ${inlineCode(
-                failedRelics.toString(),
-            )}`,
+            `Updated relics: ${inlineCode(updateRelics.toString())} 
+Failed relic updates: ${inlineCode(failedRelics.toString())}
+Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
         );
     }
 }
