@@ -7,6 +7,7 @@ import { parseFixed } from '@ethersproject/bignumber';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import { inlineCode } from '@discordjs/builders';
 import instantUpdateRelics from './updateRelics.json';
+import { proposedGasPriceFantom } from '../utils';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
@@ -49,7 +50,7 @@ async function updateLevelsOfRelics() {
 
     const relicIdsToUpdate: number[] = [];
 
-    const fiveDaysAgo = moment().subtract(5, 'days').unix();
+    const threeDaysAgo = moment().subtract(3, 'days').unix();
     for (const pool of poolLevels.data.data.pools) {
         const maxLevel = Math.max(...pool.levels.map((level) => level.level));
 
@@ -99,7 +100,7 @@ async function updateLevelsOfRelics() {
             const requiredMaturityForNextLevel = pool.levels[relic.level + 1].requiredMaturity;
             if (
                 (relic.user.id !== '0x0000000000000000000000000000000000000000' &&
-                    relic.entryTimestamp + requiredMaturityForNextLevel < fiveDaysAgo) ||
+                    relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo) ||
                 (updateRelicIdList.includes(relic.relicId) &&
                     relic.entryTimestamp + requiredMaturityForNextLevel < moment().unix())
             ) {
@@ -115,9 +116,12 @@ async function updateLevelsOfRelics() {
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
-                const txn = await reliquary.updatePosition(relicIdToUpdate);
-                await txn.wait();
-                console.log(`Updated relic ${relicIdToUpdate}.`);
+                const gasPrice = await proposedGasPriceFantom();
+                if (parseFloat(gasPrice) < 50) {
+                    const txn = await reliquary.updatePosition(relicIdToUpdate);
+                    await txn.wait();
+                    console.log(`Updated relic ${relicIdToUpdate}.`);
+                }
             } catch (e) {
                 await sendMessage(
                     ChannelId.MULTISIG_TX,
