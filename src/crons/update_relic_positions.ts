@@ -119,18 +119,18 @@ async function updateLevelsOfRelics() {
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
-                const gasPrice = await proposedGasPriceFantom();
-                if (parseFloat(gasPrice) < 50) {
-                    const txn = await reliquary.updatePosition(relicIdToUpdate);
-                    await txn.wait();
-                    console.log(`Updated relic: ${relicIdToUpdate}.`);
-                    updatedRelics++;
-                } else {
-                    console.log(`Gas too high relic ${relicIdToUpdate}. Gas price: ${gasPrice}`);
-                    //wait a bit
-                    await new Promise((f) => setTimeout(f, 1000));
-                    gasPriceTooHigh++;
-                }
+                // const gasPrice = await proposedGasPriceFantom();
+                // if (parseFloat(gasPrice) < 50) {
+                const txn = await reliquary.updatePosition(relicIdToUpdate, { gasPrice: 50000000000 });
+                await txn.wait();
+                console.log(`Updated relic: ${relicIdToUpdate}.`);
+                updatedRelics++;
+                // } else {
+                //     console.log(`Gas too high relic ${relicIdToUpdate}. Gas price: ${gasPrice}`);
+                //     //wait a bit
+                //     await new Promise((f) => setTimeout(f, 1000));
+                //     gasPriceTooHigh++;
+                // }
             } catch (e) {
                 failedRelics++;
                 console.log(`Failed to update relic: ${relicIdToUpdate}.`);
@@ -140,8 +140,7 @@ async function updateLevelsOfRelics() {
         await sendMessage(
             ChannelId.MULTISIG_TX,
             `Updated relics: ${inlineCode(updatedRelics.toString())} 
-Failed relic updates: ${inlineCode(failedRelics.toString())}
-Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
+Failed relic updates: ${inlineCode(failedRelics.toString())}`,
         );
     }
 }
