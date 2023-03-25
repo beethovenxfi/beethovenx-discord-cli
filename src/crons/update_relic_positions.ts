@@ -127,6 +127,8 @@ async function updateLevelsOfRelics() {
                     updatedRelics++;
                 } else {
                     console.log(`Gas too high relic ${relicIdToUpdate}. Gas price: ${gasPrice}`);
+                    //wait a bit
+                    await new Promise((f) => setTimeout(f, 1000));
                     gasPriceTooHigh++;
                 }
             } catch (e) {
