@@ -8,6 +8,7 @@ import { ChannelId, sendMessage } from '../interactions/send-message';
 import { inlineCode } from '@discordjs/builders';
 import instantUpdateRelics from './updateRelics.json';
 import { proposedGasPriceFantom } from '../utils';
+import { fail } from 'assert';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
@@ -112,7 +113,8 @@ async function updateLevelsOfRelics() {
 
     if (relicIdsToUpdate.length > 0) {
         console.log(`Updating ${relicIdsToUpdate.length} relics.`);
-        await sendMessage(ChannelId.MULTISIG_TX, `Updating ${relicIdsToUpdate.length} relics`);
+        let updatedRelics = 0;
+        let failedRelics = 0;
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
@@ -121,14 +123,22 @@ async function updateLevelsOfRelics() {
                     const txn = await reliquary.updatePosition(relicIdToUpdate);
                     await txn.wait();
                     console.log(`Updated relic ${relicIdToUpdate}.`);
+                    updatedRelics++;
                 }
             } catch (e) {
                 await sendMessage(
                     ChannelId.MULTISIG_TX,
                     `Failed to update relic with ID ${inlineCode(relicIdToUpdate.toString())}!`,
                 );
+                failedRelics++;
                 console.log(e);
             }
         }
+        await sendMessage(
+            ChannelId.MULTISIG_TX,
+            `Updated relics: ${inlineCode(updateRelics.toString())}. Failed relic updates: ${inlineCode(
+                failedRelics.toString(),
+            )}`,
+        );
     }
 }
