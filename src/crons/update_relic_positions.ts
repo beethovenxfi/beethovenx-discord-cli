@@ -137,11 +137,11 @@ async function updateLevelsOfRelics() {
                 console.log(e);
             }
         }
-        await sendMessage(
-            ChannelId.MULTISIG_TX,
-            `Updated relics: ${inlineCode(updatedRelics.toString())} 
-Failed relic updates: ${inlineCode(failedRelics.toString())}
-Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
-        );
+        //         await sendMessage(
+        //             ChannelId.MULTISIG_TX,
+        //             `Updated relics: ${inlineCode(updatedRelics.toString())}
+        // Failed relic updates: ${inlineCode(failedRelics.toString())}
+        // Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
+        //         );
     }
 }
