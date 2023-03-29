@@ -16,8 +16,8 @@ const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/be
 export async function updateRelics() {
     console.log('Schedule updating relics');
     await updateLevelsOfRelics();
-    // every 2 hours
-    setInterval(updateLevelsOfRelics, 2 * 3600000);
+    // every 0.5 hours
+    setInterval(updateLevelsOfRelics, 30 * 3600000);
 }
 
 async function updateLevelsOfRelics() {
@@ -137,11 +137,12 @@ async function updateLevelsOfRelics() {
                 console.log(e);
             }
         }
-        //         await sendMessage(
-        //             ChannelId.MULTISIG_TX,
-        //             `Updated relics: ${inlineCode(updatedRelics.toString())}
-        // Failed relic updates: ${inlineCode(failedRelics.toString())}
-        // Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
-        //         );
+        if (failedRelics > 50 || gasPriceTooHigh > 100) {
+            await sendMessage(
+                ChannelId.MULTISIG_TX,
+                `Failed relic updates: ${inlineCode(failedRelics.toString())}
+Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
+            );
+        }
     }
 }
