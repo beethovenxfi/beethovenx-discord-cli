@@ -50,6 +50,7 @@ async function updateLevelsOfRelics() {
     });
 
     const relicIdsToUpdate: number[] = [];
+    const specialRelicIdsToUpdate: number[] = [];
 
     const threeDaysAgo = moment().subtract(3, 'days').unix();
     for (const pool of poolLevels.data.data.pools) {
@@ -100,15 +101,33 @@ async function updateLevelsOfRelics() {
         nonEmptyNonMaxLevelRelics.forEach((relic) => {
             const requiredMaturityForNextLevel = pool.levels[relic.level + 1].requiredMaturity;
             if (
-                (relic.user.id !== '0x0000000000000000000000000000000000000000' &&
-                    relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo) ||
-                (updateRelicIdList.includes(relic.relicId) &&
-                    relic.entryTimestamp + requiredMaturityForNextLevel < moment().unix())
+                relic.user.id !== '0x0000000000000000000000000000000000000000' &&
+                relic.entryTimestamp + requiredMaturityForNextLevel < threeDaysAgo
             ) {
                 // relic has entered next level three days ago
                 relicIdsToUpdate.push(relic.relicId);
             }
+            if (
+                updateRelicIdList.includes(relic.relicId) &&
+                relic.entryTimestamp + requiredMaturityForNextLevel < moment().unix()
+            ) {
+                specialRelicIdsToUpdate.push(relic.relicId);
+            }
         });
+    }
+
+    if (specialRelicIdsToUpdate.length > 0) {
+        const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
+        for (const relicIdToUpdate of relicIdsToUpdate) {
+            try {
+                const txn = await reliquary.updatePosition(relicIdToUpdate);
+                await txn.wait();
+                console.log(`Updated special relic: ${relicIdToUpdate}.`);
+            } catch (e) {
+                console.log(`Failed to update special relic: ${relicIdToUpdate}.`);
+                console.log(e);
+            }
+        }
     }
 
     if (relicIdsToUpdate.length > 0) {
@@ -137,6 +156,9 @@ async function updateLevelsOfRelics() {
                 console.log(e);
             }
         }
+        console.log(`Successful updates: ${updatedRelics}`);
+        console.log(`Failed updates: ${failedRelics}`);
+        console.log(`Gas price too high skips: ${gasPriceTooHigh}`);
         if (failedRelics > 50 || gasPriceTooHigh > 100) {
             await sendMessage(
                 ChannelId.MULTISIG_TX,
