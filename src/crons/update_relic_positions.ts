@@ -126,7 +126,7 @@ async function updateLevelsOfRelics() {
                 console.log(`Updated special relic: ${relicIdToUpdate}.`);
             } catch (e) {
                 console.log(`Failed to update special relic: ${relicIdToUpdate}.`);
-                console.log(e);
+                // console.log(e);
             }
         }
     }
@@ -154,7 +154,7 @@ async function updateLevelsOfRelics() {
             } catch (e) {
                 failedRelics++;
                 console.log(`Failed to update relic: ${relicIdToUpdate}.`);
-                console.log(e);
+                // console.log(e);
             }
         }
         console.log(`Successful updates: ${updatedRelics}`);
