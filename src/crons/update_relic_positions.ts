@@ -117,9 +117,9 @@ async function updateLevelsOfRelics() {
     }
 
     if (specialRelicIdsToUpdate.length > 0) {
-        console.log(`Updating ${relicIdsToUpdate.length} special relics.`);
+        console.log(`Updating ${specialRelicIdsToUpdate.length} special relics.`);
         const reliquary = await ethers.getContractAt(reliquaryAbi, networkConfig.contractAddresses.Reliquary);
-        for (const relicIdToUpdate of relicIdsToUpdate) {
+        for (const relicIdToUpdate of specialRelicIdsToUpdate) {
             try {
                 const txn = await reliquary.updatePosition(relicIdToUpdate);
                 await txn.wait();
