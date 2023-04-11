@@ -27,8 +27,8 @@ async function updateLevelsOfRelics() {
     const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
     if (updaterBalance.lt(parseFixed(`1`, 18))) {
         await sendMessage(
-            ChannelId.MULTISIG_TX,
-            `@here The wallet for the relic updatePosition service is running low. Please send FTM to ${inlineCode(
+            ChannelId.SERVER_STATUS,
+            `The wallet for the relic updatePosition service is running low. Please send FTM to ${inlineCode(
                 networkConfig.walletAddresses.relicUpdater,
             )}!`,
         );
@@ -126,7 +126,6 @@ async function updateLevelsOfRelics() {
                 console.log(`Updated special relic: ${relicIdToUpdate}.`);
             } catch (e) {
                 console.log(`Failed to update special relic: ${relicIdToUpdate}.`);
-                // console.log(e);
             }
         }
     }
@@ -140,8 +139,8 @@ async function updateLevelsOfRelics() {
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
                 const gasPrice = await proposedGasPriceFantom();
-                if (parseFloat(gasPrice) < 30) {
-                    const txn = await reliquary.updatePosition(relicIdToUpdate, { gasPrice: 30000000000 });
+                if (parseFloat(gasPrice) < 50) {
+                    const txn = await reliquary.updatePosition(relicIdToUpdate, { gasPrice: 50000000000 });
                     await txn.wait();
                     console.log(`Updated relic: ${relicIdToUpdate}.`);
                     updatedRelics++;
@@ -154,18 +153,17 @@ async function updateLevelsOfRelics() {
             } catch (e) {
                 failedRelics++;
                 console.log(`Failed to update relic: ${relicIdToUpdate}.`);
-                // console.log(e);
             }
         }
         console.log(`Successful updates: ${updatedRelics}`);
         console.log(`Failed updates: ${failedRelics}`);
         console.log(`Gas price too high skips: ${gasPriceTooHigh}`);
-        //         if (failedRelics > 50 || gasPriceTooHigh > 100) {
-        //             await sendMessage(
-        //                 ChannelId.MULTISIG_TX,
-        //                 `Failed relic updates: ${inlineCode(failedRelics.toString())}
-        // Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
-        //             );
-        //         }
+        if (failedRelics > 50 || gasPriceTooHigh > 100) {
+            await sendMessage(
+                ChannelId.SERVER_STATUS,
+                `Failed relic updates: ${inlineCode(failedRelics.toString())}
+        Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
+            );
+        }
     }
 }

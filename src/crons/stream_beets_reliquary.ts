@@ -35,8 +35,8 @@ export async function streamBeets() {
     const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
     if (updaterBalance.lt(parseUnits(`1`, 18))) {
         await sendMessage(
-            ChannelId.MULTISIG_TX,
-            `@here The wallet for the Reliquary service is running low. Please send FTM to ${inlineCode(
+            ChannelId.SERVER_STATUS,
+            `The wallet for the Reliquary service is running low. Please send FTM to ${inlineCode(
                 networkConfig.walletAddresses.relicUpdater,
             )}!`,
         );
@@ -76,7 +76,7 @@ export async function streamBeets() {
     const currentRate = (await curve.getRate(0)) as BigNumber;
 
     await sendMessage(
-        ChannelId.MULTISIG_TX,
+        ChannelId.SERVER_STATUS,
         `Sent ${formatUnits(
             beetsLeftOnReliquary.sub(beetsBefore),
         )} BEETS to Reliquary and set the rate from ${formatUnits(oldRate)} BEETS/s to ${formatUnits(
@@ -133,14 +133,14 @@ async function checkBeetsBalance(
 
     if (totalBeetsAvailable.lt(`0`)) {
         await sendMessage(
-            ChannelId.MULTISIG_TX,
+            ChannelId.SERVER_STATUS,
             `(@)here: The reliquary ran out of beets. It is lacking  ${formatUnits(totalBeetsAvailable)} BEETS.`,
         );
     }
 
     if (beetsDifferenceForEpoch.lt(`0`)) {
         await sendMessage(
-            ChannelId.MULTISIG_TX,
+            ChannelId.SERVER_STATUS,
             `(@)here Reliquary will run out of BEETS this epoch:
 Beets available: ${formatUnits(totalBeetsAvailable)}
 Current rate: ${formatUnits(currentRate)} BEETS/s
@@ -156,7 +156,7 @@ Or send ${formatUnits(beetsNeeded.sub(totalBeetsAvailable))} (${beetsNeeded.sub(
     } else {
         if (!alertOnly) {
             await sendMessage(
-                ChannelId.MULTISIG_TX,
+                ChannelId.SERVER_STATUS,
                 `Beets available: ${formatUnits(totalBeetsAvailable)}
 Current rate: ${formatUnits(currentRate)} BEETS/s 
 Depleted on: ${runOutDate.format()} 
