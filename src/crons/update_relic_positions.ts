@@ -139,8 +139,10 @@ async function updateLevelsOfRelics() {
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
                 const gasPrice = await proposedGasPriceFantom();
-                if (parseFloat(gasPrice) < 50) {
-                    const txn = await reliquary.updatePosition(relicIdToUpdate, { gasPrice: 50000000000 });
+                if (parseFloat(gasPrice) < 70) {
+                    const txn = await reliquary.updatePosition(relicIdToUpdate, {
+                        gasPrice: parseFloat(gasPrice) * 1000000000,
+                    });
                     await txn.wait();
                     console.log(`Updated relic: ${relicIdToUpdate}.`);
                     updatedRelics++;
