@@ -139,7 +139,7 @@ async function updateLevelsOfRelics() {
         for (const relicIdToUpdate of relicIdsToUpdate) {
             try {
                 const gasPrice = await proposedGasPriceFantom();
-                if (parseFloat(gasPrice) < 70) {
+                if (parseFloat(gasPrice) < 100) {
                     const txn = await reliquary.updatePosition(relicIdToUpdate, {
                         gasPrice: parseFloat(gasPrice) * 1000000000,
                     });
