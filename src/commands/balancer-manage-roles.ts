@@ -54,6 +54,10 @@ export const balancerManageRoles: CommandHandler = {
                 .addChoices(
                     { name: 'Vault', value: 'Vault' },
                     { name: 'ProtocolFeesCollector', value: 'ProtocolFeesCollector' },
+                    {
+                        name: 'PoolSpecificProtocolFeePercentagesProvider',
+                        value: 'PoolSpecificProtocolFeePercentagesProvider',
+                    },
                     { name: 'Authorizer', value: 'Authorizer' },
                 )
                 .setDescription('Chose contract to grant/revoke roles on')
