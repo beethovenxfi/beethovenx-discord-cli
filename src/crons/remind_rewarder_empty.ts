@@ -48,7 +48,7 @@ async function checkEmptyRewarders() {
                 if (days < 5) {
                     await sendMessage(
                         ChannelId.MULTISIG_TX,
-                        `@here Rewarder ${inlineCode(rewarderAddress)} running empty in under 5 days! 
+                        `Rewarder ${inlineCode(rewarderAddress)} running empty in under 5 days! 
         Remaining reward tokens: ${inlineCode(ethers.utils.formatUnits(balance))} ${await erc20.symbol()}
         Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
         `,
