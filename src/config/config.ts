@@ -10,6 +10,7 @@ type CliNetworkConfigContent = {
         BeetsLp: string;
         TeamVesting: string;
         ProtocolFeesCollector: string;
+        PoolSpecificProtocolFeePercentagesProvider: string;
         Reliquary: string;
         ReliquaryBeetsStreamer: string;
         multicall: string;
@@ -37,6 +38,7 @@ export const scriptConfig: NetworkConfig = {
             BeetsLp: '0x03c6B3f09D2504606936b1A4DeCeFaD204687890',
             TeamVesting: '0xa2503804ec837D1E4699932D58a3bdB767DeA505',
             ProtocolFeesCollector: '0xC6920d3a369E7c8BD1A22DbE385e11d1F7aF948F',
+            PoolSpecificProtocolFeePercentagesProvider: '0xe101551C4772F771FEDEBecc786931E61000657C',
             Reliquary: '0x1ed6411670c709F4e163854654BD52c74E66D7eC',
             ReliquaryBeetsStreamer: '0xC8e3f0fC248F3A734d69045cf5174EC02173b5d0',
             multicall: '0x66335d7ad8011f6aa3f48aadcb523b62b38ed961',
@@ -60,6 +62,7 @@ export const scriptConfig: NetworkConfig = {
             BeetsLp: '0x33276d43ada054a281d40a11d48310cdc0156fc2',
             TeamVesting: '',
             ProtocolFeesCollector: '0x45384d59dA6748d7C21200c80893634d5CA980CD',
+            PoolSpecificProtocolFeePercentagesProvider: '',
             Reliquary: '',
             ReliquaryBeetsStreamer: '',
             multicall: '',
