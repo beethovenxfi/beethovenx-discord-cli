@@ -8,7 +8,6 @@ import { ChannelId, sendMessage } from '../interactions/send-message';
 import { inlineCode } from '@discordjs/builders';
 import instantUpdateRelics from './updateRelics.json';
 import { proposedGasPriceFantom } from '../utils';
-import { fail } from 'assert';
 const { ethers } = require('hardhat');
 
 const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
@@ -163,8 +162,9 @@ async function updateLevelsOfRelics() {
         if (failedRelics > 50 || gasPriceTooHigh > 100) {
             await sendMessage(
                 ChannelId.SERVER_STATUS,
-                `Failed relic updates: ${inlineCode(failedRelics.toString())}
-        Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
+                `Successful updated relics: ${inlineCode(updatedRelics.toString())}
+Failed relic updates: ${inlineCode(failedRelics.toString())}
+Not updated due to high gas: ${inlineCode(gasPriceTooHigh.toString())}`,
             );
         }
     }
