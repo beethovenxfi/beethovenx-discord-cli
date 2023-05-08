@@ -27,6 +27,7 @@ async function checkEmptyRewarders() {
                 checkSingleTokenRewarder(rewarderAddress);
             } catch (e) {
                 // check if it's a multitoken rewarder
+                console.log(`SingleTokenRewarder check failed: ${rewarderAddress}`);
                 try {
                     checkMultiTokenRewarder(rewarderAddress);
                 } catch (e) {
