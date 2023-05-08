@@ -24,12 +24,12 @@ async function checkEmptyRewarders() {
         console.log('Checking rewarders: ', rewarders.toString());
         for (let rewarderAddress of rewarders) {
             try {
-                checkSingleTokenRewarder(rewarderAddress);
+                await checkSingleTokenRewarder(rewarderAddress);
             } catch (e) {
                 // check if it's a multitoken rewarder
                 console.log(`SingleTokenRewarder check failed: ${rewarderAddress}`);
                 try {
-                    checkMultiTokenRewarder(rewarderAddress);
+                    await checkMultiTokenRewarder(rewarderAddress);
                 } catch (e) {
                     console.log('error checking for empty rewarders', e);
                 }
