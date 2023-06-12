@@ -50,16 +50,16 @@ async function execute(interaction: CommandInteraction) {
         }
 
         rewardersOut.push(rewarder);
+    }
 
-        await interaction.editReply({
-            content: codeBlock(`Found ${rewardersOut.length} rewarders:`),
+    await interaction.editReply({
+        content: codeBlock(`Found ${rewardersOut.length} rewarders:`),
+    });
+    for (const rewarder of rewardersOut) {
+        await interaction.followUp({
+            content: codeBlock(`${JSON.stringify(rewarder, null, 2)}`),
+            ephemeral: true,
         });
-        for (const rewarder of rewardersOut) {
-            await interaction.followUp({
-                content: codeBlock(`${JSON.stringify(rewarder, null, 2)}`),
-                ephemeral: true,
-            });
-        }
     }
 }
 
