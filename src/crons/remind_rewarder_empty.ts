@@ -7,6 +7,7 @@ import { ERC20 } from '../../masterchef-types';
 import { TimeBasedMasterChefRewarder } from '../../masterchef-types/TimeBasedMasterChefRewarder';
 import moment from 'moment';
 import { TimeBasedMasterChefMultiTokenRewarder } from '../../masterchef-types/TimeBasedMasterChefMultiTokenRewarder';
+import { formatFixed } from '@ethersproject/bignumber';
 
 export async function notifiyEmptyRewarders() {
     console.log('Schedule checking for empty rewarders');
@@ -49,6 +50,7 @@ async function checkSingleTokenRewarder(rewarderAddress: string) {
     const rewardToken = await rewarder.rewardToken();
     const erc20 = (await ethers.getContractAt('ERC20', rewardToken)) as ERC20;
     const balance = await erc20.balanceOf(rewarder.address);
+    const decimals = await erc20.decimals();
     const rewardPerSecond = await rewarder.rewardPerSecond();
     if (rewardPerSecond.eq(0)) {
         return;
@@ -68,7 +70,7 @@ async function checkSingleTokenRewarder(rewarderAddress: string) {
             await sendMessage(
                 ChannelId.MULTISIG_TX,
                 `Rewarder ${inlineCode(rewarderAddress)} running empty in under 5 days! 
-Remaining reward tokens: ${inlineCode(ethers.utils.formatUnits(balance))} ${await erc20.symbol()}
+Remaining reward tokens: ${inlineCode(formatFixed(balance, decimals))} ${await erc20.symbol()}
 Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
 `,
             );
@@ -87,6 +89,7 @@ async function checkMultiTokenRewarder(rewarderAddress: string) {
     for (const rewardToken of rewardTokens) {
         const erc20 = (await ethers.getContractAt('ERC20', rewardToken)) as ERC20;
         const balance = await erc20.balanceOf(rewarder.address);
+        const decimals = await erc20.decimals();
         const rewardTokenConfig = await rewarder.rewardTokenConfigs(i);
         if (rewardTokenConfig.rewardsPerSecond.eq(0)) {
             return;
@@ -106,7 +109,7 @@ async function checkMultiTokenRewarder(rewarderAddress: string) {
                 await sendMessage(
                     ChannelId.MULTISIG_TX,
                     `Rewarder ${inlineCode(rewarderAddress)} running empty in under 5 days! 
-    Remaining reward tokens: ${inlineCode(ethers.utils.formatUnits(balance))} ${await erc20.symbol()}
+    Remaining reward tokens: ${inlineCode(formatFixed(balance, decimals))} ${await erc20.symbol()}
     Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
     `,
                 );
