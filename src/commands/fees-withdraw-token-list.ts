@@ -235,15 +235,10 @@ async function insertUSDValue(
     const allContractAddresses = tokenValues.map((token) => token.tokenAddress);
     const pagedTokenPrices: TokenPrices[] = [];
     const chunks = _.chunk(allContractAddresses, 100);
-    let backendUrl = '';
-    if (platform === 'fantom') {
-        backendUrl = 'https://backend-v2.beets-ftm-node.com/graphql';
-    } else if ('optimism') {
-        backendUrl = 'https://backend-optimism-v2.beets-ftm-node.com/graphql';
-    }
+    const backendUrl = 'https://backend-v3.beets-ftm-node.com/graphql';
     const allPools = await axios.post(backendUrl, {
         query: ` query {
-          poolGetPools{
+          poolGetPools(where: {chainIn: [${platform.toUpperCase()}]}){
             address
             dynamicData{
             totalShares
@@ -253,14 +248,22 @@ async function insertUSDValue(
         }`,
     });
 
-    const backendTokenPrices = await axios.post(backendUrl, {
-        query: `query {
+    const backendTokenPrices = await axios.post(
+        backendUrl,
+        {
+            query: `query {
         tokenGetCurrentPrices{
           address
           price
         }
       }`,
-    });
+        },
+        {
+            headers: {
+                chainId: platform === 'fantom' ? '250' : '10',
+            },
+        },
+    );
     for (const chunk of chunks) {
         const response = await axios.get(
             `https://api.coingecko.com/api/v3/simple/token_price/${platform}?vs_currencies=usd&contract_addresses=` +
