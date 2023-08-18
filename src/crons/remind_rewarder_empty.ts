@@ -8,6 +8,8 @@ import { TimeBasedMasterChefRewarder } from '../../masterchef-types/TimeBasedMas
 import moment from 'moment';
 import { TimeBasedMasterChefMultiTokenRewarder } from '../../masterchef-types/TimeBasedMasterChefMultiTokenRewarder';
 import { formatFixed } from '@ethersproject/bignumber';
+import axios from 'axios';
+import { parseUnits } from 'ethers/lib/utils';
 
 export async function notifiyEmptyRewarders() {
     console.log('Schedule checking for empty rewarders');
@@ -56,22 +58,50 @@ async function checkSingleTokenRewarder(rewarderAddress: string) {
         return;
     }
 
+    const farmId = await rewarder.masterchefPoolIds('0');
+
+    const currentBlock = await ethers.provider.getBlock('latest');
+
+    const farmUsers = await axios.post<{
+        data: { users: [{ address: string }] };
+    }>('https://api.thegraph.com/subgraphs/name/beethovenxfi/masterchefv2', {
+        query: `{
+                    users(where: {pool: ${farmId}}){
+                        address
+                    }
+                }`,
+    });
+
+    let totalPending = parseUnits('0');
+
+    for (const user of farmUsers.data.data.users) {
+        const pendingTokens = await rewarder.pendingToken(parseFloat(`${farmId}`), user.address, {
+            blockTag: currentBlock.number,
+        });
+        totalPending = totalPending.add(pendingTokens);
+    }
+
+    const totalLeft = balance.sub(totalPending);
+    const secondsLeft = totalLeft.div(rewardPerSecond);
+
+    const runOutTime = currentBlock.timestamp + parseFloat(`${secondsLeft}`);
+    const runOutMoment = moment.unix(runOutTime).utc();
+
     const seconds = balance.div(rewardPerSecond);
-    if (seconds.eq(0)) {
+    if (moment().utc().unix > runOutMoment.unix) {
         await sendMessage(
             ChannelId.MULTISIG_TX,
-            `@here Rewarder ${inlineCode(rewarderAddress)} is empty!
+            `@here Rewarder ${inlineCode(rewarderAddress)} is empty! Ran out at ${runOutMoment.toISOString()}
 `,
         );
     } else {
-        const estimatedEndOfRewards = moment().add(seconds.toNumber(), 'seconds');
-        const days = estimatedEndOfRewards.diff(moment(), 'days');
+        const days = runOutMoment.diff(moment(), 'days');
         if (days < 5) {
             await sendMessage(
                 ChannelId.MULTISIG_TX,
                 `Rewarder ${inlineCode(rewarderAddress)} running empty in under 5 days! 
 Remaining reward tokens: ${inlineCode(formatFixed(balance, decimals))} ${await erc20.symbol()}
-Estimated end of rewards: ${estimatedEndOfRewards.toISOString()} 
+Estimated end of rewards: ${runOutMoment.toISOString()} 
 `,
             );
         }
