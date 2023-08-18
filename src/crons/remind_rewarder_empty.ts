@@ -43,7 +43,7 @@ async function checkEmptyRewarders() {
     }
 }
 
-async function checkSingleTokenRewarder(rewarderAddress: string) {
+export async function checkSingleTokenRewarder(rewarderAddress: string) {
     const rewarder = (await ethers.getContractAt(
         'TimeBasedMasterChefRewarder',
         rewarderAddress,
@@ -52,15 +52,16 @@ async function checkSingleTokenRewarder(rewarderAddress: string) {
     const rewardToken = await rewarder.rewardToken();
     const erc20 = (await ethers.getContractAt('ERC20', rewardToken)) as ERC20;
     const balance = await erc20.balanceOf(rewarder.address);
-    const decimals = await erc20.decimals();
     const rewardPerSecond = await rewarder.rewardPerSecond();
     if (rewardPerSecond.eq(0)) {
         return;
     }
 
     const farmId = await rewarder.masterchefPoolIds('0');
+    console.log(`Got farm Id: ${farmId}`);
 
     const currentBlock = await ethers.provider.getBlock('latest');
+    console.log(`Got block: ${currentBlock.number}`);
 
     const farmUsers = await axios.post<{
         data: { users: [{ address: string }] };
@@ -74,6 +75,8 @@ async function checkSingleTokenRewarder(rewarderAddress: string) {
 
     let totalPending = parseUnits('0');
 
+    console.log(`Got ${farmUsers.data.data.users.length} users`);
+
     for (const user of farmUsers.data.data.users) {
         const pendingTokens = await rewarder.pendingToken(parseFloat(`${farmId}`), user.address, {
             blockTag: currentBlock.number,
@@ -81,31 +84,34 @@ async function checkSingleTokenRewarder(rewarderAddress: string) {
         totalPending = totalPending.add(pendingTokens);
     }
 
+    console.log(`Got ${totalPending} total pending`);
+
     const totalLeft = balance.sub(totalPending);
     const secondsLeft = totalLeft.div(rewardPerSecond);
 
     const runOutTime = currentBlock.timestamp + parseFloat(`${secondsLeft}`);
     const runOutMoment = moment.unix(runOutTime).utc();
 
-    const seconds = balance.div(rewardPerSecond);
-    if (moment().utc().unix > runOutMoment.unix) {
-        await sendMessage(
-            ChannelId.MULTISIG_TX,
-            `@here Rewarder ${inlineCode(rewarderAddress)} is empty! Ran out at ${runOutMoment.toISOString()}
-`,
-        );
-    } else {
-        const days = runOutMoment.diff(moment(), 'days');
-        if (days < 5) {
-            await sendMessage(
-                ChannelId.MULTISIG_TX,
-                `Rewarder ${inlineCode(rewarderAddress)} running empty in under 5 days! 
-Remaining reward tokens: ${inlineCode(formatFixed(balance, decimals))} ${await erc20.symbol()}
-Estimated end of rewards: ${runOutMoment.toISOString()} 
-`,
-            );
-        }
-    }
+    console.log(runOutMoment);
+
+    //     if (moment().utc().unix > runOutMoment.unix) {
+    //         await sendMessage(
+    //             ChannelId.MULTISIG_TX,
+    //             `@here Rewarder ${inlineCode(rewarderAddress)} is empty! Ran out at ${runOutMoment.toISOString()}
+    // `,
+    //         );
+    //     } else {
+    //         const days = runOutMoment.diff(moment(), 'days');
+    //         if (days < 5) {
+    //             await sendMessage(
+    //                 ChannelId.MULTISIG_TX,
+    //                 `Rewarder ${inlineCode(rewarderAddress)} running empty in under 5 days!
+    // Remaining reward tokens: ${inlineCode(formatFixed(balance, decimals))} ${await erc20.symbol()}
+    // Estimated end of rewards: ${runOutMoment.toISOString()}
+    // `,
+    //             );
+    //         }
+    //     }
 }
 
 async function checkMultiTokenRewarder(rewarderAddress: string) {
