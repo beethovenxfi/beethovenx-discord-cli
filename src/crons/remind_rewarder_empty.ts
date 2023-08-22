@@ -65,21 +65,35 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
     const currentBlock = await ethers.provider.getBlock('latest');
     console.log(`Got block: ${currentBlock.number}`);
 
-    const farmUsers = await axios.post<{
-        data: { users: [{ address: string }] };
-    }>('https://api.thegraph.com/subgraphs/name/beethovenxfi/masterchefv2', {
-        query: `{
-                    users(where: {pool: "${farmId}"}, first: 1000){
-                        address
-                    }
-                }`,
-    });
+    const limit = 1000;
+    let userAddress = '0x0000000000000000000000000000000000000000';
+    let hasMore = true;
+    let farmUsers: string[] = [];
 
+    while (hasMore) {
+        const response = await axios.post<{
+            data: { users: [{ address: string }] };
+        }>('https://api.thegraph.com/subgraphs/name/beethovenxfi/masterchefv2', {
+            query: `{
+                        users(where: {pool: "${farmId}"}, first: 1000, address_gt:"${userAddress}"}, first: 1000, orderBy: address, orderDirection: asc){
+                            address
+                        }
+                    }`,
+        });
+
+        farmUsers = [...farmUsers, ...response.data.data.users.map((user) => user.address)];
+
+        if (response.data.data.users.length < limit) {
+            hasMore = false;
+        } else {
+            userAddress = response.data.data.users[response.data.data.users.length - 1].address;
+        }
+    }
     let totalPending = parseUnits('0');
-    console.log(`Got ${farmUsers.data.data.users.length} users`);
+    console.log(`Got ${farmUsers.length} users`);
 
-    for (const user of farmUsers.data.data.users) {
-        const pendingTokens = await rewarder.pendingToken(parseFloat(`${farmId}`), user.address, {
+    for (const user of farmUsers) {
+        const pendingTokens = await rewarder.pendingToken(parseFloat(`${farmId}`), user, {
             blockTag: currentBlock.number,
         });
         totalPending = totalPending.add(pendingTokens);
