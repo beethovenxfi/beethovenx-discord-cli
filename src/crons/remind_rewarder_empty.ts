@@ -75,10 +75,15 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
             data: { users: [{ address: string }] };
         }>('https://api.thegraph.com/subgraphs/name/beethovenxfi/masterchefv2', {
             query: `{
-                        users(where: {pool: "${farmId}", first: 1000, address_gt:"${userAddress}"}, first: 1000, orderBy: address, orderDirection: asc){
-                            address
-                        }
-                    }`,
+                users(
+                  where: {pool: "${farmId}", address_gt: "${userAddress}"}
+                  first: 1000
+                  orderBy: address
+                  orderDirection: asc
+                ) {
+                  address
+                }
+              }`,
         });
 
         console.log(response.data);
