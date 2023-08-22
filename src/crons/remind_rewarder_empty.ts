@@ -75,7 +75,7 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
             data: { users: [{ address: string }] };
         }>('https://api.thegraph.com/subgraphs/name/beethovenxfi/masterchefv2', {
             query: `{
-                        users(where: {pool: "${farmId}"}, first: 1000, address_gt:"${userAddress}"}, first: 1000, orderBy: address, orderDirection: asc){
+                        users(where: {pool: "${farmId}", first: 1000, address_gt:"${userAddress}"}, first: 1000, orderBy: address, orderDirection: asc){
                             address
                         }
                     }`,
@@ -89,6 +89,7 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
             userAddress = response.data.data.users[response.data.data.users.length - 1].address;
         }
     }
+
     let totalPending = parseUnits('0');
     console.log(`Got ${farmUsers.length} users`);
 
