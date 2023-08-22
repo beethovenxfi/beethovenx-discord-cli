@@ -115,7 +115,7 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
 
     console.log(runOutMoment);
 
-    if (moment().utc().unix > runOutMoment.unix) {
+    if (moment().utc().unix() > runOutMoment.unix()) {
         await sendMessage(
             ChannelId.MULTISIG_TX,
             `@here Rewarder ${inlineCode(rewarderAddress)} is empty! Ran out at ${runOutMoment.toISOString()}
