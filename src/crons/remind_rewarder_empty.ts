@@ -75,12 +75,16 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
     });
 
     let totalPending = parseUnits('0');
+    console.log(`Got ${farmUsers.data.data.users.length} users`);
+
     for (const user of farmUsers.data.data.users) {
         const pendingTokens = await rewarder.pendingToken(parseFloat(`${farmId}`), user.address, {
             blockTag: currentBlock.number,
         });
         totalPending = totalPending.add(pendingTokens);
     }
+
+    console.log(`Got ${totalPending} total pending`);
 
     const totalLeft = balance.sub(totalPending);
     const secondsLeft = totalLeft.div(rewardPerSecond);
