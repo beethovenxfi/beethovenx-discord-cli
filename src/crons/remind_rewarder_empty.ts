@@ -31,6 +31,7 @@ async function checkEmptyRewarders() {
             } catch (e) {
                 // check if it's a multitoken rewarder
                 console.log(`SingleTokenRewarder check failed: ${rewarderAddress}`);
+                console.log(e);
                 try {
                     await checkMultiTokenRewarder(rewarderAddress);
                 } catch (e) {
@@ -68,7 +69,7 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
         data: { users: [{ address: string }] };
     }>('https://api.thegraph.com/subgraphs/name/beethovenxfi/masterchefv2', {
         query: `{
-                    users(where: {pool: "${farmId}"}){
+                    users(where: {pool: "${farmId}"}, first: 1000){
                         address
                     }
                 }`,
