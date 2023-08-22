@@ -86,8 +86,6 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
               }`,
         });
 
-        console.log(response.data);
-
         farmUsers = [...farmUsers, ...response.data.data.users.map((user) => user.address)];
 
         if (response.data.data.users.length < limit) {
