@@ -234,7 +234,7 @@ async function insertUSDValue(
     const tokensWithoutprice = [];
     const allContractAddresses = tokenValues.map((token) => token.tokenAddress);
     const pagedTokenPrices: TokenPrices[] = [];
-    const chunks = _.chunk(allContractAddresses, 100);
+    const chunks = _.chunk(allContractAddresses, 10);
     const backendUrl = 'https://backend-v3.beets-ftm-node.com/graphql';
     const allPools = await axios.post(backendUrl, {
         query: ` query {
