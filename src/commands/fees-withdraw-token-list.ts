@@ -264,46 +264,47 @@ async function insertUSDValue(
             },
         },
     );
-    for (const chunk of chunks) {
-        const response = await axios.get(
-            `https://api.coingecko.com/api/v3/simple/token_price/${platform}?vs_currencies=usd&contract_addresses=` +
-                chunk.join(','),
-        );
-        pagedTokenPrices.push(response.data);
-    }
-    const allTokenPrices = pagedTokenPrices.reduce((result, page) => ({ ...result, ...page }), {});
+    // for (const chunk of chunks) {
+    //     const response = await axios.get(
+    //         `https://api.coingecko.com/api/v3/simple/token_price/${platform}?vs_currencies=usd&contract_addresses=` +
+    //             chunk.join(','),
+    //     );
+    //     pagedTokenPrices.push(response.data);
+    // }
+    // const allTokenPrices = pagedTokenPrices.reduce((result, page) => ({ ...result, ...page }), {});
+    const allTokenPrices = {};
     for (const token of tokenValues) {
         let foundPrice = false;
-        if (allTokenPrices[token.tokenAddress]) {
-            token.totalValueUSD =
-                (parseInt(token.balance) / 10 ** token.decimals) * allTokenPrices[token.tokenAddress].usd;
-        } else {
-            // try to get BPT prices
-            for (const pool of allPools.data.data.poolGetPools) {
-                if (pool.address.toLowerCase() === token.tokenAddress.toLowerCase()) {
-                    const tokenPrice =
-                        parseFloat(pool.dynamicData.totalLiquidity) / parseFloat(pool.dynamicData.totalShares);
-                    token.totalValueUSD = (parseInt(token.balance) / 10 ** token.decimals) * tokenPrice;
+        // if (allTokenPrices[token.tokenAddress]) {
+        //     token.totalValueUSD =
+        //         (parseInt(token.balance) / 10 ** token.decimals) * allTokenPrices[token.tokenAddress].usd;
+        // } else {
+        // try to get BPT prices
+        for (const pool of allPools.data.data.poolGetPools) {
+            if (pool.address.toLowerCase() === token.tokenAddress.toLowerCase()) {
+                const tokenPrice =
+                    parseFloat(pool.dynamicData.totalLiquidity) / parseFloat(pool.dynamicData.totalShares);
+                token.totalValueUSD = (parseInt(token.balance) / 10 ** token.decimals) * tokenPrice;
+                foundPrice = true;
+            }
+        }
+        if (!foundPrice) {
+            //try backend
+            for (const backendToken of backendTokenPrices.data.data.tokenGetCurrentPrices) {
+                if (backendToken.address.toLowerCase() === token.tokenAddress.toLowerCase()) {
+                    token.totalValueUSD = (parseInt(token.balance) / 10 ** token.decimals) * backendToken.price;
                     foundPrice = true;
                 }
             }
-            if (!foundPrice) {
-                //try backend
-                for (const backendToken of backendTokenPrices.data.data.tokenGetCurrentPrices) {
-                    if (backendToken.address.toLowerCase() === token.tokenAddress.toLowerCase()) {
-                        token.totalValueUSD = (parseInt(token.balance) / 10 ** token.decimals) * backendToken.price;
-                        foundPrice = true;
-                    }
-                }
-                console.log(
-                    `Can't find price for ${token.symbol}(${token.tokenAddress}). Balance: ${
-                        parseInt(token.balance) / 10 ** token.decimals
-                    }`,
-                );
-                tokensWithoutprice.push(token);
-            }
+            console.log(
+                `Can't find price for ${token.symbol}(${token.tokenAddress}). Balance: ${
+                    parseInt(token.balance) / 10 ** token.decimals
+                }`,
+            );
+            tokensWithoutprice.push(token);
         }
     }
+    // }
     return tokensWithoutprice;
 }
 
