@@ -76,22 +76,23 @@ export async function opFarmsReminder(): Promise<void> {
     }
 
     let jwtClient;
+    let authError: boolean = false;
 
-    try {
-        jwtClient = new google.auth.JWT(
-            process.env.GOOGLE_CLIENT_EMAIL!,
-            undefined,
-            process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
-            'https://www.googleapis.com/auth/spreadsheets',
-        );
-        await jwtClient.authorize(function (err, result) {
-            if (err) {
-                console.log(`Error authorizing google jwt client: ${err}`);
-                throw new Error(err);
-            }
-        });
-    } catch (e) {
-        console.log(`Could not get google sheet credentials. Error: ${e}`);
+    jwtClient = new google.auth.JWT(
+        process.env.GOOGLE_CLIENT_EMAIL!,
+        undefined,
+        process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
+        'https://www.googleapis.com/auth/spreadsheets',
+    );
+    await jwtClient.authorize(function (err, result) {
+        if (err) {
+            console.log(`Error authorizing google jwt client: ${err}`);
+            authError = true;
+        }
+    });
+
+    if (authError) {
+        console.log(`Could not get google sheet credentials.`);
         await sendMessage(
             ChannelId.MULTISIG_TX,
             'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet credentials',
