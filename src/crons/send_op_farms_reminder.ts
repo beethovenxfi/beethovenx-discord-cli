@@ -69,10 +69,15 @@ const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 export async function scheduleOpFarmsReminder() {
     console.log('scheduling op farms reminder...');
     await opFarmsReminder();
-    setInterval(opFarmsReminder, 604800000);
+    setInterval(opFarmsReminder, 43200000); // every 12 hrs
 }
 
 export async function opFarmsReminder(): Promise<void> {
+    const now = moment();
+    if (!(now.day() === 3 && now.hour() < 13)) {
+        return;
+    }
+
     let credentials: GoogleSheetCredentials;
     let jwtClient: JWT;
 
