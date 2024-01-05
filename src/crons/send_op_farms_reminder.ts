@@ -83,7 +83,7 @@ export async function opFarmsReminder(): Promise<void> {
         throw Error('Could not find credentials file.');
     }
 
-    var file = fs.readdirSync(process.cwd()).find((fn) => fn.startsWith('transaction'));
+    const file = fs.readdirSync(process.cwd()).find((fn) => fn.startsWith('transaction'));
 
     // remove the old transaction json file
     if (file) {
@@ -108,23 +108,19 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
         await sendMessage(ChannelId.MULTISIG_TX, {
             content: '@here SOMETHING WENT WRONG WITH OP FARMS!!',
         });
-        throw Error('Could not find sheet name provided.');
+        throw Error('Could not find any sheets!');
     }
 
     const sheetsWithEpoch = result.data.sheets?.filter((sheet) => sheet.properties?.title?.includes('Epoch'));
     const sheetNames = sheetsWithEpoch?.map((sheet) => sheet.properties?.title);
 
     sheetNames?.forEach(async (name) => {
-        let result;
-        try {
-            result = await sheets.spreadsheets.values.get({
-                spreadsheetId: sheetId,
-                range: `${name}${sheetRange}`,
-                valueRenderOption: 'UNFORMATTED_VALUE',
-            });
-        } catch (e) {
-            throw Error('Could not find sheet name provided.');
-        }
+        const result = await sheets.spreadsheets.values.get({
+            spreadsheetId: sheetId,
+            range: `${name}${sheetRange}`,
+            valueRenderOption: 'UNFORMATTED_VALUE',
+        });
+
         const rows = result.data.values;
 
         if (rows?.length) {
