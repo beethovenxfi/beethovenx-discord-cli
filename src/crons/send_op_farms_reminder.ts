@@ -102,9 +102,7 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
             spreadsheetId: sheetId,
         });
     } catch (e) {
-        await sendMessage(ChannelId.MULTISIG_TX, {
-            content: '@here SOMETHING WENT WRONG WITH OP FARMS!!',
-        });
+        await sendMessage(ChannelId.MULTISIG_TX, '@here SOMETHING WENT WRONG WITH OP FARMS!!');
         throw Error('Could not find any sheets!');
     }
 
@@ -225,9 +223,7 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                 });
             }
         } else {
-            await sendMessage(ChannelId.MULTISIG_TX, {
-                content: '@here SOMETHING WENT WRONG WITH OP FARMS!!',
-            });
+            await sendMessage(ChannelId.MULTISIG_TX, '@here SOMETHING WENT WRONG WITH OP FARMS!!');
             throw new Error('No data found.');
         }
     });
