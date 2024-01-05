@@ -115,7 +115,6 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
         let result;
         try {
             result = await sheets.spreadsheets.values.get({
-                auth: auth,
                 spreadsheetId: sheetId,
                 range: `${name}${sheetRange}`,
                 valueRenderOption: 'UNFORMATTED_VALUE',
