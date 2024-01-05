@@ -71,9 +71,9 @@ export async function scheduleOpFarmsReminder() {
 
 export async function opFarmsReminder(): Promise<void> {
     const now = moment();
-    if (!(now.day() === 3 && now.hour() < 11)) {
-        return;
-    }
+    // if (!(now.day() === 3 && now.hour() < 11)) {
+    //     return;
+    // }
 
     let jwtClient;
 
