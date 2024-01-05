@@ -64,8 +64,6 @@ type GoogleSheetCredentials = {
     client_x509_cert_url: string;
 };
 
-const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
-
 export async function scheduleOpFarmsReminder() {
     console.log('scheduling op farms reminder...');
     await opFarmsReminder();
@@ -78,15 +76,10 @@ export async function opFarmsReminder(): Promise<void> {
         return;
     }
 
-    let credentials: GoogleSheetCredentials;
-    let jwtClient: JWT;
-
-    if (fs.existsSync(CREDENTIALS_PATH)) {
-        credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf-8'));
-        jwtClient = await googleJwtClient.getAuthorizedSheetsClient(credentials.client_email, credentials.private_key);
-    } else {
-        throw Error('Could not find credentials file.');
-    }
+    const jwtClient = await googleJwtClient.getAuthorizedSheetsClient(
+        process.env.GOOGLE_CLIENT_EMAIL!,
+        process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
+    );
 
     const file = fs.readdirSync(process.cwd()).find((fn) => fn.startsWith('transaction'));
 
