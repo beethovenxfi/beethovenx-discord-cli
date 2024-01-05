@@ -83,7 +83,7 @@ export async function opFarmsReminder(): Promise<void> {
             process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
         );
     } catch (e) {
-        console.log(`Could not get google sheet credentials`);
+        console.log(`Could not get google sheet credentials. Error: ${e}`);
         await sendMessage(
             ChannelId.MULTISIG_TX,
             'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet credentials',
@@ -105,7 +105,7 @@ export async function opFarmsReminder(): Promise<void> {
             });
         }
     } catch (e) {
-        console.log(`Could not get or delete stored json file`);
+        console.log(`Could not get or delete stored json file. Error: ${e}`);
         await sendMessage(
             ChannelId.MULTISIG_TX,
             'SOMETHING WENT WRONG WITH OP FARMS! Could not get or delete stored json file',
