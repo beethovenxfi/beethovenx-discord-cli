@@ -75,6 +75,11 @@ export async function opFarmsReminder(): Promise<void> {
     //     return;
     // }
 
+    await sendMessage(
+        ChannelId.MULTISIG_TX,
+        'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet credentials',
+    );
+
     let jwtClient;
 
     try {
