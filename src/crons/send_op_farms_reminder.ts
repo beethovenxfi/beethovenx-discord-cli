@@ -84,7 +84,12 @@ export async function opFarmsReminder(): Promise<void> {
             process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
             'https://www.googleapis.com/auth/spreadsheets',
         );
-        await jwtClient.authorize();
+        await jwtClient.authorize(function (err, result) {
+            if (err) {
+                console.log(`Error authorizing google jwt client: ${err}`);
+                throw new Error(err);
+            }
+        });
     } catch (e) {
         console.log(`Could not get google sheet credentials. Error: ${e}`);
         await sendMessage(
