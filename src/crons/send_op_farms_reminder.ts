@@ -4,7 +4,6 @@ import { google } from 'googleapis';
 import moment from 'moment';
 import { parseUnits } from 'ethers/lib/utils';
 import { googleJwtClient } from '../client/google-jwt-client';
-import { JWT } from 'google-auth-library';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 
 interface SafeTransactionBatch {
