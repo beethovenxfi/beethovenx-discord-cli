@@ -230,8 +230,6 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                     content: '@here OP farms:',
                     files: [attachment],
                 });
-            } else {
-                console.log(`No transactions found`);
             }
         } else {
             await sendMessage(ChannelId.MULTISIG_TX, {
