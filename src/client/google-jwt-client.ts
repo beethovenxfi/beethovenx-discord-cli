@@ -9,7 +9,12 @@ export class GoogleJwtClient {
             privateKey,
             'https://www.googleapis.com/auth/spreadsheets',
         );
-        await jwtClient.authorize();
+        await jwtClient.authorize(function (err, result) {
+            if (err) {
+                console.log(`Error authorizing google jwt client: ${err}`);
+                throw err;
+            }
+        });
         return jwtClient;
     }
 }
