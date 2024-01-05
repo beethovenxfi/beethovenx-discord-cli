@@ -85,7 +85,10 @@ export async function opFarmsReminder(): Promise<void> {
     // remove the old transaction json file
     if (file) {
         unlink(path.join(process.cwd(), file), (err) => {
-            if (err) throw err;
+            if (err) {
+                console.log(`Could not delete file: Error ${err}`);
+                return;
+            }
             console.log(`${file} was deleted`);
         });
     }
@@ -102,8 +105,9 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
             spreadsheetId: sheetId,
         });
     } catch (e) {
-        await sendMessage(ChannelId.MULTISIG_TX, '@here SOMETHING WENT WRONG WITH OP FARMS!!');
-        throw Error('Could not find any sheets!');
+        await sendMessage(ChannelId.MULTISIG_TX, 'SOMETHING WENT WRONG WITH OP FARMS!!');
+        console.log(`Could not find any sheets! Error: ${e}`);
+        return;
     }
 
     const sheetsWithEpoch = result.data.sheets?.filter((sheet) => sheet.properties?.title?.includes('Epoch'));
@@ -223,8 +227,8 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                 });
             }
         } else {
-            await sendMessage(ChannelId.MULTISIG_TX, '@here SOMETHING WENT WRONG WITH OP FARMS!!');
-            throw new Error('No data found.');
+            await sendMessage(ChannelId.MULTISIG_TX, 'SOMETHING WENT WRONG WITH OP FARMS!!');
+            console.log('No data found.');
         }
     });
 }
