@@ -85,7 +85,7 @@ export async function opFarmsReminder(): Promise<void> {
 
     var file = fs.readdirSync(process.cwd()).find((fn) => fn.startsWith('transaction'));
 
-    console.log({ file });
+    // remove the old transaction json file
     if (file) {
         unlink(path.join(process.cwd(), file), (err) => {
             if (err) throw err;
