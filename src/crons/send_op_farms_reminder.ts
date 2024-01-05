@@ -78,7 +78,7 @@ export async function opFarmsReminder(): Promise<void> {
 
     const jwtClient = await googleJwtClient.getAuthorizedSheetsClient(
         process.env.GOOGLE_CLIENT_EMAIL!,
-        process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
+        process.env.GOOGLE_CLIENT_PRIVATE_KEY!.split(String.raw`\n`).join('\n'),
     );
 
     const file = fs.readdirSync(process.cwd()).find((fn) => fn.startsWith('transaction'));
