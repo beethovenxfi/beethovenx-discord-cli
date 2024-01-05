@@ -91,6 +91,7 @@ export async function opFarmsReminder(): Promise<void> {
         }
     });
 
+    console.log(`authError: ${authError}`);
     if (authError) {
         console.log(`Could not get google sheet credentials.`);
         await sendMessage(
