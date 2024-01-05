@@ -71,9 +71,9 @@ export async function scheduleOpFarmsReminder() {
 
 export async function opFarmsReminder(): Promise<void> {
     const now = moment();
-    if (!(now.day() === 3 && now.hour() < 11)) {
-        return;
-    }
+    // if (!(now.day() === 3 && now.hour() < 11)) {
+    //     return;
+    // }
 
     let jwtClient;
     let authError: boolean = false;
@@ -86,8 +86,8 @@ export async function opFarmsReminder(): Promise<void> {
     );
     await jwtClient.authorize(function (err, result) {
         if (err) {
-            console.log(`Error authorizing google jwt client: ${err}`);
             authError = true;
+            console.log(`Error authorizing google jwt client: ${err}`);
         }
     });
 
