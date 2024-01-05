@@ -12,7 +12,7 @@ export class GoogleJwtClient {
         await jwtClient.authorize(function (err, result) {
             if (err) {
                 console.log(`Error authorizing google jwt client: ${err}`);
-                throw err;
+                throw new Error(err);
             }
         });
         return jwtClient;
