@@ -75,22 +75,42 @@ export async function opFarmsReminder(): Promise<void> {
         return;
     }
 
-    const jwtClient = await googleJwtClient.getAuthorizedSheetsClient(
-        process.env.GOOGLE_CLIENT_EMAIL!,
-        process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
-    );
+    let jwtClient;
 
-    const file = fs.readdirSync(process.cwd()).find((fn) => fn.startsWith('transaction'));
+    try {
+        jwtClient = await googleJwtClient.getAuthorizedSheetsClient(
+            process.env.GOOGLE_CLIENT_EMAIL!,
+            process.env.GOOGLE_CLIENT_PRIVATE_KEY!,
+        );
+    } catch (e) {
+        console.log(`Could not get google sheet credentials`);
+        await sendMessage(
+            ChannelId.MULTISIG_TX,
+            'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet credentials',
+        );
+        return;
+    }
 
-    // remove the old transaction json file
-    if (file) {
-        unlink(path.join(process.cwd(), file), (err) => {
-            if (err) {
-                console.log(`Could not delete file: Error ${err}`);
-                return;
-            }
-            console.log(`${file} was deleted`);
-        });
+    try {
+        const file = fs.readdirSync(process.cwd()).find((fn) => fn.startsWith('transaction'));
+
+        // remove the old transaction json file
+        if (file) {
+            unlink(path.join(process.cwd(), file), (err) => {
+                if (err) {
+                    console.log(`Could not delete file: Error ${err}`);
+                    return;
+                }
+                console.log(`${file} was deleted`);
+            });
+        }
+    } catch (e) {
+        console.log(`Could not get or delete stored json file`);
+        await sendMessage(
+            ChannelId.MULTISIG_TX,
+            'SOMETHING WENT WRONG WITH OP FARMS! Could not get or delete stored json file',
+        );
+        return;
     }
 
     createJsonOutput(jwtClient, '1rhIgAvr0BQ2EPATqGyisiQEV0XFVMqmGgDuVpO9-inU', '!A:G');
@@ -105,7 +125,7 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
             spreadsheetId: sheetId,
         });
     } catch (e) {
-        await sendMessage(ChannelId.MULTISIG_TX, 'SOMETHING WENT WRONG WITH OP FARMS!!');
+        await sendMessage(ChannelId.MULTISIG_TX, 'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet.');
         console.log(`Could not find any sheets! Error: ${e}`);
         return;
     }
@@ -227,7 +247,10 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                 });
             }
         } else {
-            await sendMessage(ChannelId.MULTISIG_TX, 'SOMETHING WENT WRONG WITH OP FARMS!!');
+            await sendMessage(
+                ChannelId.MULTISIG_TX,
+                'SOMETHING WENT WRONG WITH OP FARMS!! Did not find data in the google sheet',
+            );
             console.log('No data found.');
         }
     });
