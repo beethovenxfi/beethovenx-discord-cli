@@ -220,8 +220,6 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
 
                 fileName = `transactionBatch_${new Date().getTime()}.json`;
 
-                console.log(fileName);
-
                 fs.writeFileSync(fileName, JSON.stringify(transactionBatch, null, 2));
                 attachment = fs.readFileSync(fileName);
 
