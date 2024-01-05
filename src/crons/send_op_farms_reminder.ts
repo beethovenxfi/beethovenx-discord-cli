@@ -105,6 +105,9 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
             spreadsheetId: sheetId,
         });
     } catch (e) {
+        await sendMessage(ChannelId.MULTISIG_TX, {
+            content: '@here SOMETHING WENT WRONG WITH OP FARMS!!',
+        });
         throw Error('Could not find sheet name provided.');
     }
 
@@ -224,13 +227,16 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                 attachment = fs.readFileSync(fileName);
 
                 await sendMessage(ChannelId.MULTISIG_TX, {
-                    content: '@here THIS IS A TEST!!!',
+                    content: '@here OP farms:',
                     files: [attachment],
                 });
             } else {
                 console.log(`No transactions found`);
             }
         } else {
+            await sendMessage(ChannelId.MULTISIG_TX, {
+                content: '@here SOMETHING WENT WRONG WITH OP FARMS!!',
+            });
             throw new Error('No data found.');
         }
     });
