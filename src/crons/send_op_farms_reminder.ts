@@ -71,14 +71,9 @@ export async function scheduleOpFarmsReminder() {
 
 export async function opFarmsReminder(): Promise<void> {
     const now = moment();
-    // if (!(now.day() === 3 && now.hour() < 11)) {
-    //     return;
-    // }
-
-    await sendMessage(
-        ChannelId.SERVER_STATUS,
-        'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet credentials',
-    );
+    if (!(now.day() === 3 && now.hour() < 11)) {
+        return;
+    }
 
     let jwtClient;
 

@@ -18,6 +18,6 @@ notifiyPreparedRewarders();
 notifiyEmptyRewarders();
 // updateRelics();
 streamBeetsToReliquary();
-scheduleOpFarmsReminder();
+// scheduleOpFarmsReminder();
 
 client.login(TOKEN);
