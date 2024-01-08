@@ -66,7 +66,6 @@ type GoogleSheetCredentials = {
 
 export async function scheduleOpFarmsReminder() {
     console.log('scheduling op farms reminder...');
-    await opFarmsReminder();
     // setInterval(opFarmsReminder, 43200000); // every 12 hrs
     setInterval(opFarmsReminder, 20000);
 }
