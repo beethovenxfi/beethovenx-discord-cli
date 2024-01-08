@@ -12,6 +12,7 @@ client.once('ready', (client) => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
 });
 
+client.login(TOKEN);
 registerSlashCommands();
 scheduleTransactionReminders();
 notifiyPreparedRewarders();
@@ -19,5 +20,3 @@ notifiyEmptyRewarders();
 // updateRelics();
 streamBeetsToReliquary();
 scheduleOpFarmsReminder();
-
-client.login(TOKEN);

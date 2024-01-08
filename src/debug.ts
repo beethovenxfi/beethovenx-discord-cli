@@ -1,7 +1,16 @@
+import { client } from './client/discord-client';
 import { opFarmsReminder } from './crons/send_op_farms_reminder';
 import { updateRelics } from './crons/update_relic_positions';
 
+const TOKEN = process.env.DISCORD_TOKEN!;
+
 async function debugMe(): Promise<void> {
+    await client.once('ready', (client) => {
+        console.log(`Ready! Logged in as ${client.user.tag}`);
+    });
+
+    await client.login(TOKEN);
+    await opFarmsReminder();
     // type rewarderOutput = {
     //     address: string;
     //     rewardTokenAddress: string;
@@ -45,6 +54,5 @@ async function debugMe(): Promise<void> {
     // }
 }
 // updateRelics();
-opFarmsReminder();
 
-// debugMe();
+debugMe();

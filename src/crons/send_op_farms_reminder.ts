@@ -66,7 +66,8 @@ type GoogleSheetCredentials = {
 export async function scheduleOpFarmsReminder() {
     console.log('scheduling op farms reminder...');
     await opFarmsReminder();
-    setInterval(opFarmsReminder, 43200000); // every 12 hrs
+    // setInterval(opFarmsReminder, 43200000); // every 12 hrs
+    setInterval(opFarmsReminder, 20000);
 }
 
 export async function opFarmsReminder(): Promise<void> {
@@ -245,7 +246,7 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                 attachment = fs.readFileSync(fileName);
 
                 await sendMessage(ChannelId.MULTISIG_TX, {
-                    content: '@here OP farms:',
+                    content: 'OP farms:',
                     files: [attachment],
                 });
             }
