@@ -65,25 +65,20 @@ type GoogleSheetCredentials = {
 
 export async function scheduleOpFarmsReminder() {
     console.log('scheduling op farms reminder...');
-    // setInterval(opFarmsReminder, 43200000); // every 12 hrs
-    setInterval(opFarmsReminder, 20000);
+    setInterval(opFarmsReminder, 43200000); // every 12 hrs
 }
 
 export async function opFarmsReminder(): Promise<void> {
     const now = moment();
-    // if (!(now.day() === 3 && now.hour() < 11)) {
-    //     return;
-    // }
+    if (!(now.day() === 3 && now.hour() < 11)) {
+        return;
+    }
 
     let jwtClient;
 
-    const email = process.env.GOOGLE_CLIENT_EMAIL!;
     const filename = process.env.GOOGLE_CLIENT_PRIVATE_KEY_FILENAME!;
 
     const key = fs.readFileSync(filename, 'utf-8');
-
-    console.log(email);
-    console.log(key);
 
     try {
         jwtClient = await googleJwtClient.getAuthorizedSheetsClient(process.env.GOOGLE_CLIENT_EMAIL!, key);
