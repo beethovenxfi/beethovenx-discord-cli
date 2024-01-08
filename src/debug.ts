@@ -1,3 +1,4 @@
+import { opFarmsReminder } from './crons/send_op_farms_reminder';
 import { updateRelics } from './crons/update_relic_positions';
 
 async function debugMe(): Promise<void> {
@@ -43,6 +44,7 @@ async function debugMe(): Promise<void> {
     //     console.log(JSON.stringify(rewardersOut, null, 2));
     // }
 }
-updateRelics();
+// updateRelics();
+opFarmsReminder();
 
-debugMe();
+// debugMe();
