@@ -86,7 +86,7 @@ export async function opFarmsReminder(): Promise<void> {
         console.log(`Could not get google sheet credentials. Error: ${e}`);
         await sendMessage(
             ChannelId.MULTISIG_TX,
-            'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet credentials',
+            'Could not auto-generate OP farms json, error: Could not get google sheet credentials',
         );
         return;
     }
@@ -108,7 +108,7 @@ export async function opFarmsReminder(): Promise<void> {
         console.log(`Could not get or delete stored json file. Error: ${e}`);
         await sendMessage(
             ChannelId.MULTISIG_TX,
-            'SOMETHING WENT WRONG WITH OP FARMS! Could not get or delete stored json file',
+            'Could not auto-generate OP farms json, error: Could not get or delete stored json file',
         );
         return;
     }
@@ -125,7 +125,10 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
             spreadsheetId: sheetId,
         });
     } catch (e) {
-        await sendMessage(ChannelId.MULTISIG_TX, 'SOMETHING WENT WRONG WITH OP FARMS! Could not get google sheet.');
+        await sendMessage(
+            ChannelId.MULTISIG_TX,
+            'Could not auto-generate OP farms json, error: Could not get google sheet.',
+        );
         console.log(`Could not find any sheets! Error: ${e}`);
         return;
     }
