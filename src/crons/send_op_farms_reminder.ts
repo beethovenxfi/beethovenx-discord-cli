@@ -5,6 +5,7 @@ import moment from 'moment';
 import { parseUnits } from 'ethers/lib/utils';
 import { googleJwtClient } from '../client/google-jwt-client';
 import { ChannelId, sendMessage } from '../interactions/send-message';
+import { MessageAttachment } from 'discord.js';
 
 interface SafeTransactionBatch {
     version: string;
@@ -246,8 +247,8 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                 attachment = fs.readFileSync(fileName);
 
                 await sendMessage(ChannelId.MULTISIG_TX, {
-                    content: 'OP farms:',
-                    files: [attachment],
+                    content: `OP farms ${fileName}:`,
+                    files: [{ attachment: attachment, name: fileName }],
                 });
             }
         } else {
