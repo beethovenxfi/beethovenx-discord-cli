@@ -113,7 +113,7 @@ export async function opFarmsReminder(): Promise<void> {
         return;
     }
 
-    createJsonOutput(jwtClient, '1rhIgAvr0BQ2EPATqGyisiQEV0XFVMqmGgDuVpO9-inU', '!A:G');
+    await createJsonOutput(jwtClient, '1rhIgAvr0BQ2EPATqGyisiQEV0XFVMqmGgDuVpO9-inU', '!A:G');
 }
 
 async function createJsonOutput(auth: any, sheetId: string, sheetRange: string): Promise<void> {
