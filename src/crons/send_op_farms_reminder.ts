@@ -79,7 +79,7 @@ export async function opFarmsReminder(): Promise<void> {
     let jwtClient;
 
     const email = process.env.GOOGLE_CLIENT_EMAIL!;
-    const key = process.env.GOOGLE_CLIENT_PRIVATE_KEY!.split(String.raw`\n`).join('/\\n');
+    const key = process.env.GOOGLE_CLIENT_PRIVATE_KEY!.split(String.raw`\n`).join(String.raw`\n`);
 
     console.log(email);
     console.log(key);
