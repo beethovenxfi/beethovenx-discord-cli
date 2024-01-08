@@ -5,7 +5,6 @@ import moment from 'moment';
 import { parseUnits } from 'ethers/lib/utils';
 import { googleJwtClient } from '../client/google-jwt-client';
 import { ChannelId, sendMessage } from '../interactions/send-message';
-import { MessageAttachment } from 'discord.js';
 
 interface SafeTransactionBatch {
     version: string;
@@ -79,7 +78,9 @@ export async function opFarmsReminder(): Promise<void> {
     let jwtClient;
 
     const email = process.env.GOOGLE_CLIENT_EMAIL!;
-    const key = process.env.GOOGLE_CLIENT_PRIVATE_KEY!.split(String.raw`\n`).join(String.raw`\n`);
+    const filename = process.env.GOOGLE_CLIENT_PRIVATE_KEY_FILENAME!;
+
+    const key = fs.readFileSync(filename, 'utf-8');
 
     console.log(email);
     console.log(key);
