@@ -150,7 +150,7 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
         if (rows?.length) {
             let gaugeTxns: Transaction[] = [];
             let canProcess = false;
-            let fileName: string;
+            let name: string;
             let attachment;
 
             for (const row of rows) {
@@ -241,14 +241,14 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                     transactions: gaugeTxns,
                 };
 
-                fileName = `transactionBatch_${new Date().getTime()}.json`;
+                name = `transactionBatch_${new Date().getTime()}.json`;
 
-                fs.writeFileSync(fileName, JSON.stringify(transactionBatch, null, 2));
-                attachment = fs.readFileSync(fileName);
+                fs.writeFileSync(name, JSON.stringify(transactionBatch, null, 2));
+                attachment = fs.readFileSync(name);
 
                 await sendMessage(ChannelId.MULTISIG_TX, {
-                    content: `OP farms ${fileName}:`,
-                    files: [{ attachment: attachment, name: fileName }],
+                    content: `OP farms ${name}:`,
+                    files: [{ attachment, name }],
                 });
             }
         } else {
