@@ -78,6 +78,12 @@ export async function opFarmsReminder(): Promise<void> {
 
     let jwtClient;
 
+    const email = process.env.GOOGLE_CLIENT_EMAIL!;
+    const key = process.env.GOOGLE_CLIENT_PRIVATE_KEY!.split(String.raw`\n`).join('\n');
+
+    console.log(email);
+    console.log(key);
+
     try {
         jwtClient = await googleJwtClient.getAuthorizedSheetsClient(
             process.env.GOOGLE_CLIENT_EMAIL!,
