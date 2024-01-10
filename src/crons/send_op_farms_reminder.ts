@@ -245,7 +245,7 @@ async function createJsonOutput(auth: any, sheetId: string, sheetRange: string):
                 attachment = fs.readFileSync(name);
 
                 await sendMessage(ChannelId.MULTISIG_TX, {
-                    content: `OP farms ${name}:`,
+                    content: `@Ardordo OP farms ${name}:`,
                     files: [{ attachment, name }],
                 });
             }
