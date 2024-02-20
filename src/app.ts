@@ -5,6 +5,7 @@ import { notifiyPreparedRewarders } from './crons/handle_prepared_rewarders';
 import { notifiyEmptyRewarders } from './crons/remind_rewarder_empty';
 import { streamBeetsToReliquary } from './crons/stream_beets_reliquary';
 import { scheduleOpFarmsReminder } from './crons/send_op_farms_reminder';
+import { claimSftmxRewards } from './crons/claim_sftmx_rewards';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -20,3 +21,4 @@ notifiyEmptyRewarders();
 // updateRelics();
 streamBeetsToReliquary();
 scheduleOpFarmsReminder();
+claimSftmxRewards();
