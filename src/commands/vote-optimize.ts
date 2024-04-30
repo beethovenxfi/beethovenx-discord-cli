@@ -5,7 +5,7 @@ import axios from 'axios';
 
 type response = {
     proposal: string;
-    inventivesReceived: number;
+    incentivesReceived: number;
     choiceHuman: Record<string, number>;
     choice: Record<string, number>;
 };
@@ -27,7 +27,7 @@ async function execute(interaction: CommandInteraction) {
 
     await interaction.followUp({
         content: codeBlock(`
-            Incentives received: ${data.inventivesReceived}
+            Incentives received: ${data.incentivesReceived}
             Votes: ${JSON.stringify(data.choiceHuman, null, 2)}
         `),
         ephemeral: true,
