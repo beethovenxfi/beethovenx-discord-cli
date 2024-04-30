@@ -24,6 +24,7 @@ import { rewarderListTracked } from './rewarder-list-tracked-rewarders';
 import { checkReliquaryRate } from './check-reliquary-rate';
 import { balancerManageRoles } from './balancer-manage-roles';
 import { feesCollectorTokenlist } from './fees-withdraw-token-list';
+import { voteOptimization } from './vote-optimize';
 
 export type CommandExecutor = (interaction: CommandInteraction) => Promise<any>;
 export type CommandHandler = {
@@ -57,4 +58,5 @@ export const commandHandlers = [
     rewarderListTracked,
     checkReliquaryRate,
     balancerManageRoles,
+    voteOptimization,
 ];
