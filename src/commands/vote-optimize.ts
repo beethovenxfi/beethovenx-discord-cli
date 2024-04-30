@@ -25,17 +25,11 @@ async function execute(interaction: CommandInteraction) {
 
     console.log(data.choiceHuman);
 
-    await interaction.reply({
+    await interaction.followUp({
         content: codeBlock(`
-            Inventives received: ${data.inventivesReceived}
+            Incentives received: ${data.inventivesReceived}
             Votes: ${JSON.stringify(data.choiceHuman, null, 2)}
         `),
-        ephemeral: true,
-    });
-
-    await interaction.editReply({ content: inlineCode('Votes:') });
-    await interaction.followUp({
-        content: codeBlock(data.choiceHuman.toString()),
         ephemeral: true,
     });
 }
