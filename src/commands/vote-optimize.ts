@@ -17,7 +17,7 @@ async function execute(interaction: CommandInteraction) {
     const market = interaction.options.getString('market')!;
     const mdSelection = interaction.options.getString('md_selection')!;
 
-    const { data } = await axios.post<response>('http://127.0.0.1:5000', {
+    const { data } = await axios.post<response>('http://127.0.0.1:5000/vote', {
         walletAddress: voterAddress,
         market: market,
         md_selection: mdSelection,
