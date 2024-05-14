@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { client } from './client/discord-client';
 import { opFarmsReminder } from './crons/send_op_farms_reminder';
 import { updateRelics } from './crons/update_relic_positions';
@@ -5,12 +6,28 @@ import { updateRelics } from './crons/update_relic_positions';
 const TOKEN = process.env.DISCORD_TOKEN!;
 
 async function debugMe(): Promise<void> {
-    await client.once('ready', (client) => {
-        console.log(`Ready! Logged in as ${client.user.tag}`);
+    // await client.once('ready', (client) => {
+    //     console.log(`Ready! Logged in as ${client.user.tag}`);
+    // });
+
+    // await client.login(TOKEN);
+    // await opFarmsReminder();
+
+    type response = {
+        proposal: string;
+        inventivesReceived: number;
+        choiceHuman: Record<string, number>;
+        choice: Record<string, number>;
+    };
+
+    const { data } = await axios.post<response>('http://127.0.0.1:8000/vote', {
+        walletAddress: '0x641e10Cd6132D3e3FA01bfd65d2e0afCf64b136A',
+        market: 'beets',
+        md_selection: 'mdSelection',
     });
 
-    await client.login(TOKEN);
-    await opFarmsReminder();
+    console.log(data);
+
     // type rewarderOutput = {
     //     address: string;
     //     rewardTokenAddress: string;
