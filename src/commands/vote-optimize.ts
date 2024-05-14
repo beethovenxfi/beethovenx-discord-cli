@@ -19,7 +19,7 @@ async function execute(interaction: CommandInteraction) {
     const market = interaction.options.getString('market')!;
     const mdSelection = interaction.options.getString('md_selection')!;
     const strategy = interaction.options.getString('strategy')!;
-    const vote = interaction.options.getString('auto vote')!;
+    const vote = interaction.options.getString('auto_vote')!;
 
     const { data } = await axios.post<response>('http://127.0.0.1:5000/vote', {
         walletAddress: voterAddress,
@@ -86,7 +86,7 @@ export const voteOptimization: CommandHandler = {
         )
         .addStringOption((option) =>
             option
-                .setName('auto vote')
+                .setName('auto_vote')
                 .addChoices({ name: 'yes', value: 'true' }, { name: 'no', value: 'false' })
                 .setDescription('Whether to automatically cast the vote on snapshot.')
                 .setRequired(true),
