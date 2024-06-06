@@ -109,6 +109,6 @@ export async function vote() {
         ChannelId.SERVER_STATUS,
         `MD voted with the following incentives received: ${inlineCode(
             data.incentivesReceived.toString(),
-        )} and votes: ${inlineCode(data.choiceHuman.toString())}`,
+        )} and votes: ${inlineCode(JSON.stringify(data.choiceHuman))}`,
     );
 }
