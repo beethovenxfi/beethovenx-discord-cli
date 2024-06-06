@@ -32,15 +32,23 @@ export async function autoVoteDelegate() {
 export async function vote() {
     console.log('checking if need to vote');
 
-    const response = await axios.get<{ data: { proposalDeadline: number }[] }>(
+    const response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
         'https://api.hiddenhand.finance/proposal/beethovenx/',
     );
 
     if (!response.data.data || response.data.data.length === 0) {
+        console.log('no data found');
         return;
     }
-    //deadline passed
+    //deadline passed, vote finished
     if (response.data.data[0].proposalDeadline < moment().unix()) {
+        console.log('no active proposal');
+        return;
+    }
+
+    // only one bribe up
+    if (response.data.data.filter((bribe) => bribe.totalValue > 0).length > 1) {
+        console.log('only one bribe up');
         return;
     }
 
