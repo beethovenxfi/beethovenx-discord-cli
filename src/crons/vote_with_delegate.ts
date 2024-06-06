@@ -35,7 +35,7 @@ export async function vote() {
     const response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
         'https://api.hiddenhand.finance/proposal/beethovenx/',
     );
-    console.log(response.data);
+    // console.log(response.data);
 
     if (!response.data.data || response.data.data.length === 0) {
         console.log('no data found');
@@ -46,6 +46,8 @@ export async function vote() {
         console.log('no active proposal');
         return;
     }
+
+    console.log(response.data.data.filter((bribe) => bribe.totalValue > 0));
 
     // only one bribe up
     if (response.data.data.filter((bribe) => bribe.totalValue > 0).length > 1) {
