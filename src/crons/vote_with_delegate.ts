@@ -69,14 +69,14 @@ export async function vote() {
 
     console.log(data.choiceHuman);
 
-    const lastVotes = fs.readFileSync('./crons/latestVotes.json', 'utf-8');
+    const lastVotes = fs.readFileSync('./src/crons/latestVotes.json', 'utf-8');
 
     if (_.isEqual(data.choiceHuman, JSON.parse(lastVotes))) {
         console.log('do not cast the same vote');
         return;
     }
 
-    fs.writeFileSync('./crons/latestVotes.json', JSON.stringify(data.choiceHuman));
+    fs.writeFileSync('./src/crons/latestVotes.json', JSON.stringify(data.choiceHuman));
 
     const client = new snapshot.Client712('https://hub.snapshot.org');
 
