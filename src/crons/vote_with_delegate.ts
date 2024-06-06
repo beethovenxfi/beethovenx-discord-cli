@@ -47,10 +47,8 @@ export async function vote() {
         return;
     }
 
-    console.log(response.data.data.filter((bribe) => bribe.totalValue > 0));
-
-    // only one bribe up
-    if (response.data.data.filter((bribe) => bribe.totalValue > 0).length > 1) {
+    // less than two bribes up
+    if (response.data.data.filter((bribe) => bribe.totalValue > 0).length < 2) {
         console.log('only one bribe up');
         return;
     }
