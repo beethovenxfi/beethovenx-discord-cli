@@ -35,6 +35,7 @@ export async function vote() {
     const response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
         'https://api.hiddenhand.finance/proposal/beethovenx/',
     );
+    console.log(response.data);
 
     if (!response.data.data || response.data.data.length === 0) {
         console.log('no data found');
