@@ -12,6 +12,8 @@ import { inlineCode } from '@discordjs/builders';
 import snapshot from '@snapshot-labs/snapshot.js';
 import { Wallet } from '@ethersproject/wallet';
 const { ethers } = require('hardhat');
+import fs from 'fs';
+import _ from 'lodash';
 
 // every 15mins
 export const intervalMs = 900000;
@@ -66,6 +68,15 @@ export async function vote() {
     });
 
     console.log(data.choiceHuman);
+
+    const lastVotes = fs.readFileSync('./latestVotes.json', 'utf-8');
+
+    if (_.isEqual(data.choiceHuman, JSON.parse(lastVotes))) {
+        console.log('do not cast the same vote');
+        return;
+    }
+
+    fs.writeFileSync('./latestVotes.json', JSON.stringify(data.choiceHuman));
 
     const client = new snapshot.Client712('https://hub.snapshot.org');
 
