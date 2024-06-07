@@ -92,10 +92,24 @@ async function vote() {
 
     console.log(data.choiceHuman);
 
-    const lastVotes = fs.readFileSync('./src/crons/latestVotes.json', 'utf-8');
+    const lastVotes = JSON.parse(fs.readFileSync('./src/crons/latestVotes.json', 'utf-8')) as Record<string, number>;
 
-    if (_.isEqual(data.choiceHuman, JSON.parse(lastVotes))) {
-        console.log('do not cast the same vote');
+    let differentVote = false;
+    for (const key in data.choiceHuman) {
+        const threshold = 5;
+        const voteAllocation = lastVotes[key];
+        const minValue = voteAllocation - threshold;
+        const maxValue = voteAllocation + threshold;
+
+        if (data.choiceHuman[key] >= minValue && voteAllocation <= maxValue) {
+            console.log('different vote but within range');
+        } else {
+            differentVote = true;
+        }
+    }
+
+    if (!differentVote) {
+        console.log('same vote as last time');
         return;
     }
 
