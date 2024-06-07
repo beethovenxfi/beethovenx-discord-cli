@@ -42,6 +42,7 @@ export async function voteCheck() {
 
     // less than two bribes up
     if (response.data.data.filter((bribe) => bribe.totalValue > 0).length < 2) {
+        console.log('only one bribe up');
         return;
     }
 
@@ -49,6 +50,7 @@ export async function voteCheck() {
 
     // dont vote before 3 days of closing
     if (voteEnd - moment().unix() > 3 * ONE_DAY_IN_SECONDS) {
+        console.log('too early to vote');
         return;
     }
 
@@ -59,6 +61,7 @@ export async function voteCheck() {
         voteEnd - moment().unix() > 2 * ONE_DAY_IN_SECONDS &&
         moment().unix() - moment().startOf('day').unix() < fifteenMinutes
     ) {
+        console.log('between 3 and 2 days left, trigger once every 12 hours');
         await vote();
         return;
     }
@@ -69,11 +72,13 @@ export async function voteCheck() {
         voteEnd - moment().unix() > 1 * ONE_DAY_IN_SECONDS &&
         moment().unix() - moment().startOf('hour').unix() < fifteenMinutes
     ) {
+        console.log('between 2 and 1 days left, trigger once every 1 hour');
         await vote();
         return;
     }
 
     // vote every 15mins on the last day
+    console.log('vote every 15mins on the last day');
     await vote();
 }
 
