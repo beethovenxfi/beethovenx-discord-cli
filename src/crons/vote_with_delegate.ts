@@ -46,6 +46,12 @@ export async function voteCheck() {
     }
 
     const voteEnd = response.data.data[0].proposalDeadline;
+
+    // dont vote before 3 days of closing
+    if (voteEnd - moment().unix() > 3 * ONE_DAY_IN_SECONDS) {
+        return;
+    }
+
     // between 3 and 2 days left, trigger once every 12 hours
     const fifteenMinutes = 15 * 60;
     if (
