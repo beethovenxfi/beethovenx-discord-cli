@@ -1,22 +1,13 @@
-import { networkConfig } from '../config/config';
-import reliquaryBeetsStreamerAbi from '../../abi/ReliquaryBeetsStreamer.json';
-import reliquaryAbi from '../../abi/Reliquary.json';
-import erc20Abi from '../../abi/ERC20.json';
-import BeetsConstantEmissionCurve from '../../abi/BeetsConstantEmissionCurve.json';
 import moment from 'moment';
 import { ChannelId, sendMessage } from '../interactions/send-message';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import axios from 'axios';
-import { BigNumber, ContractTransaction } from 'ethers';
 import { inlineCode } from '@discordjs/builders';
 import snapshot from '@snapshot-labs/snapshot.js';
 import { Wallet } from '@ethersproject/wallet';
-const { ethers } = require('hardhat');
 import fs from 'fs';
 import _ from 'lodash';
 
-// every 15mins
-export const intervalMs = 900000;
+const ONE_DAY_IN_SECONDS = 86400;
 
 type response = {
     proposal: string;
@@ -27,11 +18,11 @@ type response = {
 
 export async function autoVoteDelegate() {
     console.log('Schedule auto vote with delegate');
-    await vote();
-    setInterval(vote, intervalMs);
+    await voteCheck();
+    setInterval(voteCheck, 900000);
 }
 
-export async function vote() {
+export async function voteCheck() {
     console.log('checking if need to vote');
 
     const response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
@@ -51,10 +42,36 @@ export async function vote() {
 
     // less than two bribes up
     if (response.data.data.filter((bribe) => bribe.totalValue > 0).length < 2) {
-        console.log('only one bribe up');
         return;
     }
 
+    const voteEnd = response.data.data[0].proposalDeadline;
+    // between 3 and 2 days left, trigger once every 12 hours
+    const fifteenMinutes = 15 * 60;
+    if (
+        voteEnd - moment().unix() < 3 * ONE_DAY_IN_SECONDS &&
+        voteEnd - moment().unix() > 2 * ONE_DAY_IN_SECONDS &&
+        moment().unix() - moment().startOf('day').unix() < fifteenMinutes
+    ) {
+        await vote();
+        return;
+    }
+
+    // between 2 and 1 days left, trigger once every 1 hour
+    if (
+        voteEnd - moment().unix() < 2 * ONE_DAY_IN_SECONDS &&
+        voteEnd - moment().unix() > 1 * ONE_DAY_IN_SECONDS &&
+        moment().unix() - moment().startOf('hour').unix() < fifteenMinutes
+    ) {
+        await vote();
+        return;
+    }
+
+    // vote every 15mins on the last day
+    await vote();
+}
+
+async function vote() {
     const voterAddress = '0x641e10Cd6132D3e3FA01bfd65d2e0afCf64b136A';
     const market = 'beets';
     const mdSelection = 'Staked Fantom & Circle Symphony';
