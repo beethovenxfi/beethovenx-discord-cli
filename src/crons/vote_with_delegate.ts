@@ -77,9 +77,12 @@ export async function voteCheck() {
         return;
     }
 
-    // vote every 15mins on the last day
-    console.log('vote every 15mins on the last day');
-    await vote();
+    if (voteEnd - moment().unix() < 1 * ONE_DAY_IN_SECONDS && voteEnd - moment().unix() > 0 * ONE_DAY_IN_SECONDS) {
+        // vote every 15mins on the last day
+        console.log('vote every 15mins on the last day');
+        await vote();
+    }
+    console.log('no need to vote');
 }
 
 async function vote() {
