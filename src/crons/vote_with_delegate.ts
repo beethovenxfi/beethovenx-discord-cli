@@ -101,14 +101,15 @@ async function vote() {
 
     let differentVote = false;
     for (const key in data.choiceHuman) {
-        const threshold = 5;
+        const threshold = 50;
         const voteAllocation = lastVotes[key];
         const minValue = voteAllocation - threshold;
         const maxValue = voteAllocation + threshold;
 
         if (data.choiceHuman[key] >= minValue && data.choiceHuman[key] <= maxValue) {
-            console.log('vote within range');
+            console.log(`${key}: vote within range`);
         } else {
+            console.log(`${key}: out of range`);
             differentVote = true;
         }
     }
