@@ -6,8 +6,8 @@ const ftmStakingContract = '0xB458BfC855ab504a8a327720FcEF98886065529b';
 export async function claimSftmxRewards() {
     console.log('Schedule claim sftmx rewards');
     await claimAllSftmxRewards();
-    // every 24 hours
-    setInterval(claimAllSftmxRewards, 24 * 60 * 60000);
+    // every 2 hours
+    setInterval(claimAllSftmxRewards, 2 * 60 * 60000);
 }
 
 async function claimAllSftmxRewards() {
