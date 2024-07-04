@@ -73,7 +73,7 @@ export async function checkSingleTokenRewarder(rewarderAddress: string) {
     while (hasMore) {
         const response = await axios.post<{
             data: { users: [{ address: string }] };
-        }>('https://api.thegraph.com/subgraphs/name/beethovenxfi/masterchefv2', {
+        }>('https://api.studio.thegraph.com/query/73674/masterchefv2/version/latest', {
             query: `{
                 users(
                   where: {pool: "${farmId}", address_gt: "${userAddress}"}

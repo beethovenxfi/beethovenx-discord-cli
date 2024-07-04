@@ -10,7 +10,7 @@ import instantUpdateRelics from './updateRelics.json';
 import { proposedGasPriceFantom } from '../utils';
 const { ethers } = require('hardhat');
 
-const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
+const reliquarySubgraphUrl: string = 'https://api.studio.thegraph.com/query/73674/reliquary/version/latest';
 
 export async function updateRelics() {
     console.log('Schedule updating relics');

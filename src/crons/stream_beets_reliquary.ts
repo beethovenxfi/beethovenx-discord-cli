@@ -11,7 +11,7 @@ import { BigNumber, ContractTransaction } from 'ethers';
 import { inlineCode } from '@discordjs/builders';
 const { ethers } = require('hardhat');
 
-const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
+const reliquarySubgraphUrl: string = 'https://api.studio.thegraph.com/query/73674/reliquary/version/latest';
 const fBeetsPoolId: number = 1;
 //TODO change back or run it every day?
 export const triggerDuration = moment.duration(2, 'days').subtract(30, 'minutes').asSeconds(); // 1day 23h 30m

@@ -14,7 +14,7 @@ import { BigNumber } from 'ethers';
 import axios from 'axios';
 import moment from 'moment';
 
-const reliquarySubgraphUrl: string = 'https://api.thegraph.com/subgraphs/name/beethovenxfi/reliquary';
+const reliquarySubgraphUrl: string = 'https://api.studio.thegraph.com/query/73674/reliquary/version/latest';
 const fBeetsPoolId: number = 1;
 
 async function execute(interaction: CommandInteraction) {
