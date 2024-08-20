@@ -21,7 +21,7 @@ const config: HardhatUserConfig = {
             chainId: 4,
         },
         fantom: {
-            url: 'https://rpc.ftm.tools/',
+            url: 'https://fantom.drpc.org/',
             accounts,
             chainId: 250,
             gasMultiplier: 10,
