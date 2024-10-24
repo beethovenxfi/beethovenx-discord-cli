@@ -30,7 +30,7 @@ async function claimAllSftmxRewards() {
         const maxGasPrice = 100;
         if (parseFloat(gasPrice) < maxGasPrice) {
             const txn = await sftmx.claimRewardsAll({
-                gasPrice: parseFloat(gasPrice) * 7000000,
+                gasPrice: parseFloat(gasPrice) * 8000000,
             });
             await txn.wait();
         } else {
