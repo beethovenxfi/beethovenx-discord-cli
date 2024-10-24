@@ -30,7 +30,7 @@ async function claimAllSftmxRewards() {
         const maxGasPrice = 100;
         if (parseFloat(gasPrice) < maxGasPrice) {
             const txn = await sftmx.claimRewardsAll({
-                gasPrice: parseFloat(gasPrice) * 5968460,
+                gasPrice: parseFloat(gasPrice) * 7000000,
             });
             await txn.wait();
         } else {
@@ -41,6 +41,7 @@ async function claimAllSftmxRewards() {
             console.log(`Did not claim sftmx rewards, gas price too high. Want ${maxGasPrice}, is ${gasPrice}`);
         }
     } catch (e) {
-        console.log(`Failed to claim sftmx rewards.`);
+        console.log(`Failed to claim sftmx rewards: ${e}`);
+        await sendMessage(ChannelId.SERVER_STATUS, `Error while claiming sFTMx rewards`);
     }
 }
