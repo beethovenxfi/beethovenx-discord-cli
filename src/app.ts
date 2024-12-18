@@ -20,7 +20,7 @@ scheduleTransactionReminders();
 notifiyPreparedRewarders();
 notifiyEmptyRewarders();
 // updateRelics();
-streamBeetsToReliquary();
+// streamBeetsToReliquary();
 scheduleOpFarmsReminder();
 claimSftmxRewards();
 autoVoteDelegate();
