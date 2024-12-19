@@ -12,8 +12,8 @@ const sonicStakingContract = '0xe5da20f15420ad15de0fa650600afc998bbe3955';
 export async function claimStsRewards() {
     console.log('Schedule claim sftmx rewards');
     await claimAllSftmxRewards();
-    // every 4 hours
-    setInterval(claimAllSftmxRewards, 4 * 60 * 60000);
+    // every 1 hours
+    setInterval(claimAllSftmxRewards, 60 * 60000);
 }
 
 async function claimAllSftmxRewards() {
