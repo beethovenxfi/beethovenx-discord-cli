@@ -20,11 +20,11 @@ const config: HardhatUserConfig = {
             url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
             chainId: 4,
         },
-        fantom: {
-            url: 'https://rpc.fantom.network',
+        sonic: {
+            url: 'https://rpc.soniclabs.com',
             accounts,
-            chainId: 250,
-            gasMultiplier: 10,
+            chainId: 146,
+            // gasMultiplier: 10,
         },
         // "fantom-testnet": {
         //   url: "https://rpc.testnet.fantom.network",
