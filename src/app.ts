@@ -19,7 +19,7 @@ client.login(TOKEN);
 registerSlashCommands();
 // scheduleTransactionReminders();
 // notifiyPreparedRewarders();
-notifiyEmptyRewarders();
+// notifiyEmptyRewarders();
 // updateRelics();
 // streamBeetsToReliquary();
 // scheduleOpFarmsReminder();
