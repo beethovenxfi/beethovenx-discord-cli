@@ -7,6 +7,7 @@ import { streamBeetsToReliquary } from './crons/stream_beets_reliquary';
 import { scheduleOpFarmsReminder } from './crons/send_op_farms_reminder';
 import { claimSftmxRewards } from './crons/claim_sftmx_rewards';
 import { autoVoteDelegate } from './crons/vote_with_delegate';
+import { claimStsRewards } from './crons/claim_sts_rewards';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -16,11 +17,12 @@ client.once('ready', (client) => {
 
 client.login(TOKEN);
 registerSlashCommands();
-scheduleTransactionReminders();
-notifiyPreparedRewarders();
+// scheduleTransactionReminders();
+// notifiyPreparedRewarders();
 notifiyEmptyRewarders();
 // updateRelics();
 // streamBeetsToReliquary();
-scheduleOpFarmsReminder();
-claimSftmxRewards();
+// scheduleOpFarmsReminder();
+// claimSftmxRewards();
+claimStsRewards();
 autoVoteDelegate();
