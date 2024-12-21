@@ -29,7 +29,7 @@ async function claimAllSftmxRewards() {
         // const gasPrice = await proposedGasPriceFantom();
         const maxGasPrice = 100;
         // if (parseFloat(gasPrice) < maxGasPrice) {
-        const txn = await sftmx.claimRewards([1, 15, 16, 17, 18, 24, 29, 30]);
+        const txn = await sftmx.claimRewards([1, 15, 16, 17, 18, 23, 24, 29, 30]);
         await txn.wait();
         // } else {
         //     await sendMessage(
