@@ -1,10 +1,9 @@
 import { BigNumber } from 'ethers';
 import { parseFixed } from '@ethersproject/bignumber';
 import sonicStakingAbi from '../../abi/SonicStaking.json';
-import { proposedGasPriceFantom } from '../utils';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import { networkConfig } from '../config/config';
-import { inlineCode } from '@discordjs/builders';
+import axios from 'axios';
 const { ethers } = require('hardhat');
 
 const sonicStakingContract = '0xe5da20f15420ad15de0fa650600afc998bbe3955';
@@ -25,11 +24,24 @@ async function claimAllSftmxRewards() {
         return;
     }
 
+    const backendUrl = 'https://backend-v3.beets-ftm-node.com/graphql';
+    const allPools = (await axios.post(backendUrl, {
+        query: ` query {
+            stsGetGqlStakedSonicData {
+                delegatedValidators {
+                validatorId
+                }
+            }
+            }`,
+    })) as { data: { stsGetGqlStakedSonicData: { delegatedValidators: { validatorId: string }[] } } };
+
+    const validatorIds = allPools.data.stsGetGqlStakedSonicData.delegatedValidators.map((v) => v.validatorId);
+
     try {
         // const gasPrice = await proposedGasPriceFantom();
         const maxGasPrice = 100;
         // if (parseFloat(gasPrice) < maxGasPrice) {
-        const txn = await sftmx.claimRewards([1, 15, 16, 17, 18, 23, 24, 29, 30]);
+        const txn = await sftmx.claimRewards(validatorIds);
         await txn.wait();
         // } else {
         //     await sendMessage(

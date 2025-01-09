@@ -8,6 +8,7 @@ import { scheduleOpFarmsReminder } from './crons/send_op_farms_reminder';
 import { claimSftmxRewards } from './crons/claim_sftmx_rewards';
 import { autoVoteDelegate } from './crons/vote_with_delegate';
 import { claimStsRewards } from './crons/claim_sts_rewards';
+import { updateRelics } from './crons/update_relic_positions';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -20,7 +21,7 @@ registerSlashCommands();
 // scheduleTransactionReminders();
 // notifiyPreparedRewarders();
 // notifiyEmptyRewarders();
-// updateRelics();
+updateRelics();
 // streamBeetsToReliquary();
 // scheduleOpFarmsReminder();
 // claimSftmxRewards();

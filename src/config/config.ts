@@ -63,7 +63,7 @@ export const scriptConfig: NetworkConfig = {
             TeamVesting: '0xa2503804ec837D1E4699932D58a3bdB767DeA505',
             ProtocolFeesCollector: '0xC6920d3a369E7c8BD1A22DbE385e11d1F7aF948F',
             PoolSpecificProtocolFeePercentagesProvider: '0xe101551C4772F771FEDEBecc786931E61000657C',
-            Reliquary: '0x1ed6411670c709F4e163854654BD52c74E66D7eC',
+            Reliquary: '0x973670ce19594f857a7cd85ee834c7a74a941684',
             ReliquaryBeetsStreamer: '0xC8e3f0fC248F3A734d69045cf5174EC02173b5d0',
             multicall: '0x66335d7ad8011f6aa3f48aadcb523b62b38ed961',
             Authorizer: '0x974D3FF709D84Ba44cde3257C0B5B0b14C081Ce9',

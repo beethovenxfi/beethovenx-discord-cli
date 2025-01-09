@@ -10,7 +10,7 @@ import instantUpdateRelics from './updateRelics.json';
 import { proposedGasPriceFantom } from '../utils';
 const { ethers } = require('hardhat');
 
-const reliquarySubgraphUrl: string = 'https://api.studio.thegraph.com/query/73674/reliquary/version/latest';
+const reliquarySubgraphUrl: string = 'https://api.studio.thegraph.com/query/73674/mabeets-sonic/version/latest';
 
 export async function updateRelics() {
     console.log('Schedule updating relics');
@@ -27,9 +27,7 @@ async function updateLevelsOfRelics() {
     if (updaterBalance.lt(parseFixed(`1`, 18))) {
         await sendMessage(
             ChannelId.SERVER_STATUS,
-            `The wallet for the relic updatePosition service is running low. Please send FTM to ${inlineCode(
-                networkConfig.walletAddresses.relicUpdater,
-            )}!`,
+            `The wallet is running low. Please send FTM to ${inlineCode(networkConfig.walletAddresses.relicUpdater)}!`,
         );
         return;
     }
