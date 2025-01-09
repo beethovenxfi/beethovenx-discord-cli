@@ -10,12 +10,12 @@ const sonicStakingContract = '0xe5da20f15420ad15de0fa650600afc998bbe3955';
 
 export async function claimStsRewards() {
     console.log('Schedule claim sftmx rewards');
-    await claimAllSftmxRewards();
+    await claimAllStSRewards();
     // every 1 hours
-    setInterval(claimAllSftmxRewards, 60 * 60000);
+    setInterval(claimAllStSRewards, 60 * 60000);
 }
 
-async function claimAllSftmxRewards() {
+export async function claimAllStSRewards() {
     console.log('claiming sts rewards');
     const sftmx = await ethers.getContractAt(sonicStakingAbi, sonicStakingContract);
 
@@ -25,31 +25,17 @@ async function claimAllSftmxRewards() {
     }
 
     const backendUrl = 'https://backend-v3.beets-ftm-node.com/graphql';
-    const validators = (await fetch(backendUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            query: `{
-                stsGetGqlStakedSonicData {
-                    delegatedValidators {
-                    validatorId
-                    }
+    const response = (await axios.post(backendUrl, {
+        query: ` query {
+            stsGetGqlStakedSonicData {
+                delegatedValidators {
+                validatorId
                 }
-                }`,
-        }),
-    }).then((res) => res.json())) as {
-        data: {
-            stsGetGqlStakedSonicData: {
-                delegatedValidators: {
-                    validatorId: string;
-                }[];
-            };
-        };
-    };
+            }
+            }`,
+    })) as { data: { data: { stsGetGqlStakedSonicData: { delegatedValidators: { validatorId: string }[] } } } };
 
-    const validatorIds = validators.data.stsGetGqlStakedSonicData.delegatedValidators.map((v) =>
+    const validatorIds = response.data.data.stsGetGqlStakedSonicData.delegatedValidators.map((v) =>
         parseFloat(v.validatorId),
     );
 
