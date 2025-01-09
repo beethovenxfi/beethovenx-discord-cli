@@ -25,17 +25,33 @@ async function claimAllSftmxRewards() {
     }
 
     const backendUrl = 'https://backend-v3.beets-ftm-node.com/graphql';
-    const allPools = (await axios.post(backendUrl, {
-        query: ` query {
-            stsGetGqlStakedSonicData {
-                delegatedValidators {
-                validatorId
+    const validators = (await fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            query: `{
+                stsGetGqlStakedSonicData {
+                    delegatedValidators {
+                    validatorId
+                    }
                 }
-            }
-            }`,
-    })) as { data: { stsGetGqlStakedSonicData: { delegatedValidators: { validatorId: string }[] } } };
+                }`,
+        }),
+    }).then((res) => res.json())) as {
+        data: {
+            stsGetGqlStakedSonicData: {
+                delegatedValidators: {
+                    validatorId: string;
+                }[];
+            };
+        };
+    };
 
-    const validatorIds = allPools.data.stsGetGqlStakedSonicData.delegatedValidators.map((v) => v.validatorId);
+    const validatorIds = validators.data.stsGetGqlStakedSonicData.delegatedValidators.map((v) =>
+        parseFloat(v.validatorId),
+    );
 
     try {
         // const gasPrice = await proposedGasPriceFantom();
