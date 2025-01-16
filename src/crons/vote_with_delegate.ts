@@ -26,7 +26,7 @@ export async function voteCheck() {
     console.log('checking if need to vote');
 
     const response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
-        'https://api.hiddenhand.finance/proposal/beethovenx/',
+        'https://api.hiddenhand.finance/proposal/beets/',
     );
     // console.log(response.data);
 
