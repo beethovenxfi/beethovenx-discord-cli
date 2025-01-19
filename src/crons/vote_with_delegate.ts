@@ -127,7 +127,7 @@ async function vote() {
 
     const client = new snapshot.Client712('https://hub.snapshot.org');
 
-    const provider = snapshot.utils.getProvider('250');
+    const provider = snapshot.utils.getProvider('146');
 
     let wallet = new Wallet(process.env.MD_DELEGATE!);
     wallet = wallet.connect(provider);
@@ -136,7 +136,7 @@ async function vote() {
 
     try {
         const receipt = await client.vote(wallet, wallet.address, {
-            space: 'beets.eth',
+            space: 'beets-gauges.eth',
             proposal: data.proposal,
             type: 'weighted',
             choice: data.choice,
