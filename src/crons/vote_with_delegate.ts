@@ -67,10 +67,7 @@ export async function voteCheck() {
     }
 
     // between 2 and 1 days left, trigger once every 1 hour
-    if (
-        voteEnd - moment().unix() < 2 * ONE_DAY_IN_SECONDS &&
-        voteEnd - moment().unix() > 1 * ONE_DAY_IN_SECONDS &&
-    ) {
+    if (voteEnd - moment().unix() < 2 * ONE_DAY_IN_SECONDS && voteEnd - moment().unix() > 1 * ONE_DAY_IN_SECONDS) {
         console.log('between 2 and 1 days left, trigger once every 1 hour');
         await vote();
         return;
