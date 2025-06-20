@@ -85,7 +85,7 @@ export async function voteCheck() {
 async function vote() {
     const voterAddress = '0x641e10Cd6132D3e3FA01bfd65d2e0afCf64b136A';
     const market = 'beets';
-    const mdSelection = 'scUSD/stS-Weighted-0x25ca';
+    const mdSelection = 'wS/stS-Stable-0x3746';
     const strategy = 'even';
 
     const { data } = await axios.post<response>('http://127.0.0.1:5000/vote', {
