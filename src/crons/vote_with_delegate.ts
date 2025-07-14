@@ -32,8 +32,7 @@ export async function voteCheck() {
         );
     } catch (error) {
         console.error('Error fetching proposal data:', error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        await sendMessage(ChannelId.SERVER_STATUS, `Error fetching proposal data: ${errorMessage}`);
+        await sendMessage(ChannelId.SERVER_STATUS, `Error fetching proposal data from HiddenHand`);
         return;
     }
 
