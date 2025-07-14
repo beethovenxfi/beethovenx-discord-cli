@@ -25,10 +25,17 @@ export async function autoVoteDelegate() {
 export async function voteCheck() {
     console.log('checking if need to vote');
 
-    const response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
-        'https://api.hiddenhand.finance/proposal/beets/',
-    );
-    // console.log(response.data);
+    let response;
+    try {
+        response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
+            'https://api.hiddenhand.finance/proposal/beets/',
+        );
+    } catch (error) {
+        console.error('Error fetching proposal data:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        await sendMessage(ChannelId.SERVER_STATUS, `Error fetching proposal data: ${errorMessage}`);
+        return;
+    }
 
     if (!response.data.data || response.data.data.length === 0) {
         console.log('no data found');
