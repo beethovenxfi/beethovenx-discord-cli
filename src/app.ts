@@ -1,14 +1,9 @@
 import { client } from './client/discord-client';
 import { registerSlashCommands } from './interactions/slash-commands';
-import { scheduleTransactionReminders } from './crons/send_tx_reminders';
-import { notifiyPreparedRewarders } from './crons/handle_prepared_rewarders';
-import { notifiyEmptyRewarders } from './crons/remind_rewarder_empty';
-import { streamBeetsToReliquary } from './crons/stream_beets_reliquary';
-import { scheduleOpFarmsReminder } from './crons/send_op_farms_reminder';
-import { claimSftmxRewards } from './crons/claim_sftmx_rewards';
 import { autoVoteDelegate } from './crons/vote_with_delegate';
 import { claimStsRewards } from './crons/claim_sts_rewards';
 import { updateRelics } from './crons/update_relic_positions';
+import { findOorDynamicEclps } from './crons/remind_oor_dynamic_eclps';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -27,3 +22,4 @@ updateRelics();
 // claimSftmxRewards();
 claimStsRewards();
 autoVoteDelegate();
+findOorDynamicEclps();
