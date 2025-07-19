@@ -16,7 +16,7 @@ registerSlashCommands();
 // scheduleTransactionReminders();
 // notifiyPreparedRewarders();
 // notifiyEmptyRewarders();
-updateRelics();
+// updateRelics();
 // streamBeetsToReliquary();
 // scheduleOpFarmsReminder();
 // claimSftmxRewards();
