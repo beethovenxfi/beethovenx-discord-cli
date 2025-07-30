@@ -52,6 +52,8 @@ export async function claimAllStSRewards() {
         //     );
         //     console.log(`Did not claim sftmx rewards, gas price too high. Want ${maxGasPrice}, is ${gasPrice}`);
         // }
+        console.log('claimed sts rewards');
+        console.log(txn);
     } catch (e) {
         console.log(`Failed to claim sts rewards: ${e}`);
         await sendMessage(ChannelId.SERVER_STATUS, `Error while claiming sts rewards: ${e}`);
