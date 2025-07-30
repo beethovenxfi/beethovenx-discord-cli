@@ -4,6 +4,7 @@ import sonicStakingAbi from '../../abi/SonicStaking.json';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import { networkConfig } from '../config/config';
 import axios from 'axios';
+import { inlineCode } from '@discordjs/builders';
 const { ethers } = require('hardhat');
 
 const sonicStakingContract = '0xe5da20f15420ad15de0fa650600afc998bbe3955';
@@ -20,7 +21,13 @@ export async function claimAllStSRewards() {
     const sftmx = await ethers.getContractAt(sonicStakingAbi, sonicStakingContract);
 
     const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
-    if (updaterBalance.lt(parseFixed(`5`, 18))) {
+    if (updaterBalance.lt(parseFixed(`2`, 18))) {
+        await sendMessage(
+            ChannelId.SERVER_STATUS,
+            `The wallet for the stS rewardclaiming is running low. Please send S to ${inlineCode(
+                networkConfig.walletAddresses.relicUpdater,
+            )}!`,
+        );
         return;
     }
 
@@ -52,7 +59,6 @@ export async function claimAllStSRewards() {
         //     );
         //     console.log(`Did not claim sftmx rewards, gas price too high. Want ${maxGasPrice}, is ${gasPrice}`);
         // }
-        console.log('claimed sts rewards');
     } catch (e) {
         console.log(`Failed to claim sts rewards: ${e}`);
         await sendMessage(ChannelId.SERVER_STATUS, `Error while claiming sts rewards: ${e}`);
