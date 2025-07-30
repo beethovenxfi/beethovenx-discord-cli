@@ -20,7 +20,7 @@ export async function claimAllStSRewards() {
     const sftmx = await ethers.getContractAt(sonicStakingAbi, sonicStakingContract);
 
     const updaterBalance: BigNumber = await ethers.provider.getBalance(networkConfig.walletAddresses.relicUpdater);
-    if (updaterBalance.lt(parseFixed(`1`, 18))) {
+    if (updaterBalance.lt(parseFixed(`5`, 18))) {
         return;
     }
 
@@ -53,7 +53,6 @@ export async function claimAllStSRewards() {
         //     console.log(`Did not claim sftmx rewards, gas price too high. Want ${maxGasPrice}, is ${gasPrice}`);
         // }
         console.log('claimed sts rewards');
-        console.log(txn);
     } catch (e) {
         console.log(`Failed to claim sts rewards: ${e}`);
         await sendMessage(ChannelId.SERVER_STATUS, `Error while claiming sts rewards: ${e}`);
