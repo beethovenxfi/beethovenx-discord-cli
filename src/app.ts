@@ -2,7 +2,7 @@ import { client } from './client/discord-client';
 import { registerSlashCommands } from './interactions/slash-commands';
 import { autoVoteDelegate } from './crons/vote_with_delegate';
 import { claimStsRewards } from './crons/claim_sts_rewards';
-import { scheduleDynamicEclpOutOfRangeCheck } from './crons/remind_oor_dynamic_eclps';
+import { scheduleDynamicEclpRangeUpdater } from './crons/remind_oor_dynamic_eclps';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -21,4 +21,4 @@ registerSlashCommands();
 // claimSftmxRewards();
 claimStsRewards();
 autoVoteDelegate();
-scheduleDynamicEclpOutOfRangeCheck();
+scheduleDynamicEclpRangeUpdater();
