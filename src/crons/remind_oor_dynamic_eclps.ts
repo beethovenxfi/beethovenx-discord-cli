@@ -1,33 +1,11 @@
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import axios from 'axios';
-import { createPublicClient, createWalletClient, http, formatUnits } from 'viem';
-import { readContract, writeContract, waitForTransactionReceipt } from 'viem/actions';
-import { privateKeyToAccount } from 'viem/accounts';
+import { ethers } from 'ethers';
 
 const BACKEND_URL = 'https://backend-v3.beets-ftm-node.com/graphql';
 
-const sonicChain = {
-    id: 146,
-    name: 'Sonic',
-    network: 'sonic',
-    nativeCurrency: {
-        decimals: 18,
-        name: 'Sonic',
-        symbol: 'S',
-    },
-    rpcUrls: {
-        default: { http: ['https://rpc.soniclabs.com'] },
-        public: { http: ['https://rpc.soniclabs.com'] },
-    },
-    blockExplorers: {
-        default: { name: 'Sonic Explorer', url: 'https://sonicscan.org' },
-    },
-} as const;
-
-const publicClient = createPublicClient({
-    chain: sonicChain,
-    transport: http('https://rpc.soniclabs.com'),
-});
+const RPC_URL = 'https://rpc.soniclabs.com';
+const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 
 type PoolToken = {
     address: string;
@@ -101,19 +79,13 @@ async function validateRateProviderPrice(
     tokenPrices: TokenPrice[],
 ): Promise<boolean> {
     try {
-        const feedAddress = await publicClient.readContract({
-            address: rateProviderAddress as `0x${string}`,
-            abi: RATE_PROVIDER_ABI,
-            functionName: 'feed',
-        });
+        const rateProviderContract = new ethers.Contract(rateProviderAddress, RATE_PROVIDER_ABI, provider);
 
-        const rate = await publicClient.readContract({
-            address: feedAddress,
-            abi: RATE_PROVIDER_ABI,
-            functionName: 'getRate',
-        });
+        const feedAddress = await rateProviderContract.feed();
+        const feedContract = new ethers.Contract(feedAddress, RATE_PROVIDER_ABI, provider);
 
-        const rateValue = parseFloat(formatUnits(rate, 18));
+        const rate = await feedContract.getRate();
+        const rateValue = parseFloat(ethers.utils.formatUnits(rate, 18));
 
         const tokenPrice = tokenPrices.find((p) => p.address.toLowerCase() === tokenAddress.toLowerCase());
         if (!tokenPrice) {
@@ -144,25 +116,13 @@ async function updateRateProviderToEdge(rateProviderAddress: string): Promise<bo
             return false;
         }
 
-        const account = privateKeyToAccount(process.env.RELIC_UPDATER as `0x${string}`);
+        const wallet = new ethers.Wallet(process.env.RELIC_UPDATER, provider);
+        const contract = new ethers.Contract(rateProviderAddress, RATE_PROVIDER_ABI, wallet);
 
-        const walletClient = createWalletClient({
-            account,
-            chain: sonicChain,
-            transport: http('https://rpc.soniclabs.com'),
-        });
+        const tx = await contract.updateToEdge();
+        const receipt = await tx.wait();
 
-        const txHash = await walletClient.writeContract({
-            address: rateProviderAddress as `0x${string}`,
-            abi: RATE_PROVIDER_ABI,
-            functionName: 'updateToEdge',
-        });
-
-        await publicClient.waitForTransactionReceipt({
-            hash: txHash,
-        });
-
-        console.log(`Successfully updated rate provider ${rateProviderAddress} to edge. Tx: ${txHash}`);
+        console.log(`Successfully updated rate provider ${rateProviderAddress} to edge. Tx: ${tx.hash}`);
         return true;
     } catch (error) {
         console.error(`Error updating rate provider ${rateProviderAddress}:`, error);
