@@ -9,6 +9,7 @@ const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 
 type PoolToken = {
     address: string;
+    symbol: string;
     balanceUSD: string;
     priceRateProviderData?: {
         name: string;
@@ -47,6 +48,7 @@ const RATE_PROVIDER_ABI = [
 
 type Pool = {
     id: string;
+    name: string;
     poolTokens: PoolToken[];
 };
 
@@ -88,16 +90,20 @@ async function validateRateProviderPrice(
         const rateValue = parseFloat(ethers.utils.formatUnits(rate, 18));
 
         const tokenPrice = tokenPrices.find((p) => p.address.toLowerCase() === tokenAddress.toLowerCase());
-        if (!tokenPrice) {
-            console.log(`Token price not found for ${tokenAddress}`);
+        const otherTokenPrice = tokenPrices.find((p) => p.address.toLowerCase() !== tokenAddress.toLowerCase());
+
+        if (!tokenPrice || !otherTokenPrice) {
+            console.warn(`Token prices not found for validation: ${tokenAddress}`);
             return false;
         }
 
-        const priceDifference = Math.abs(rateValue - tokenPrice.price) / tokenPrice.price;
+        const rateFromPrices = tokenPrice.price / otherTokenPrice.price;
+
+        const priceDifference = Math.abs(rateValue - rateFromPrices) / rateFromPrices;
         const isValid = priceDifference <= 0.02;
 
         console.log(
-            `Rate validation for ${tokenAddress}: rate=${rateValue}, price=${tokenPrice.price}, diff=${(
+            `Rate validation for ${tokenAddress}: rate=${rateValue}, rateFromPrices=${rateFromPrices}, diff=${(
                 priceDifference * 100
             ).toFixed(2)}%, valid=${isValid}`,
         );
@@ -149,8 +155,10 @@ export async function updateDynamicEclpRanges() {
                         where: {chainIn: [SONIC], protocolVersionIn: [2], poolTypeIn:[GYROE]}
                     ) {
                         id
+                        name
                         poolTokens{
                             address
+                            symbol
                             balanceUSD
                             priceRateProviderData{
                                 name
@@ -181,6 +189,11 @@ export async function updateDynamicEclpRanges() {
         const updateResults: string[] = [];
 
         for (const pool of outOfRangePools) {
+            const poolTokenPrices = pool.poolTokens.map((token) => ({
+                address: token.address,
+                price: tokenPrices.find((p) => p.address.toLowerCase() === token.address.toLowerCase())?.price || 0,
+            }));
+
             for (const token of pool.poolTokens) {
                 if (
                     token.priceRateProviderData?.name?.toLowerCase().includes('dynamic') &&
@@ -189,7 +202,7 @@ export async function updateDynamicEclpRanges() {
                     const isValidPrice = await validateRateProviderPrice(
                         token.priceRateProviderData.address,
                         token.address,
-                        tokenPrices,
+                        poolTokenPrices,
                     );
 
                     if (isValidPrice) {
@@ -197,15 +210,15 @@ export async function updateDynamicEclpRanges() {
 
                         if (updateSuccess) {
                             updatedRanges++;
-                            updateResults.push(`✅ Updated range for pool ${pool.id} (token ${token.address})`);
+                            updateResults.push(`✅ Updated range for pool ${pool.name} (token ${token.symbol})`);
                         } else {
                             updateResults.push(
-                                `❌ Failed to update range for pool ${pool.id} (token ${token.address})`,
+                                `❌ Failed to update range for pool ${pool.name} (token ${token.symbol})`,
                             );
                         }
                     } else {
                         updateResults.push(
-                            `⚠️ Skipped update for pool ${pool.id} (token ${token.address}) - price validation failed`,
+                            `⚠️ Skipped update for pool ${pool.name} (token ${token.symbol}) - price validation failed`,
                         );
                     }
                 }
