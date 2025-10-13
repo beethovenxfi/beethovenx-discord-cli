@@ -182,7 +182,7 @@ export async function updateDynamicEclpRanges() {
             const balance1 = parseFloat(token1.balanceUSD);
             const balance2 = parseFloat(token2.balanceUSD);
 
-            return balance1 < 0.001 || balance2 < 0.001;
+            return balance1 < 0.01 || balance2 < 0.01;
         });
 
         let updatedRanges = 0;
