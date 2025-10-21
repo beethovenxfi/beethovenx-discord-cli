@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { client } from './client/discord-client';
-import { opFarmsReminder } from './crons/send_op_farms_reminder';
 import { updateRelics } from './crons/update_relic_positions';
 import { claimAllStSRewards } from './crons/claim_sts_rewards';
-import { vote, voteCheck } from './crons/vote_with_delegate';
+import { streamBeets } from './crons/stream_beets_reliquary';
+import { updateDynamicEclpRanges } from './crons/remind_oor_dynamic_eclps';
+import { sendTreasuryNotifications } from './crons/notifyTreasuryTxns';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -12,7 +13,7 @@ async function debugMe(): Promise<void> {
     //     console.log(`Ready! Logged in as ${client.user.tag}`);
     // });
 
-    // await client.login(TOKEN);
+    await client.login(TOKEN);
     // await opFarmsReminder();
 
     // type response = {
@@ -31,7 +32,8 @@ async function debugMe(): Promise<void> {
     // console.log(data);
 
     // claimAllStSRewards();
-    await vote();
+    // await updateDynamicEclpRanges();
+    await sendTreasuryNotifications();
 
     // type rewarderOutput = {
     //     address: string;

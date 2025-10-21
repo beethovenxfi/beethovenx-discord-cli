@@ -3,6 +3,7 @@ import { registerSlashCommands } from './interactions/slash-commands';
 import { autoVoteDelegate } from './crons/vote_with_delegate';
 import { claimStsRewards } from './crons/claim_sts_rewards';
 import { scheduleDynamicEclpRangeUpdater } from './crons/remind_oor_dynamic_eclps';
+import { scheduleTreasuryNotifications } from './crons/notifyTreasuryTxns';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -22,3 +23,4 @@ registerSlashCommands();
 claimStsRewards();
 autoVoteDelegate();
 scheduleDynamicEclpRangeUpdater();
+scheduleTreasuryNotifications();
