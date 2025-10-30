@@ -139,8 +139,8 @@ async function updateRateProviderToEdge(rateProviderAddress: string): Promise<bo
 export async function scheduleDynamicEclpRangeUpdater() {
     console.log('Schedule dynamic eclp range updater');
     await updateDynamicEclpRanges();
-    // every 2hrs mins
-    setInterval(updateDynamicEclpRanges, 2 * 60 * 60 * 1000);
+    // every 1hrs mins
+    setInterval(updateDynamicEclpRanges, 1 * 60 * 60 * 1000);
 }
 
 export async function updateDynamicEclpRanges() {
