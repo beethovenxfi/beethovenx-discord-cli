@@ -32,8 +32,8 @@ async function debugMe(): Promise<void> {
     // console.log(data);
 
     // claimAllStSRewards();
-    // await updateDynamicEclpRanges();
-    await sendTreasuryNotifications();
+    await updateDynamicEclpRanges();
+    // await sendTreasuryNotifications();
 
     // type rewarderOutput = {
     //     address: string;

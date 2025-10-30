@@ -182,11 +182,24 @@ export async function updateDynamicEclpRanges() {
             const balance1 = parseFloat(token1.balanceUSD);
             const balance2 = parseFloat(token2.balanceUSD);
 
-            return balance1 < 0.01 || balance2 < 0.01;
+            console.log(`Pool ${pool.name} balances: ${balance1}, ${balance2}`);
+
+            // if (
+            //     token1.address === `0x0555e30da8f98308edb960aa94c0db47230d2b9c` ||
+            //     token2.address === `0x0555e30da8f98308edb960aa94c0db47230d2b9c`
+            // ) {
+            //     //BTC token, need higher threshold
+            //     return balance1 < 0.05 || balance2 < 0.05;
+            // }
+
+            return balance1 < 0.02 || balance2 < 0.02;
         });
 
         let updatedRanges = 0;
         const updateResults: string[] = [];
+
+        console.log(`Found ${outOfRangePools.length} out-of-range dynamic ECLP pools`);
+        console.log(`Pools: ${outOfRangePools.map((p) => p.name).join(', ')}`);
 
         for (const pool of outOfRangePools) {
             const poolTokenPrices = pool.poolTokens.map((token) => ({
