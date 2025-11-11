@@ -4,7 +4,7 @@ import { autoVoteDelegate } from './crons/vote_with_delegate';
 import { claimStsRewards } from './crons/claim_sts_rewards';
 import { scheduleDynamicEclpRangeUpdater } from './crons/remind_oor_dynamic_eclps';
 import { scheduleTreasuryNotifications } from './crons/notifyTreasuryTxns';
-import { updateDynamicFees } from './crons/update_swap_fees';
+import { scheduleDynamicFeeUpdater } from './crons/update_swap_fees';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -25,4 +25,4 @@ claimStsRewards();
 autoVoteDelegate();
 scheduleDynamicEclpRangeUpdater();
 scheduleTreasuryNotifications();
-updateDynamicFees();
+scheduleDynamicFeeUpdater();
