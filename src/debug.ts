@@ -5,6 +5,7 @@ import { claimAllStSRewards } from './crons/claim_sts_rewards';
 import { streamBeets } from './crons/stream_beets_reliquary';
 import { updateDynamicEclpRanges } from './crons/remind_oor_dynamic_eclps';
 import { sendTreasuryNotifications } from './crons/notifyTreasuryTxns';
+import { updateDynamicFees } from './crons/update_swap_fees';
 
 const TOKEN = process.env.DISCORD_TOKEN!;
 
@@ -32,7 +33,8 @@ async function debugMe(): Promise<void> {
     // console.log(data);
 
     // claimAllStSRewards();
-    await updateDynamicEclpRanges();
+    // await updateDynamicEclpRanges();
+    await updateDynamicFees();
     // await sendTreasuryNotifications();
 
     // type rewarderOutput = {
