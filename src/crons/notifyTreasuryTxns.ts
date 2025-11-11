@@ -28,7 +28,7 @@ const chainIdToName: Record<number, string> = {
 
 export async function scheduleTreasuryNotifications() {
     console.log('Schedule treasury notifications');
-    await sendTreasuryNotifications();
+    // await sendTreasuryNotifications();
     // every 1hrs
     setInterval(sendTreasuryNotifications, 60 * 60 * 1000);
 }
