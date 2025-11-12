@@ -27,10 +27,10 @@ const pools: { [poolName: string]: { referencePool: string; beetsPool: string } 
         referencePool: '0x324963c267c354c7660ce8ca3f5f167e05649970',
         beetsPool: '0xa4c937817f99829ac4003a3475f17a2f0d6eaf7c',
     },
-    'scbtc/weth-reclamm': {
-        referencePool: '0x6b19c48449ce9de4254a883749257be5da660bfb',
-        beetsPool: '0xc16036a6b9395303601bd41aa8f46f560adfdfe7',
-    },
+    // 'scbtc/weth-reclamm': {
+    //     referencePool: '0x6b19c48449ce9de4254a883749257be5da660bfb',
+    //     beetsPool: '0xc16036a6b9395303601bd41aa8f46f560adfdfe7',
+    // },
 };
 
 const RPC_URL = 'https://rpc.soniclabs.com';
