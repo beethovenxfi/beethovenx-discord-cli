@@ -186,13 +186,13 @@ export async function updateDynamicEclpRanges() {
 
             //BTC token, need higher threshold
             if (token1.address === `0x0555e30da8f98308edb960aa94c0db47230d2b9c`) {
-                return balance1 < 0.2;
+                return balance1 < 0.8;
             }
             if (token2.address === `0x0555e30da8f98308edb960aa94c0db47230d2b9c`) {
-                return balance2 < 0.2;
+                return balance2 < 0.8;
             }
 
-            return balance1 < 0.02 || balance2 < 0.02;
+            return balance1 < 0.5 || balance2 < 0.5;
         });
 
         let updatedRanges = 0;
