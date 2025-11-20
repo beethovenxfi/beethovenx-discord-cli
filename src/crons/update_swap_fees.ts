@@ -2,7 +2,7 @@ import { formatUnits } from 'ethers/lib/utils';
 import { ChannelId, sendMessage } from '../interactions/send-message';
 import { ethers } from 'ethers';
 
-const pools: { [poolName: string]: { referencePool: string; beetsPool: string } } = {
+const pools: { [poolName: string]: { referencePool: string; beetsPool: string; minFee?: number } } = {
     'scusd/usdc-reclamm': {
         referencePool: '0x2c13383855377faf5a562f1aef47e4be7a0f12ac',
         beetsPool: '0x02e84edccf97e54bfb505b478da1d931dda13d78',
@@ -22,10 +22,12 @@ const pools: { [poolName: string]: { referencePool: string; beetsPool: string } 
     'weth/usdc-reclamm': {
         referencePool: '0x6fb30f3fcb864d49cdff15061ed5c6adfee40b40',
         beetsPool: '0x4aff385131de823ec412db504d88eef646707de9',
+        minFee: 0.0025,
     },
     'ws/usdc-reclamm': {
         referencePool: '0x324963c267c354c7660ce8ca3f5f167e05649970',
         beetsPool: '0xa4c937817f99829ac4003a3475f17a2f0d6eaf7c',
+        minFee: 0.0025,
     },
     // 'scbtc/weth-reclamm': {
     //     referencePool: '0x6b19c48449ce9de4254a883749257be5da660bfb',
@@ -74,39 +76,52 @@ export async function updateDynamicFees() {
     console.log('Checking and updating dynamic fee');
     try {
         // for each pool in the mapping, fetch the fees via onchain call
-        for (const [poolName, { referencePool, beetsPool }] of Object.entries(pools)) {
+        for (const [poolName, { referencePool, beetsPool, minFee }] of Object.entries(pools)) {
             try {
                 const beetsPoolContract = new ethers.Contract(beetsPool, fee_abi, provider);
                 const fee = await beetsPoolContract.getStaticSwapFeePercentage();
-                const beetsFeePercentage = Number(formatUnits(fee, 18));
+                const currentBeetsFeePercentage = Number(formatUnits(fee, 18));
                 const referencePoolContract = new ethers.Contract(referencePool, fee_abi, provider);
                 const referenceFee = await referencePoolContract.fee();
                 const referenceFeePercentage = Number(formatUnits(referenceFee, 6));
-                // new fee is 15% less than the reference fee, round to 8 decimal places
-                const newBeetsFeePercentage = Math.round(referenceFeePercentage * 0.85 * 1e8) / 1e8;
-                // define fee difference boundaries between 10 and 20 percent
-                const maxBeetsFeePercentage = Math.round(referenceFeePercentage * 0.9 * 1e8) / 1e8;
-                const minBeetsFeePercentage = Math.round(referenceFeePercentage * 0.8 * 1e8) / 1e8;
-                // if the new percentage is outside the boundaries, update it to new percentage
-                if (beetsFeePercentage > maxBeetsFeePercentage || beetsFeePercentage < minBeetsFeePercentage) {
+                // define fee difference boundaries between 10 and 20 percent, considering minFee if defined
+                const maxBeetsFeePercentage = Math.max(
+                    Math.round(referenceFeePercentage * 0.9 * 1e8) / 1e8,
+                    minFee || 0,
+                );
+                const minBeetsFeePercentage = Math.max(
+                    Math.round(referenceFeePercentage * 0.8 * 1e8) / 1e8,
+                    minFee || 0,
+                );
+                // if the current fee percentage is outside the boundaries, update it to new percentage
+                if (
+                    currentBeetsFeePercentage > maxBeetsFeePercentage ||
+                    currentBeetsFeePercentage < minBeetsFeePercentage
+                ) {
+                    // new fee is 15% less than the reference fee but at least the minFee round to 8 decimal places
+                    const newBeetsFeePercentage = Math.max(
+                        Math.round(referenceFeePercentage * 0.85 * 1e8) / 1e8,
+                        minFee || 0,
+                    );
+
                     console.log(
                         `Pool ${poolName} (${beetsPool}) fee calculation out of bounds, setting from ${
-                            beetsFeePercentage * 100
+                            currentBeetsFeePercentage * 100
                         }% to ${newBeetsFeePercentage * 100}% (ref: ${referenceFeePercentage * 100}%)`,
                     );
                     await updateSwapFee(beetsPool, newBeetsFeePercentage);
                     await sendMessage(
                         ChannelId.SERVER_STATUS,
-                        `✅ Updated swap fee for pool ${poolName} (${beetsPool}): ${(beetsFeePercentage * 100).toFixed(
-                            6,
-                        )}% -> ${(newBeetsFeePercentage * 100).toFixed(6)}% (ref: ${(
+                        `✅ Updated swap fee for pool ${poolName} (${beetsPool}): ${(
+                            currentBeetsFeePercentage * 100
+                        ).toFixed(6)}% -> ${(newBeetsFeePercentage * 100).toFixed(6)}% (ref: ${(
                             referenceFeePercentage * 100
                         ).toFixed(6)}%)`,
                     );
                 } else {
                     console.log(
                         `Pool ${poolName} (${beetsPool}) fee within bounds, no update needed. Current: ${
-                            beetsFeePercentage * 100
+                            currentBeetsFeePercentage * 100
                         }%, Ref: ${referenceFeePercentage * 100}%, Bounds: [${minBeetsFeePercentage * 100}%, ${
                             maxBeetsFeePercentage * 100
                         }%]`,
