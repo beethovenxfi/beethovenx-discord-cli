@@ -162,10 +162,18 @@ async function vote() {
         );
     }
 
+    // filter choiceHuman and remove options that include "No bribe Option"
+    const filteredChoiceHuman: Record<string, number> = {};
+    for (const key in data.choiceHuman) {
+        if (!key.toLowerCase().includes('no bribe option')) {
+            filteredChoiceHuman[key] = data.choiceHuman[key];
+        }
+    }
+
     await sendMessage(
         ChannelId.SERVER_STATUS,
         `MD voted with the following incentives received: ${inlineCode(
             data.incentivesReceived.toString(),
-        )} and votes: ${inlineCode(JSON.stringify(data.choiceHuman))}`,
+        )} and votes: ${inlineCode(JSON.stringify(filteredChoiceHuman, null, 2))}`,
     );
 }
