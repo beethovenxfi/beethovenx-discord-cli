@@ -27,31 +27,40 @@ export async function voteCheck() {
 
     let response;
     try {
-        response = await axios.get<{ data: { proposalDeadline: number; totalValue: number }[] }>(
-            'https://api.hiddenhand.finance/proposal/beets/',
-        );
+        response = await axios.get<{
+            result: {
+                data: {
+                    json: {
+                        bribefile: {
+                            header: { voteEnd: number; totalBribes: number };
+                            bribelist: { voteindex: number }[];
+                        };
+                    };
+                };
+            };
+        }>('https://www.beetswars.live/api/trpc/bribes.list');
     } catch (error) {
         console.error('Error fetching proposal data:', error);
         return;
     }
 
-    if (!response.data.data || response.data.data.length === 0) {
+    if (!response.data.result || response.data.result.data.json.bribefile.bribelist.length === 0) {
         console.log('no data found');
         return;
     }
     //deadline passed, vote finished
-    if (response.data.data[0].proposalDeadline < moment().unix()) {
+    if (response.data.result.data.json.bribefile.header.voteEnd < moment().unix()) {
         console.log('no active proposal');
         return;
     }
 
     // less than two bribes up
-    if (response.data.data.filter((bribe) => bribe.totalValue > 0).length < 2) {
+    if (response.data.result.data.json.bribefile.bribelist.length < 2) {
         console.log('only one bribe up');
         return;
     }
 
-    const voteEnd = response.data.data[0].proposalDeadline;
+    const voteEnd = response.data.result.data.json.bribefile.header.voteEnd / 1000;
 
     // dont vote before 3 days of closing
     if (voteEnd - moment().unix() > 3 * ONE_DAY_IN_SECONDS) {
